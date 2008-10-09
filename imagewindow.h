@@ -5,13 +5,17 @@
 #include <QWidget>
 #include <QPixmap>
 #include <QLabel>
+#include <QtGui>
 
 class ImageWindow : public ShowWindow
 {
 public:
 	/*derivamos el constructor de ShowWindow*/
      ImageWindow(QWidget *parent = 0);
-
+     
+     /*funcion para cargar imagenes, devuelve true si pudo cargar*/
+     bool LoadImage (QString filename);
+	
     ~ImageWindow();
     
 private:
