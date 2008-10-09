@@ -16,7 +16,7 @@ ImageWindow::ImageWindow(QWidget *parent)
 	: ShowWindow(parent) 
 {
 	//generamos las estructuras
-	ql = new QLabel(parent, 0);
+	ql = new QLabel(parent, Qt::Window);
 	image = new QPixmap();
 	layout = new QVBoxLayout;
 	
@@ -36,6 +36,7 @@ bool ImageWindow::LoadImage (QString filename)
 {
 	bool result = false;
 	
+	ql->clear();
 	result = image->load (filename, 0, Qt::AutoColor);
 	
 	ql->setPixmap(*image);
