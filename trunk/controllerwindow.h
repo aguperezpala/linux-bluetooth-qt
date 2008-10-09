@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "showwindow.h"
+#include "imagewindow.h"
 
 QT_BEGIN_NAMESPACE
 class QCheckBox;
@@ -19,7 +19,14 @@ class ControllerWindow : public QWidget
     Q_OBJECT
 
 public:
-    ControllerWindow();
+	ControllerWindow(QWidget* parent = 0);
+	
+public slots:
+	void SetImage();
+private:
+	ImageWindow *iw;
+	QTextEdit *text1;
+	QPushButton *button1;
 
 };
 
