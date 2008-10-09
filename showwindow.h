@@ -25,14 +25,18 @@ class ShowWindow : public QWidget
 
 public:
     ShowWindow(QWidget *parent = 0);
-
+    /*para setear el tipo de ventana*/	
     void setWindowFlags(showWflags flags);
-inline void setShowWindowSize (int width, int heigth){setFixedSize(width,heigth);};
+    
+    /*seteamos el tamaño de la ventana*/
+inline    void setWindowSize (int width, int heigth){setFixedSize(width,heigth);};
+    
+    /*destructor*/
+    
+    
 
 
 private:
-    QTextEdit *textEdit;
-    QPushButton *closeButton;
 };
 //! [0]
 
