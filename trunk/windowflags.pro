@@ -3,10 +3,14 @@
 # Subdirectorio relativo al directorio principal del proyecto: .
 # El destino es una aplicaci??n: 
 
+CONFIG      += uitools
+
 HEADERS += controllerwindow.h \
            showwindow.h \
-           imagewindow.h 
+           imagewindow.h \
+           loadwidget.h
 SOURCES += controllerwindow.cpp \
            showwindow.cpp \
            main.cpp \
-           imagewindow.cpp 
+           imagewindow.cpp \
+           loadwidget.cpp

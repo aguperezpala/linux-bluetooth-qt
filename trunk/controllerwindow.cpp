@@ -13,7 +13,7 @@ ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 	text1->setReadOnly(false);
 	text1->setLineWrapMode(QTextEdit::NoWrap);
 	
-	iw->setWindowFlags (SW_WITHOUT_BORDERS);
+	//iw->setWindowFlags (SW_WITHOUT_BORDERS);
 	iw->setWindowSize (300,300);
 	iw->LoadImage( QString ("ona.jpg"));
 
