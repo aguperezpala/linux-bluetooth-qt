@@ -8,9 +8,9 @@ CONFIG      += uitools
 HEADERS += controllerwindow.h \
            showwindow.h \
            imagewindow.h \
-           loadwidget.h
+           textwindow.h 
 SOURCES += controllerwindow.cpp \
            showwindow.cpp \
            main.cpp \
            imagewindow.cpp \
-           loadwidget.cpp
+           textwindow.cpp 

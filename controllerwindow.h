@@ -2,8 +2,10 @@
 #define CONTROLLERWINDOW_H
 
 #include <QWidget>
+#include <QTableWidget>
 
 #include "imagewindow.h"
+#include "textwindow.h"
 
 QT_BEGIN_NAMESPACE
 class QCheckBox;
@@ -23,10 +25,16 @@ public:
 	
 public slots:
 	void SetImage();
+	void SetText();
+	void SetItemTable();
+	
 private:
 	ImageWindow *iw;
+	TextWindow *tw;
 	QTextEdit *text1;
 	QPushButton *button1;
+	QPushButton *buttontext;
+	QTableWidget *qtw;	//test
 
 };
 

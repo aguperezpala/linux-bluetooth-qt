@@ -16,7 +16,7 @@ ImageWindow::ImageWindow(QWidget *parent)
 	: ShowWindow(parent) 
 {
 	//generamos las estructuras
-	ql = new QLabel(parent, Qt::Window);
+	ql = new QLabel(0, Qt::Window);
 	image = new QPixmap();
 	layout = new QVBoxLayout;
 	
