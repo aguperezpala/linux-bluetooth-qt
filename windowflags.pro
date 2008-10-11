@@ -5,12 +5,14 @@
 
 CONFIG      += uitools
 
-HEADERS += controllerwindow.h \
-           showwindow.h \
-           imagewindow.h \
-           textwindow.h 
-SOURCES += controllerwindow.cpp \
-           showwindow.cpp \
-           main.cpp \
-           imagewindow.cpp \
-           textwindow.cpp 
+#HEADERS += $(shell ls src/*.h)
+#SOURCES += $(shell ls src/*.cpp)
+HEADERS += src/controllerwindow.h \
+           src/showwindow.h \
+           src/imagewindow.h \
+           src/textwindow.h 
+SOURCES += src/controllerwindow.cpp \
+           src/showwindow.cpp \
+           src/main.cpp \
+           src/imagewindow.cpp \
+           src/textwindow.cpp 
