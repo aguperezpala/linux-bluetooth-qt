@@ -1,6 +1,7 @@
 #include <QtGui>
 #include <QTextEdit>
 #include <QPushButton>
+#include <QFileInfo>
 #include "controllerwindow.h"
 #include <QMessageBox>
 #include <stdio.h>
@@ -15,7 +16,7 @@ ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 	/*configuramos ImageWindow*/
 	//iw->setWindowFlags (SW_WITHOUT_BORDERS);
 	iw->setWindowSize (300,300);
-	iw->LoadImage( QString ("ona.jpg"));
+	iw->LoadImage( QString ("../ona.jpg"));
 	
 	
 	/*configuramos TextWindow*/
@@ -24,7 +25,8 @@ ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 	
 	text1 = new QTextEdit;
 	text1->setReadOnly(false);
-	text1->setLineWrapMode(QTextEdit::NoWrap);
+	text1->setAcceptRichText (false);
+	//text1->setLineWrapMode(QTextEdit::NoWrap);
 
 
 	button1 = new QPushButton(tr("Mostrar imagen"));
@@ -52,8 +54,17 @@ ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 
 void ControllerWindow::SetImage ()
 {	
-	printf ("imagen: %s \n",(char *) text1->toPlainText().toStdString().c_str());
-	iw->LoadImage(text1->toPlainText());
+	QFileInfo fi(text1->toPlainText());
+	QString aux;
+	QString aux1;
+	aux = text1->toPlainText();
+	parseFile (aux);
+	aux1 = fi.canonicalFilePath();
+	//aux1.append (fi.fileName());
+	printf ("fi: %s \n",(char *) aux1.toStdString().c_str());
+	printf ("imagen: %s \n",(char *) aux.toStdString().c_str());
+	text1->setText(text1->toHtml());
+	iw->LoadImage(aux);
 }
 void ControllerWindow::SetText ()
 {
@@ -71,3 +82,23 @@ void ControllerWindow::SetItemTable ()
 	qtw->resizeRowToContents (qtw->rowCount()-1);
 	
 }
+
+void ControllerWindow::parseFile (QString& str)
+{
+	bool cond = false;
+	int i = 0;
+	
+	if (!str.isNull() && !str.isEmpty()) {//chequeamos por las dudas
+		while (!cond && i < (str.length()-1)) {
+			cond = ((str[i] == QChar ('/')) && (str[(i+1)] != QChar ('/')));
+			i++;
+		}
+		//en este punto deberiamos tener i = primera / del verdadero path
+		str.remove (0, i-1); //sacamos la "basura"
+		str.replace ("%20"," "); //reemplazamos los espacios
+		str.replace ("\n", ""); //sacamos los "enters"
+		str.trimmed (); //sacamos los espacios al final y al principio
+	}
+}
+
+

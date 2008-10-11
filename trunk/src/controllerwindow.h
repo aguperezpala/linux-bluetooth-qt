@@ -23,12 +23,15 @@ class ControllerWindow : public QWidget
 public:
 	ControllerWindow(QWidget* parent = 0);
 	
+	
 public slots:
 	void SetImage();
 	void SetText();
 	void SetItemTable();
 	
 private:
+	
+	void parseFile (QString& str); //funcion para parsear archivos
 	ImageWindow *iw;
 	TextWindow *tw;
 	QTextEdit *text1;
