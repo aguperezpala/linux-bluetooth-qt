@@ -1,7 +1,7 @@
 #ifndef IMAGEWINDOW_H
 #define IMAGEWINDOW_H
 
-#include "showwindow.h"
+#include "../showwindow.h"
 #include <QWidget>
 #include <QPixmap>
 #include <QLabel>

@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <QTableWidget>
 
-#include "imagewindow.h"
-#include "textwindow.h"
+#include "imagewindow/imagewindow.h"
+#include "textwindow/textwindow.h"
 
 QT_BEGIN_NAMESPACE
 class QCheckBox;

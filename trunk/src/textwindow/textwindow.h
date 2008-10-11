@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QLayout>
 #include <QTextEdit>
-#include "showwindow.h"
+#include "../showwindow.h"
 
 class TextWindow : public ShowWindow
 {

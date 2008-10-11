@@ -2,10 +2,10 @@
 #include <QtGui>
 #include <QPixmap>
 
-#include "loadwidget.h"
+#include "mainwidget.h"
 
 
-LoadWidget::LoadWidget(QWidget *parent)
+MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent)
 {
     QPixmap aguPix;

@@ -9,12 +9,12 @@ class QSpinBox;
 QT_END_NAMESPACE
 
 
-class LoadWidget : public QWidget
+class MainWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-	LoadWidget(QWidget *parent = 0);
+	MainWidget(QWidget *parent = 0);
 
 private:
 };
