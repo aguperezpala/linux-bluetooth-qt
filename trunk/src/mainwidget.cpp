@@ -11,7 +11,7 @@ LoadWidget::LoadWidget(QWidget *parent)
     QPixmap aguPix;
     QUiLoader loader;
 
-    QFile file("mainwidget.ui");
+    QFile file("src/mainwidget.ui");
     file.open(QFile::ReadOnly);
     QWidget *formWidget = loader.load(&file, this);
     file.close();
