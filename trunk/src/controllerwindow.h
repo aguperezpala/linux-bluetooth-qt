@@ -6,6 +6,7 @@
 
 #include "imagewindow/imagewindow.h"
 #include "textwindow/textwindow.h"
+#include "qparser/parser.h"
 
 QT_BEGIN_NAMESPACE
 class QCheckBox;
@@ -37,6 +38,7 @@ private:
 	QPushButton *button1;
 	QPushButton *buttontext;
 	QTableWidget *qtw;	//test
+	Parser *parser;
 
 };
 

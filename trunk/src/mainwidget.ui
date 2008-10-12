@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>355</height>
+    <width>1025</width>
+    <height>822</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -36,22 +36,25 @@
   <property name="windowTitle" >
    <string>Calculator Builder</string>
   </property>
-  <layout class="QFormLayout" name="formLayout" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="1" >
-      <widget class="QTextEdit" name="textEdit" />
-     </item>
-     <item row="0" column="0" >
-      <widget class="QPushButton" name="pushButton" >
-       <property name="text" >
-        <string>PushButton</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-  </layout>
+  <widget class="QWidget" name="gridLayoutWidget" >
+   <property name="geometry" >
+    <rect>
+     <x>240</x>
+     <y>190</y>
+     <width>361</width>
+     <height>381</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout" >
+    <item row="0" column="0" >
+     <widget class="QPushButton" name="button1" >
+      <property name="text" >
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections/>
