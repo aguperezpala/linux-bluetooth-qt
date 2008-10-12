@@ -6,7 +6,7 @@
 #include <QMessageBox>
 #include <stdio.h>
 #include <iostream>
-
+#include "qparser/parser.h"
 
 ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 {
@@ -83,22 +83,5 @@ void ControllerWindow::SetItemTable ()
 	
 }
 
-void ControllerWindow::parseFile (QString& str)
-{
-	bool cond = false;
-	int i = 0;
-	
-	if (!str.isNull() && !str.isEmpty()) {//chequeamos por las dudas
-		while (!cond && i < (str.length()-1)) {
-			cond = ((str[i] == QChar ('/')) && (str[(i+1)] != QChar ('/')));
-			i++;
-		}
-		//en este punto deberiamos tener i = primera / del verdadero path
-		str.remove (0, i-1); //sacamos la "basura"
-		str.replace ("%20"," "); //reemplazamos los espacios
-		str.replace ("\n", ""); //sacamos los "enters"
-		str.trimmed (); //sacamos los espacios al final y al principio
-	}
-}
 
 

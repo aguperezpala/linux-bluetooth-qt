@@ -31,7 +31,6 @@ public slots:
 	
 private:
 	
-	void parseFile (QString& str); //funcion para parsear archivos
 	ImageWindow *iw;
 	TextWindow *tw;
 	QTextEdit *text1;
