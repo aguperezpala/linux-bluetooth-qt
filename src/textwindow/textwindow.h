@@ -13,8 +13,7 @@ public:
     
     /*en esta funcion vamos a mostrar por pantalla el mensaje*/
     void setMesg (const QString& nombre, const QString& mensaje);
-    
-    
+
     ~TextWindow();
 
 private:

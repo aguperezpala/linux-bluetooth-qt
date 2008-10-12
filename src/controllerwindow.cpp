@@ -5,14 +5,13 @@
 #include "controllerwindow.h"
 #include <QMessageBox>
 #include <stdio.h>
-#include <iostream>
 #include "qparser/parser.h"
 
 ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 {
 	iw = new ImageWindow (0);
 	tw = new TextWindow (0);
-	
+	parser = new Parser;
 	/*configuramos ImageWindow*/
 	//iw->setWindowFlags (SW_WITHOUT_BORDERS);
 	iw->setWindowSize (300,300);
@@ -27,6 +26,8 @@ ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 	text1->setReadOnly(false);
 	text1->setAcceptRichText (false);
 	//text1->setLineWrapMode(QTextEdit::NoWrap);
+	
+	
 
 
 	button1 = new QPushButton(tr("Mostrar imagen"));
@@ -54,17 +55,15 @@ ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 
 void ControllerWindow::SetImage ()
 {	
-	QFileInfo fi(text1->toPlainText());
-	QString aux;
-	QString aux1;
+/*	QString aux;
 	aux = text1->toPlainText();
-	parseFile (aux);
-	aux1 = fi.canonicalFilePath();
-	//aux1.append (fi.fileName());
-	printf ("fi: %s \n",(char *) aux1.toStdString().c_str());
+	parser->parseFile (aux);
+#ifdef __DEBUG
+	unsigned int ftype = parser->getFileType (aux);
+	printf ("FileName: %s \tParser file type: %d \n",(char *) aux.toStdString().c_str(),ftype);
 	printf ("imagen: %s \n",(char *) aux.toStdString().c_str());
-	text1->setText(text1->toHtml());
-	iw->LoadImage(aux);
+#endif
+	iw->LoadImage(aux);*/
 }
 void ControllerWindow::SetText ()
 {

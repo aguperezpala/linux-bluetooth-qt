@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>Form</class>
- <widget class="QWidget" name="Form" >
+ <class>MainTxtWindow</class>
+ <widget class="QWidget" name="MainTxtWindow" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -183,8 +183,8 @@
   <widget class="QWidget" name="verticalLayoutWidget_4" >
    <property name="geometry" >
     <rect>
-     <x>450</x>
-     <y>20</y>
+     <x>330</x>
+     <y>100</y>
      <width>381</width>
      <height>351</height>
     </rect>
@@ -208,19 +208,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QTableView" name="txttableSms" >
-      <property name="autoScroll" >
-       <bool>true</bool>
-      </property>
-      <property name="showGrid" >
-       <bool>true</bool>
-      </property>
-      <property name="sortingEnabled" >
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QPushButton" name="txtbuttonDeleteSms" >
       <property name="text" >
        <string>Eliminar</string>
@@ -229,6 +216,46 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWidget" name="verticalLayoutWidget_5" >
+   <property name="geometry" >
+    <rect>
+     <x>30</x>
+     <y>229</y>
+     <width>101</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4" >
+    <property name="spacing" >
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QPushButton" name="txtbuttonStart" >
+      <property name="text" >
+       <string>Comenzar</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="txtbuttonStop" >
+      <property name="text" >
+       <string>Frenar</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <zorder>verticalLayoutWidget</zorder>
+  <zorder>verticalLayoutWidget_2</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
+  <zorder>verticalLayoutWidget_3</zorder>
+  <zorder>horizontalLayoutWidget_2</zorder>
+  <zorder>verticalLayoutWidget_4</zorder>
+  <zorder>horizontalLayoutWidget_3</zorder>
+  <zorder>verticalLayoutWidget_5</zorder>
+  <zorder>label_2</zorder>
+  <zorder>txtbuttonDeleteSms</zorder>
+  <zorder>formLayoutWidget</zorder>
  </widget>
  <resources/>
  <connections/>

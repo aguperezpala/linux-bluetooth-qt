@@ -1,5 +1,20 @@
+				TENER EN CUENTA
+Cambiar las variables de configuracion en los archivos que llaman a las funciones
+
+
 ********************************************************************************
 				Ventana principal
 ********************************************************************************
 La ventana principal la vamos a usar en mainwidget.ui que SIEMPRE debe estar en
 la carpeta /src
+
+
+
+********************************************************************************
+Variables de configuracion
+********************************************************************************
+#Correspondientes al parser.
+* MaxTextFileSize
+* MaxImageFileSize
+* Variables X, Y, Width, Height de la textwindow
+* Velocidad que pasa el texto
