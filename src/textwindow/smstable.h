@@ -17,7 +17,7 @@ class SmsTable : public QTableWidget
 public:
     SmsTable(QWidget *parent = 0);
     
-    void deleteItem (int r, int c);/*removemos el item en la fila r columna c*/
+    void deleteItem (int r);/*removemos el item en la fila r */
     void deleteSelectedItem ();
     
     //void insertFront (SmsObject&);

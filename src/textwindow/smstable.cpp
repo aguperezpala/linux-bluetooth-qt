@@ -13,14 +13,14 @@ SmsTable::SmsTable(QWidget *parent)
 }
 
 
-void SmsTable::deleteItem (int r, int c)
+void SmsTable::deleteItem (int r)
 {
-	this->removeRow (r,c);
+	this->removeRow (r);
 }
 	
 void SmsTable::deleteSelectedItem ()
 {
-	this->removeRow (this->currentRow(),this->currentColumn());
+	removeRow (this->currentRow());
 }
 
 
