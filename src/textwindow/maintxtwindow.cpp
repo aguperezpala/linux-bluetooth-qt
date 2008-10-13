@@ -24,6 +24,11 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	}
 	this->tw->show();
 	
+	
+	/*!PRUIEBAAA*/
+	this->tw->setMesg (QString ("Agustin daniel perez de los jodidididisimos andes"));
+	this->tw->start();
+	
 	QMetaObject::connectSlotsByName(this); /*conectamos cada componente*/
 }
 

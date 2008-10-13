@@ -55,6 +55,9 @@ TextWindow::TextWindow(QWidget *parent)
 	
 	
 	
+	
+	
+	
 }
 
 void TextWindow::setMesg (const QString& mensaje)
