@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include "ui_maintxtwindow.h"
 #include "smstable.h"
+#include "textwindow.h"
 
 
 class MainTxtWindow : public QWidget, private Ui::MainTxtWindow {
