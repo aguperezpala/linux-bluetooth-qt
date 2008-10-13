@@ -22,7 +22,7 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 		msg->show();
 		this->close();	/*!chequear esto*/
 	}
-		
+	this->tw->show();
 	
 	QMetaObject::connectSlotsByName(this); /*conectamos cada componente*/
 }

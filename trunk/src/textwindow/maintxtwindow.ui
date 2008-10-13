@@ -125,7 +125,23 @@
      </widget>
     </item>
     <item>
-     <widget class="QTextEdit" name="txttextFileReciber" />
+     <widget class="QTextEdit" name="txttextFileReciber" >
+      <property name="layoutDirection" >
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="verticalScrollBarPolicy" >
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="undoRedoEnabled" >
+       <bool>true</bool>
+      </property>
+      <property name="lineWrapMode" >
+       <enum>QTextEdit::NoWrap</enum>
+      </property>
+      <property name="acceptRichText" >
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -245,17 +261,6 @@
     </item>
    </layout>
   </widget>
-  <zorder>verticalLayoutWidget</zorder>
-  <zorder>verticalLayoutWidget_2</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>verticalLayoutWidget_3</zorder>
-  <zorder>horizontalLayoutWidget_2</zorder>
-  <zorder>verticalLayoutWidget_4</zorder>
-  <zorder>horizontalLayoutWidget_3</zorder>
-  <zorder>verticalLayoutWidget_5</zorder>
-  <zorder>label_2</zorder>
-  <zorder>txtbuttonDeleteSms</zorder>
-  <zorder>formLayoutWidget</zorder>
  </widget>
  <resources/>
  <connections/>

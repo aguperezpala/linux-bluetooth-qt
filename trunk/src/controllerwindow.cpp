@@ -68,7 +68,7 @@ void ControllerWindow::SetImage ()
 void ControllerWindow::SetText ()
 {
 	printf ("texto: %s \n",(char *) text1->toPlainText().toStdString().c_str());
-	tw->setMesg( QString ("Agustin"), text1->toPlainText());
+	tw->setMesg(text1->toPlainText());
 }
 
 void ControllerWindow::SetItemTable ()
