@@ -3,8 +3,10 @@
 
 #include <QWidget>
 #include <QUiLoader>
+#include <QMessageBox>
 #include "ui_maintxtwindow.h"
 #include "smstable.h"
+
 
 class MainTxtWindow : public QWidget, private Ui::MainTxtWindow {
 
@@ -24,6 +26,8 @@ public slots:
 
 private:
 	SmsTable *smsTable; 	/*tabla para mostrar los sms*/
+	TextWindow *tw;		/*ventana donde vamos a mostrar los sms*/
+	QMessageBox *msg;	/*para mostrar algunos mensajes*/
 
 };
 
