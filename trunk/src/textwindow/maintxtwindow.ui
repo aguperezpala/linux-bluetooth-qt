@@ -261,6 +261,19 @@
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="txtbuttonSetFont" >
+   <property name="geometry" >
+    <rect>
+     <x>40</x>
+     <y>80</y>
+     <width>95</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Set Fuente</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

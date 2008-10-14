@@ -1,16 +1,24 @@
 #include "textwindow.h"
-#include <QFont>
+
 
 /*esta funcion modifica el texto que se esta mostrando en pantalla*/
 void TextWindow::update_text ()
 {
 	/*primero vamos a agregar una letra del str*/
 	if (this->str.size() == 0){
-		this->text->append (QString (" "));
+		if (this->strcount >= MAX_STR_BUFF) {
+			this->timer->stop();
+			this->text->clear();
+		} else {
+			this->text->insertPlainText (QString (" "));
+			this->strcount++;
+		}
 	} else {
-		this->text->append(QString (this->str[0]));
+		this->text->insertPlainText(QString (this->str[0]));
 		this->str.remove (0,1); /*sacamos el primer caracter*/
 	}
+	this->text->moveCursor (QTextCursor::End);
+	this->text->ensureCursorVisible();
 }
 	
 
@@ -19,7 +27,7 @@ TextWindow::TextWindow(QWidget *parent)
 {
 	this->timer = NULL;
 	this->text = NULL;
-	
+	this->strcount = 0;
 	
 	text = new QTextEdit (0);
 	if (this->text == NULL){
@@ -45,8 +53,7 @@ TextWindow::TextWindow(QWidget *parent)
 	this->setLayout (layout);
 	
 	/***************configuraciones principales****************/
-	this->vel = 1;
-	this->color.setRgb (255,255,255);
+	this->vel = 100;	
 	this->text->setAlignment (Qt::AlignRight);
 	this->text->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 	this->text->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
@@ -63,12 +70,11 @@ TextWindow::TextWindow(QWidget *parent)
 void TextWindow::setMesg (const QString& mensaje)
 {
 	str.append(mensaje); /*copiamos el string sobre el cual vamos a trabajar*/
-	if (!this->timer->isActive()) {
+	this->strcount = 0;
+	/*if (!this->timer->isActive()) {
 		this->timer->start (this->vel, this);
-	}
-		
-		
-	this->text->setText (str);	
+	}*/
+	
 }
 
  void TextWindow::paintEvent(QPaintEvent * /* event */)
@@ -98,7 +104,7 @@ void TextWindow::setMesg (const QString& mensaje)
 	
 }
 
-void TextWindow::setFontType (QString& font_name, int size, QFont::Weight type)
+/*void TextWindow::setFontType (QString& font_name, int size, QFont::Weight type)
 {
 	this->text->setFont (QFont (font_name, size,  type));
 }
@@ -106,23 +112,16 @@ void TextWindow::setFontType (QString& font_name, int size, QFont::Weight type)
 void TextWindow::setFontSize (int size)
 {
 	this->text->setFont (QFont(this->text->fontFamily(), size, this->text->fontWeight()));
-}
+}*/
 
 
 void TextWindow::setVelocity (int v)
 {
 	this->vel = v;
+	dprintf ("setvelocity\n");
 	if (this->timer->isActive())
 		this->timer->stop();
 	this->timer->start (this->vel,this);
-}
-
-
-
-
-void TextWindow::setColor (int red, int green, int blue)
-{
-	this->color.setRgb (red,green,blue);
 }
 
 TextWindow::~TextWindow()
