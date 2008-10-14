@@ -37,6 +37,10 @@ inline	const QFont& getTextFont (){return this->text->font();};
 	void start(){if (!timer->isActive())timer->start(this->vel,this);};	/*comienzan a moverse las letras*/
 	void stop(){timer->stop();};	/*frena el movimiento de las letras*/
 	
+inline	void setBackColor (const QColor& c){this->text->setTextBackgroundColor (c);};
+inline	void setFontColor (const QColor& c){this->text->setTextColor (c);};
+		
+	
 
     ~TextWindow();
 protected:

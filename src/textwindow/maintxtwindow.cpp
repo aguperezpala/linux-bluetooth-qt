@@ -1,12 +1,14 @@
 #include "maintxtwindow.h"
 #include <QtGui>
+#include <QColor>
+#include <QAbstractButton>
 
 MainTxtWindow::MainTxtWindow(QWidget *parent)
 	: QWidget(parent)
 {
 	this->tw = NULL;
 	this->msg = new QMessageBox(0);
-	
+	this->fmanipulator = NULL;
 	
 	
 	/*cargamos el archivo*/
@@ -24,13 +26,23 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 		msg->show();
 		this->close();	/*!chequear esto*/
 	}
+	this->tw->setWindowFlags (SW_WITHOUT_BORDERS);
 	this->tw->show();
-	this->tw->setWindowSize (500,100);
+	this->tw->setWindowSize (500,100); /*!fijarse que tiene que ser predeterminado*/
+	
+	/*generamos el filemanipulator*/
+	this->fmanipulator = new FileManipulator;
+	if (this->fmanipulator == NULL){
+		msg->setText (QString ("Error al crear el FileManipulator"));
+		msg->show();
+		this->close();	/*!chequear esto*/
+	}
+		
 	
 	
 	/*!PRUIEBAAA*/
 	this->tw->setMesg (QString ("Agustin daniel perez de los jodidididisimos andes"));
-	
+	//this->tw->setWindowFlags (SW_WITHOUT_BORDERS);
 	
 	
 	
@@ -104,4 +116,84 @@ void MainTxtWindow::on_txtbuttonSetFont_clicked()
 	if (ok) {
 		this->tw->setTextFont (font);
 	}
+}
+
+void MainTxtWindow::on_txtbuttonSetBackColor_clicked()
+{
+	QColor color = QColorDialog::getColor(Qt::green, this);
+	if (color.isValid()) {
+		this->tw->setBackColor (color);
+	}
+}
+void MainTxtWindow::on_txtbuttonSetFontColor_clicked()
+{
+	QColor color = QColorDialog::getColor(Qt::green, this);
+	if (color.isValid()) {
+		this->tw->setFontColor (color);
+	}
+}
+
+void MainTxtWindow::on_txttextFileReciber_textChanged()
+{
+	QString aux = this->txttextFileReciber->toPlainText();
+	QString *smsContent = NULL;
+	QMessageBox *msgFile = NULL;
+	QAbstractButton *okbtn = NULL;
+	QAbstractButton *cancelbtn = NULL;
+	//QTextEdit *txtfile = NULL;	/*dnd vamos a mostrar el archivo*/
+	//QPushButton *btnOk = NULL;
+	//QPushButton *btnCancel = NULL;
+	//QVBoxLayout *flayout = NULL;
+	
+	if (!aux.isNull() && !aux.isEmpty()) {
+		this->fmanipulator->parseFilePath (aux);
+		
+		if (!this->fmanipulator->getFileType (aux) == FileManipulator::FK_TEXT){
+			dprintf ("Error de tipo de archivo, se espera un archivo de texto\n");
+			msg->setText ("Error de tipo de archivo, se espera un archivo de texto");
+			msg->show();
+		} else {
+			/*Todo esta perfecto entonces lo abrimos*/
+			/*generamos todo los componentes*/
+			msgFile = new QMessageBox (this);
+			okbtn = msgFile->addButton(tr("Aceptar"), QMessageBox::AcceptRole);
+			cancelbtn = msgFile->addButton(tr("Cancel"), QMessageBox::RejectRole);
+			
+			/*cargamos el contenido del archivo*/
+			smsContent = this->fmanipulator->getFileContent (aux);
+			
+			
+			
+			if (smsContent != NULL)
+				msgFile->setText (*smsContent);
+			else
+				dprintf ("El archivo estaba vacio\n");
+			
+			msgFile->exec();
+			
+			if (msgFile->clickedButton() == okbtn) {
+				dprintf ("se acepto el elemento\n");
+				/*encolamos*/
+			
+			} else { /*cualquier otro caso*/
+				dprintf ("No se acepto el elemento\n");
+			}
+			delete smsContent;
+			delete okbtn;
+			delete cancelbtn;
+			delete msgFile;
+		}
+		this->txttextFileReciber->clear();
+	}
+	
+}
+
+
+
+MainTxtWindow::~MainTxtWindow()
+{
+	delete this->tw;
+	delete this->smsTable;
+	delete this->fmanipulator;
+	delete this->msg;
 }
