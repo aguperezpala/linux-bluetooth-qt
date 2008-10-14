@@ -8,14 +8,16 @@
 #include <QTimerEvent>
 #include <QColor>
 #include <QPainter>
-
+#include <QFont>
 #include "../showwindow.h"
 #include "../debug.h"
 
-
+#define MAX_STR_BUFF	800	/*cantidad de caracteres que pueden estar en pantalla*/
 
 class TextWindow : public ShowWindow
 {
+	Q_OBJECT
+			
 public:
     	TextWindow(QWidget *parent);
     
@@ -26,11 +28,13 @@ public:
 
 	void setVelocity (int v);
 	
-	void setFontType (QString& font_name, int size, QFont::Weight type);
-	void setFontSize (int size);
-	void setColor (int red, int green, int blue);	/*default negro*/
+	/*void setFontType (QString& font_name, int size, QFont::Weight type);
+	void setFontSize (int size);*/
+inline	void setTextFont (QFont& f){this->text->setFont(f);};
 	
-	void start(){timer->start(60,this);};	/*comienzan a moverse las letras*/
+inline	const QFont& getTextFont (){return this->text->font();};
+	
+	void start(){if (!timer->isActive())timer->start(this->vel,this);};	/*comienzan a moverse las letras*/
 	void stop(){timer->stop();};	/*frena el movimiento de las letras*/
 	
 
@@ -45,8 +49,8 @@ private:
 	QLayout *layout;
 	int vel;
 	QBasicTimer *timer;
-	QColor color;	/*color del texto*/
 	QString str;
+	int strcount;
 	
 };
 

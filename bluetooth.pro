@@ -3,7 +3,9 @@
 # Subdirectorio relativo al directorio principal del proyecto: .
 # El destino es una aplicaci??n: 
 
+CONFIG += uitools
 FORMS += src/textwindow/maintxtwindow.ui 
+
 HEADERS += src/textwindow/smstable.h \
            src/qparser/parser.h \
            src/filemanipulator/filemanipulator.h \
@@ -24,5 +26,5 @@ SOURCES += src/textwindow/smstable.cpp \
            src/controllerwindow.cpp \
            src/mainwidget.cpp \
            src/main.cpp 
-CONFIG += uitools
+
 DEFINES += __DEBUG

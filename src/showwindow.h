@@ -29,7 +29,7 @@ public:
     void setWindowFlags(showWflags flags = SW_WITH_BORDERS);
     
     /*seteamos el tamaño de la ventana*/
-inline	void setWindowSize (int width, int heigth){setFixedSize(width,heigth);};
+    inline	void setWindowSize (int width, int heigth){resize(width,heigth);};
 inline	void setWindowPos (int x, int y){move (x,y);};
 
     
