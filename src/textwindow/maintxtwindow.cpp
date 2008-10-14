@@ -160,24 +160,29 @@ void MainTxtWindow::on_txttextFileReciber_textChanged()
 			cancelbtn = msgFile->addButton(tr("Cancel"), QMessageBox::RejectRole);
 			
 			/*cargamos el contenido del archivo*/
+			/*!Tener en cuenta que aca deberiamos parsearlo antes*/
 			smsContent = this->fmanipulator->getFileContent (aux);
 			
 			
 			
-			if (smsContent != NULL)
+			if (smsContent != NULL){
 				msgFile->setText (*smsContent);
-			else
-				dprintf ("El archivo estaba vacio\n");
+				msgFile->exec();
 			
-			msgFile->exec();
+				if (msgFile->clickedButton() == okbtn) {
+					dprintf ("se acepto el elemento\n");
+					/*encolamos*/
+					/*!recordar que antes de mandar el texto asi nomas tenemos que mandarlo
+					 *en formato como queremos que se muestre, Nombre:xxxx ... etc*/
+					/*!PRUEBA*/
+					this->tw->setMesg (*smsContent);
 			
-			if (msgFile->clickedButton() == okbtn) {
-				dprintf ("se acepto el elemento\n");
-				/*encolamos*/
+				} else { /*cualquier otro caso*/
+					dprintf ("No se acepto el elemento\n");
+				}
+			} else
+					dprintf ("El archivo estaba vacio\n");
 			
-			} else { /*cualquier otro caso*/
-				dprintf ("No se acepto el elemento\n");
-			}
 			delete smsContent;
 			delete okbtn;
 			delete cancelbtn;

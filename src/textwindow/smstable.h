@@ -2,7 +2,7 @@
 #define SMSTABLE_H
 
 #include <QTableWidget>
-//#include "smsobject.h"
+#include "smsobject.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -20,7 +20,7 @@ public:
     void deleteItem (int r);/*removemos el item en la fila r */
     void deleteSelectedItem ();
     
-    //void insertFront (SmsObject&);
+    void insertFront (SmsObject&);
     
     
 
