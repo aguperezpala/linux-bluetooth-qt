@@ -35,6 +35,7 @@ private slots:
 	void on_txtbuttonSetBackColor_clicked();
 	void on_txtbuttonSetFontColor_clicked();
 	void on_txttextFileReciber_textChanged();
+	void on_smsTable_cellClicked (int r,int c){smsTable->setSelectedCurrent(r,c);};
 	
 
 private:

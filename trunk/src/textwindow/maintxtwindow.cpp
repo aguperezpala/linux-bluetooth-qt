@@ -2,6 +2,7 @@
 #include <QtGui>
 #include <QColor>
 #include <QAbstractButton>
+#include "smsobject.h"
 
 MainTxtWindow::MainTxtWindow(QWidget *parent)
 	: QWidget(parent)
@@ -18,6 +19,7 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	/*cargamos la tabla de sms y la posicionamos dentro del layout*/
 	smsTable = new SmsTable(0);
 	verticalLayout_3->addWidget (smsTable);
+	connect (smsTable,SIGNAL(cellClicked(int,int)),this,SLOT (on_smsTable_cellClicked(int,int))); 
 	
 	/*generamos la ventana donde se van a mostrar los sms*/
 	this->tw = new TextWindow(0);
@@ -98,6 +100,7 @@ void MainTxtWindow::on_txtbuttonSetVelocity_clicked()
 }
 void MainTxtWindow::on_txtbuttonDeleteSms_clicked()
 {
+	this->smsTable->deleteSelectedItem();
 }
 void MainTxtWindow::on_txtbuttonStart_clicked()
 {
@@ -140,6 +143,7 @@ void MainTxtWindow::on_txttextFileReciber_textChanged()
 	QMessageBox *msgFile = NULL;
 	QAbstractButton *okbtn = NULL;
 	QAbstractButton *cancelbtn = NULL;
+	SmsObject *sms = NULL;
 	//QTextEdit *txtfile = NULL;	/*dnd vamos a mostrar el archivo*/
 	//QPushButton *btnOk = NULL;
 	//QPushButton *btnCancel = NULL;
@@ -175,7 +179,12 @@ void MainTxtWindow::on_txttextFileReciber_textChanged()
 					/*!recordar que antes de mandar el texto asi nomas tenemos que mandarlo
 					 *en formato como queremos que se muestre, Nombre:xxxx ... etc*/
 					/*!PRUEBA*/
-					this->tw->setMesg (*smsContent);
+					sms = new SmsObject;
+					if (sms != NULL) {
+						//this->tw->setMesg (*smsContent);
+						sms->setMesg(*smsContent);
+						this->smsTable->insertBack (sms);
+					}
 			
 				} else { /*cualquier otro caso*/
 					dprintf ("No se acepto el elemento\n");
