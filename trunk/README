@@ -1,6 +1,7 @@
 				TENER EN CUENTA
 Cambiar las variables de configuracion en los archivos que llaman a las funciones
-
+* Los destructores de todas las clases... falta hacer
+* El parser y modificar todas los comentarios en AZUL para tener en cuenta
 
 ********************************************************************************
 				Ventana principal

@@ -1,4 +1,8 @@
 #include "filemanipulator.h"
+#include "../debug.h"
+/*MUY CHORO SACAR ESTO*/
+#include <stdio.h>
+#include <stdlib.h>
 
 FileManipulator::FileManipulator (qint64 txt, qint64 img)
 {
@@ -6,11 +10,7 @@ FileManipulator::FileManipulator (qint64 txt, qint64 img)
 		this->maxTextFileSize = txt;
 		this->maxImageFileSize = img;
 	}
-	else {
-		/*!ACA DEBERIAMOS CARGAR DE ARCHIVO*/
-		this->maxTextFileSize = 200;
-		this->maxImageFileSize = 5000000;
-	}
+	
 	this->fi = new QFileInfo;
 }
 
@@ -37,7 +37,7 @@ unsigned int FileManipulator::getFileType (const QString& fname)
 
 
 
-void FileManipulator::parseFile (QString& str)
+void FileManipulator::parseFilePath (QString& str)
 {
 	bool cond = false;
 	int i = 0;
@@ -61,3 +61,36 @@ void FileManipulator::parseFile (QString& str)
 	
 }
 
+QString* FileManipulator::getFileContent (QString& file) 
+{
+	/*! BIEN AL ESTILO C CAMBIARLO por el parser*/
+	FILE * fp = NULL;
+	char *fname = NULL;
+	char *cresult = NULL;
+	QString *result = NULL;
+	
+	
+	cresult = (char *) calloc ((int)this->maxTextFileSize, sizeof (char));
+	if (cresult == NULL)
+		return NULL;
+	/*convertimos en char**/
+	fname = (char *) file.toStdString().c_str();
+	dprintf ("el archivo se llama @%s@\n",fname);
+	
+	
+	fp = fopen (file.toStdString().c_str(), "r");
+	if (fp == NULL) {
+		return NULL;
+	}
+	
+	dprintf ("se abrio %s\n",fname);
+	cresult = fgets (cresult,(size_t)this->maxTextFileSize, fp);
+	
+	result = new QString (cresult);
+	fclose (fp);
+	free (cresult);
+	
+	return result;
+}
+	
+	

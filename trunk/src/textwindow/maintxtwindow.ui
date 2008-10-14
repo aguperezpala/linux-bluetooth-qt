@@ -101,9 +101,9 @@
   <widget class="QWidget" name="horizontalLayoutWidget" >
    <property name="geometry" >
     <rect>
-     <x>220</x>
-     <y>260</y>
-     <width>271</width>
+     <x>20</x>
+     <y>520</y>
+     <width>300</width>
      <height>80</height>
     </rect>
    </property>
@@ -144,6 +144,9 @@
      </widget>
     </item>
    </layout>
+   <zorder>label</zorder>
+   <zorder>txttextFileReciber</zorder>
+   <zorder>verticalLayoutWidget_4</zorder>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget_3" >
    <property name="geometry" >
@@ -177,8 +180,8 @@
   <widget class="QWidget" name="horizontalLayoutWidget_2" >
    <property name="geometry" >
     <rect>
-     <x>110</x>
-     <y>149</y>
+     <x>210</x>
+     <y>30</y>
      <width>171</width>
      <height>30</height>
     </rect>
@@ -195,12 +198,14 @@
      <widget class="QLineEdit" name="txttextVelocity" />
     </item>
    </layout>
+   <zorder>txttextVelocity</zorder>
+   <zorder>txtbuttonSetVelocity</zorder>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget_4" >
    <property name="geometry" >
     <rect>
-     <x>330</x>
-     <y>100</y>
+     <x>430</x>
+     <y>10</y>
      <width>381</width>
      <height>351</height>
     </rect>
@@ -274,6 +279,46 @@
     <string>Set Fuente</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="txtbuttonSetBackColor" >
+   <property name="geometry" >
+    <rect>
+     <x>40</x>
+     <y>110</y>
+     <width>111</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Set backcolor</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="txtbuttonSetFontColor" >
+   <property name="geometry" >
+    <rect>
+     <x>40</x>
+     <y>140</y>
+     <width>111</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Set fontcolor</string>
+   </property>
+  </widget>
+  <zorder>verticalLayoutWidget</zorder>
+  <zorder>verticalLayoutWidget_2</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
+  <zorder>verticalLayoutWidget_3</zorder>
+  <zorder>horizontalLayoutWidget_2</zorder>
+  <zorder>verticalLayoutWidget_4</zorder>
+  <zorder>verticalLayoutWidget_5</zorder>
+  <zorder>textEdit</zorder>
+  <zorder>textEdit</zorder>
+  <zorder>pushButton</zorder>
+  <zorder>txtbuttonSetFont</zorder>
+  <zorder>txtbuttonSetBackColor</zorder>
+  <zorder>txtbuttonSetFontColor</zorder>
+  <zorder>label_2</zorder>
  </widget>
  <resources/>
  <connections/>

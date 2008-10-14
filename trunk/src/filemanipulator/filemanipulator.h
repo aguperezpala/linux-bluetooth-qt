@@ -19,7 +19,7 @@ class FileManipulator
 		/*constructor que pide los tamaños maximos de los diferentes
 		*tipos de archivos, 200 bytes para texto 5 megas para foto
 		*/
-		FileManipulator(qint64 maxtxt, qint64 maximg);
+		FileManipulator(qint64 maxtxt = 200, qint64 maximg = 5000000);
 		
 			/*esta funcion parsea el nombre de un archivo. Lo que hace es buscar
 		*despde el principio hasta hasta que encuentra el ultimo / antes de
@@ -31,7 +31,7 @@ class FileManipulator
 		"RETURNS:"
 		remplaza str por path absoluto sin espacios
 			*/
-		void parseFile (QString&);
+		void parseFilePath (QString&);
 		
 		/*Esta funcion nos va a decir que tipo de archivo es
 		* SEGUN EL TAMAÑO DEL ARCHIVO! NO IMPORTA LA EXTENCION
@@ -40,6 +40,13 @@ class FileManipulator
 		*/
 		unsigned int getFileType (const QString&);
 		
+		/*	REQUIRES:
+				file == parseado
+			RETURN:
+				NULL si hubo error
+				QString con contenido caso contrario
+		*/
+		QString* getFileContent (QString& file);
 		
 		
 		/*setear maximo tamaño*/
