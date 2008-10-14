@@ -24,6 +24,7 @@ public:
     /*en esta funcion vamos a mostrar por pantalla el mensaje*/
 	/*!Tener en cuenta que tenemos que mandarle la cadena de caracteres
 	que va a separar un mensaje de otro... */
+	/*saca los \n para "serializarlos en una misma linea*/
     	void setMesg (const QString& mensaje);
 
 	void setVelocity (int v);

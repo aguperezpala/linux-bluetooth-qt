@@ -61,15 +61,16 @@ TextWindow::TextWindow(QWidget *parent)
 	this->text->setSizePolicy (QSizePolicy::Ignored,QSizePolicy::Ignored);
 	
 	
-	
-	
-	
-	
 }
 
 void TextWindow::setMesg (const QString& mensaje)
 {
-	str.append(mensaje); /*copiamos el string sobre el cual vamos a trabajar*/
+	QString aux = mensaje;
+	/*copiamos el string sobre el cual vamos a trabajar y le sacamos los
+	 *espacios en blanco*/
+	aux.replace( "\n", " ");
+	str.append(aux);
+	
 	this->strcount = 0;
 	/*if (!this->timer->isActive()) {
 		this->timer->start (this->vel, this);
@@ -126,6 +127,10 @@ void TextWindow::setVelocity (int v)
 
 TextWindow::~TextWindow()
 {
+	delete this->text; /*aca es donde vamos a ir mostrando el texto*/
+	delete this->layout;
+	delete this->timer;
+	
 }
 
 

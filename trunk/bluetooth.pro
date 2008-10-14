@@ -11,6 +11,7 @@ HEADERS += src/textwindow/smstable.h \
            src/filemanipulator/filemanipulator.h \
            src/showwindow.h \
            src/imagewindow/imagewindow.h \
+           src/textwindow/smsobject.h \
            src/textwindow/textwindow.h \
            src/textwindow/maintxtwindow.h \
            src/controllerwindow.h \
@@ -21,6 +22,7 @@ SOURCES += src/textwindow/smstable.cpp \
            src/filemanipulator/filemanipulator.cpp \
            src/showwindow.cpp \
            src/imagewindow/imagewindow.cpp \
+           src/textwindow/smsobject.cpp \
            src/textwindow/textwindow.cpp \
            src/textwindow/maintxtwindow.cpp \
            src/controllerwindow.cpp \
