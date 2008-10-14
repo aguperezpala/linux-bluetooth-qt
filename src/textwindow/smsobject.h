@@ -8,10 +8,10 @@ public:
 	SmsObject();
 	SmsObject(QString& m, QString& na, QString& nu, QString& d);
 	
-inline	QString* getMesg (){return &this->message;};
-inline	QString* getName (){return &this->name;};
-inline	QString* getNumber (){return &this->number;};
-inline	QString* getDate (){return &this->date;};
+inline	const QString* getMesg (){return &this->message;};
+inline	const QString* getName (){return &this->name;};
+inline	const QString* getNumber (){return &this->number;};
+inline	const QString* getDate (){return &this->date;};
 
 inline	void setMesg (QString& m){this->message = m;};
 inline	void setName (QString& n){this->name = n;};
