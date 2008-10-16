@@ -2,3 +2,9 @@ Hecho en C amigo :D....
 En esta seccion vamos a crear la estructura de datos usuarios y las funciones
 para administrar los mismos, tantos como para agregar, cargar, chequear, etc..
 
+
+********************************************************************************
+Syncronized User List (syncusrlist.h)
+********************************************************************************
+Este modulo lo vamos a usar para syncronizar el agregado/chequeado/borrado de 
+usuarios.
