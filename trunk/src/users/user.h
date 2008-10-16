@@ -20,23 +20,25 @@
 #define USR_MAX_DATE_SIZE	20	/*registrar la fecha que se inscribio..*/
 
 
+#define EMPTY	NULL	/*por conveniencia*/
+
 typedef struct _user_t user_t;
 
 /*solo vamos a pedir los datos mas importantes
 	REQUIRES:
 		nada en especial, 
-  si nick == NULL seteamos 1º nombre del name (si name != NULL)
-  si algun otro param == NULL entonces directamente no se agrega ese campo
+  si nick == EMPTY seteamos 1º nombre del name (si name != EMPTY)
+  si algun otro param == EMPTY entonces directamente no se agrega ese campo
   size(param)> USR_MAX_$param$ entonces se trunca hasta USR_MAX_$param$
 
 	RETURNS:
-		result == NULL ==> error (algo raro)
-		result != NULL ==> ok
+		result == EMPTY ==> error (algo raro)
+		result != EMPTY ==> ok
 */
 user_t *user_new (char *name, char *nick, char *num);
 
 /*! Para estas funciones vamos a tener en cuenta que si estamos intentando
- * setear algun tipo de dato a la estructura "self" y self == NULL entonces
+ * setear algun tipo de dato a la estructura "self" y self == EMPTY entonces
  * vamos a devolver false
 */
 
@@ -53,7 +55,7 @@ bool user_set_date (user_t *self, char *date);	/*usamos la politica de arriva*/
 
 
 /*!Para get vamos a implementar la politica de que si pedimos algun campo, puede
- * suceder que no este definido, por lo que vamos a devolver  NULL si es que no
+ * suceder que no este definido, por lo que vamos a devolver  EMPTY si es que no
  * existe, en caso contrario vamos a devolver el puntero al campo.
  */ 
 
@@ -66,9 +68,11 @@ const char* user_get_number (user_t *self);	/*usamos la politica de arriva*/
 
 const char* user_get_dni (user_t *self);	/*usamos la politica de arriva*/
 
+const char* user_get_date (user_t *self);	/*usamos la politica de arriva*/
+
 
 /*	REQUIRES:
-		Nada.. si self == NULL ==> RETURN NULL
+		Nada.. si self == EMPTY ==> RETURN EMPTY
 */
 user_t *user_destroy (user_t *self);
 
