@@ -11,9 +11,45 @@ struct _user_t {
 };
 
 
+/* Result != NULL... osea que genera memoria*/
 static char* user_get_first_name (char *name)
 {
+	ASSERT (name != NULL);
 	
+}
+
+/*vamos a utilizar esta funcion interna para setear los campos (ya sea
+ *sobreescribiendo los datos de field si es que existen), devolviendo
+ *true en caso de poder haber seteado correctamente, false en caso contrario*/
+ 
+static bool user_set_field (char *field, char * data, int max_field_size)
+{
+	bool result = FALSE;
+		
+	/*primero chequeamos que data != NULL*/
+	if (data == NULL) {
+		/*si es null entonces vamos a setear field = NULL*/
+		if (field != NULL)
+			free (field);
+		field = NULL;
+		return false;
+	}
+	else {	/*estamos en data != NULL */
+		if (field == NULL) {
+			/*generamos memoria para field*/
+			ASSERT (max_field_size > 0);
+			field = (char *) calloc (max_field_size, sizeof (char));
+			ASSERT (field != NULL);
+			if (field != NULL)
+				/*copiamos los datos*/
+				strncpy (data, field, max_field_size);
+			else
+				pdebug ("Error...");
+		}
+		
+		
+		
+		
 	
 }
 
@@ -44,6 +80,19 @@ user_t *user_new (char *name, char *nick, char *num)
 		if (nick != NULL) {
 			result->nick = (char *) calloc (USR_MAX_NICK_SIZE, sizeof (char));
 			ASSERT (result->nick != NULL);
+			
+			if (result->nick != NULL)
+				strncpy (nick, result->nick, USR_MAX_NICK_SIZE);
+			
+		} else {
+			pdebug ("nick == NULL");
+			/*vamos a obtener el primer "nombre" de NAME si se puede*/
+			if (name != NULL)
+				result->nick = user_get_first_name (name);
+		}
+		
+			
+			
 			
 		
 
