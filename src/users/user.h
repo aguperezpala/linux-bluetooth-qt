@@ -9,6 +9,9 @@
 #include <string.h>
 #include <stdbool.h>
 
+/*	Librerias personales	*/
+#include "../debug.h"
+
 /* Practicamente estos defines no los vamos a tocar nunca*/
 #define USR_MAX_DNI_SIZE	9
 #define USR_MAX_NAME_SIZE	30

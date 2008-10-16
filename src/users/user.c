@@ -11,9 +11,44 @@ struct _user_t {
 };
 
 
+static char* user_get_first_name (char *name)
+{
+	
+	
+}
 
+/*! Para simplificarnos la vida lo que vamos hacer es determinar el tamaño
+ * por defecto, osea el MAX_... para cada parte de la estructura
+*/
+user_t *user_new (char *name, char *nick, char *num)
+{
+	user_t *result == NULL;
+		
+	result = (user_t *) calloc (1, sizeof (struct _user_t));
+	
+	ASSERT (result != NULL);	/*para debug*/
+	
+	if (result != NULL) {
+		/*ahora vamos a chequear los parametros*/
+		if (name != NULL) { /*agregamos el nombre*/
+			
+			result->name = (char *) calloc (USR_MAX_NAME_SIZE, sizeof (char));
+			ASSERT (result->name != NULL);
+			
+			if (result->name != NULL)
+				/*copiamos n caracteres*/
+				strncpy (name, result->name, USR_MAX_NAME_SIZE);
+		} else
+			pdebag ("name == NULL");
+		
+		if (nick != NULL) {
+			result->nick = (char *) calloc (USR_MAX_NICK_SIZE, sizeof (char));
+			ASSERT (result->nick != NULL);
+			
+		
 
-user_t *user_new (char *name, char *nick, char *num);
+	
+}
 
 /*! Para estas funciones vamos a tener en cuenta que si estamos intentando
  * setear algun tipo de dato a la estructura "self" y self == NULL entonces
