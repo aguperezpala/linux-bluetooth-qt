@@ -1,5 +1,5 @@
 #include "user.h"
-
+#include <string.h>
 
 /*!vamos a hacerlo todo con estructuras dinamicas... cuidado :D*/
 struct _user_t {
@@ -26,7 +26,7 @@ static char* user_get_first_name (char *name)
 */
 static bool user_set_field (char *field, char * data, int max_field_size)
 {
-	bool result = FALSE;
+	bool result = false;
 	size_t aux = 0;
 	int i = 0;
 	/*primero chequeamos que data != EMPTY*/
@@ -35,7 +35,7 @@ static bool user_set_field (char *field, char * data, int max_field_size)
 		if (field != EMPTY)
 			free (field);
 		field = EMPTY;
-		return FALSE;
+		return false;
 	}
 	else {	/*estamos en data != EMPTY */
 		if (field == EMPTY) {
@@ -46,7 +46,7 @@ static bool user_set_field (char *field, char * data, int max_field_size)
 			if (field != EMPTY) {
 				/*copiamos los datos*/
 				strncpy (data, field, max_field_size);
-				result = TRUE;
+				result = true;
 			}
 			else
 				pdebug ("Error...");
@@ -60,7 +60,7 @@ static bool user_set_field (char *field, char * data, int max_field_size)
 			}
 			/*ahora copiamos*/
 			strncpy (field, data, max_field_size);
-			result = TRUE;
+			result = true;
 		}
 	}
 	
@@ -121,7 +121,7 @@ bool user_set_nick (user_t *self, char *nick)
 	ASSERT (self != NULL);
 	
 	if (self != NULL)
-		return user_set_field (self->nick, name, USR_MAX_NICK_SIZE);
+		return user_set_field (self->nick, nick, USR_MAX_NICK_SIZE);
 	else
 		return false;
 }
