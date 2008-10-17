@@ -57,6 +57,7 @@ bool user_set_date (user_t *self, char *date);	/*usamos la politica de arriva*/
 /*!Para get vamos a implementar la politica de que si pedimos algun campo, puede
  * suceder que no este definido, por lo que vamos a devolver  EMPTY si es que no
  * existe, en caso contrario vamos a devolver el puntero al campo.
+ * En caso de self == NULL return NULL
  */ 
 
 
