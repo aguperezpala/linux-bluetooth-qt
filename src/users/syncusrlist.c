@@ -6,6 +6,53 @@ struct _syncusrlist_t {
 }
 
 
+/*funcion que determina si dos strings son iguales, no requirer nada*/
+
+static bool syncusrlist_strequals (const char* c1, const char* c2, size_t tam)
+{
+	return;
+}
+
+
+/*Esta funcion bien groncha nos va hacer mas "eficiente" y legible el codigo
+ *a la hora de buscar algo. 
+ *
+ * /user_func : funcion que nos dice que parametro buscar (nombre/nick/dni....etc)
+ *		proviniente de user. POR ESO NO DEBE SER MODIFICADO user.h
+ *
+ *	REQUIRES:
+ 		NO SE MODIFIQUE user.h :)
+ 		self != NULL
+ 	RETURNS:
+ 		user_t = NULL (si no se encontro o hubo error)
+ 		user_t != NULL caso contrario.
+*/
+static user_t *syncusrlist_sfind (syncusrlist *self, (const char*) (*usr_func) (user_t *))
+{
+	user_t *result = NULL;
+	GList *aux = NULL;	/*lo vamos a usar para hacer una busqueda manual*/
+	char *field = NULL;
+
+	
+	ASSERT (self != NULL);
+	if (self != NULL) {
+		aux = g_list_first (self->list); /*obtenemos el ptr a la 1º celda*/
+		while (aux != NULL && result == NULL) { 
+		/*sabemos que mientras aux != NULL todavia quedan elementos*/
+		/*!tomamos el elemento (no se si funcionara esto)*/
+		result = (user_t *) aux->data;
+		
+		/*obtenemos el char **/
+		field = usr_func (result);
+
+		
+
+			
+		
+		
+		
+		
+		
 
 
 syncusrlist_t *syncusrlist_create (void)
@@ -92,6 +139,8 @@ unsigned int syncusrlist_get_size (syncusrlist_t *self)
 }
 	
 
+
+
 /*!La politica que vamos a utilizar en estas funciones es:
  * en caso de que busquemos "NULL" entonces lo que hacemos es devolver
  * directamente NULL.
@@ -104,7 +153,19 @@ unsigned int syncusrlist_get_size (syncusrlist_t *self)
 */
 
 /*buscamos un usuario por el nombre*/
-user_t *syncusrlist_by_name (syncusrlist_t *self, char *name);
+user_t *syncusrlist_by_name (syncusrlist_t *self, char *name)
+{
+	user_t *result = NULL;
+	
+	if (name == NULL) { /*no buscamos nada retornamos directamente*/
+		pdebug ("recibimos name == NULL");
+		return result;
+	}
+	
+	ASSERT (self != NULL);
+	if (self != NULL) {
+		
+		
 
 user_t *syncusrlist_by_number (syncusrlist_t *self, char *numb);
 

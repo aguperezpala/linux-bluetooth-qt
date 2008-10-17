@@ -2,6 +2,13 @@ Hecho en C amigo :D....
 En esta seccion vamos a crear la estructura de datos usuarios y las funciones
 para administrar los mismos, tantos como para agregar, cargar, chequear, etc..
 
+********************************************************************************
+QUE HAY QUE HACER
+********************************************************************************
+* Sacarle todos los espacios al final y al principio de cada char * en cada campo
+de users. (sacar \t \n ... etc).
+* Fijarse la funcion de comprobacion (osea matcheo) de strings en syncusrlist.
+
 
 ********************************************************************************
 Syncronized User List (syncusrlist.h)

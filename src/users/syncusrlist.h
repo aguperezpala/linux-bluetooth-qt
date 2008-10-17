@@ -11,6 +11,7 @@
 #include <glib.h>
 #include <semaphore.h>	/*para los mutex de sync*/
 #include <stdbool.h>
+#include <string.h>
 
 #include "../debug.h"
 #include "user.h"
