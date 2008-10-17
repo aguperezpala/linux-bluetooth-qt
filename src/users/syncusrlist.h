@@ -17,6 +17,8 @@
 #include "user.h"
 
 
+#define SUL_MAX_STR_SIZE	100	/*maximo tamaño de string "compare*/
+
 typedef struct _syncusrlist_t syncusrlist_t;
 
 
@@ -64,23 +66,27 @@ unsigned int syncusrlist_get_size (syncusrlist_t *self);
 */
 
 /*buscamos un usuario por el nombre*/
-user_t *syncusrlist_by_name (syncusrlist_t *self, char *name);
+user_t *syncusrlist_by_name (syncusrlist_t *self, const char *name);
 
-user_t *syncusrlist_by_number (syncusrlist_t *self, char *numb);
+user_t *syncusrlist_by_number (syncusrlist_t *self, const char *numb);
 
-user_t *syncusrlist_by_nick (syncusrlist_t *self, char *nick);
+user_t *syncusrlist_by_nick (syncusrlist_t *self, const char *nick);
 
-user_t *syncusrlist_by_dni (syncusrlist_t *self, char *dni);
+user_t *syncusrlist_by_dni (syncusrlist_t *self, const char *dni);
 
 
-/*Funcion para borrar un usuario.
+
+
+/*Funcion para borrar un usuario. (hace user_destroy)
 	REQUIRES:
-		usr == usuario a borrar (si es NULL no se hace nada)
 		self != NULL
 */
-void syncusrlist_remove (syncusrlist_t *self, user_t *usr);
+void syncusrlist_remove_first (syncusrlist_t *self);
 
+void syncusrlist_remove_last (syncusrlist_t *self);
 
+/*esta podria ser para eliminar un determinado usuario si es que existe*/
+void syncusrlist_remove_user (syncusrlist_t *self, user_t * usr);
 
 /*Destructor
 	REQUIRES:
