@@ -6,7 +6,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+/*#include <string.h>*/
+#include "/usr/include/string.h"
 #include <stdbool.h>
 
 /*	Librerias personales	*/

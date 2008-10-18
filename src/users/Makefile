@@ -1,6 +1,6 @@
 TARGET=baash
 CC=gcc
-CFLAGS+= -ansi -Wall -Wextra -Wdeclaration-after-statement -Wbad-function-cast -Wcast-qual -Wstrict-prototypes -Wmissing-declarations -Wmissing-prototypes -Wno-unused-parameter -Werror -pedantic -g `pkg-config --cflags glib-2.0` -D__DEBUG
+CFLAGS+= -ansi -Wall -Wextra -Wdeclaration-after-statement -Wbad-function-cast -Wcast-qual -Wstrict-prototypes -Wmissing-declarations -Wmissing-prototypes -Wno-unused-parameter -Werror -pedantic -g `pkg-config --cflags glib-2.0` -D__DEBUG -D__USE_GNU
 LDFLAGS=`pkg-config --libs glib-2.0`
 SOURCES=$(shell echo *.c)
 
