@@ -22,14 +22,15 @@
 typedef struct _syncusrlist_t syncusrlist_t;
 
 
-/* Crea una lista syncronizada de usuarios
+/* Crea una lista syncronizada de usuarios, tomando como parametro un user 
+ * (para evitar la creacion de una celda dummy).
 	REQUIRES:
-		Nada
+		usr != NULL
 	RETURNS:
 		syncusrlist_t != NULL (si no hubo error)
-		NULL => ERROR
+		NULL => (usr == NULL || ERROR)
 */
-syncusrlist_t *syncusrlist_create (void);
+syncusrlist_t *syncusrlist_create (user_t *usr);
 
 
 /*Inserta un usuario. en caso de ser NULL no lo inserta. Tener en cuenta que
@@ -95,10 +96,11 @@ void syncusrlist_remove_user (syncusrlist_t *self, user_t * usr);
 	RETURNS:
 		NULL
 */
-void syncusrlist_destroy (syncusrlist_t *self);
+syncusrlist_t* syncusrlist_destroy (syncusrlist_t *self);
 
 
-
+/*!Para debug*/
+void syncusrlist_pprint (syncusrlist_t *self);
 
 #endif
 
