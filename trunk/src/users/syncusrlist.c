@@ -10,7 +10,9 @@ struct _syncusrlist_t {
 
 static bool syncusrlist_strequals (const char* c1, const char* c2, size_t tam)
 {
-	return (c1==c2);
+	/*printf ("\n****		strequals		****\n");
+	printf ("c1: %s \t c2: %s\n",c1,c2);*/
+	return strncmp (c1, c2, tam);
 }
 
 
@@ -52,18 +54,17 @@ static user_t *syncusrlist_sfind (syncusrlist_t *self, const char *(*usr_func)(u
 			while (aux != NULL && mustContinue) { 
 				/*sabemos que mientras aux != NULL todavia quedan elementos*/
 				/*!tomamos el elemento (no se si funcionara esto)*/
+				result = NULL;
+				field = NULL;
 				result = (user_t *) aux->data;
 				
 				/*obtenemos el char * del user_t obtenido*/
-				field = usr_func (result);
-				mustContinue = syncusrlist_strequals (find, field, (size_t) SUL_MAX_STR_SIZE);
+				if (result != NULL) {
+					field = usr_func (result);
+					mustContinue = syncusrlist_strequals (find, field, (size_t) SUL_MAX_STR_SIZE);
 				
-				if (mustContinue) {
-					/*limpiamos un poco*/
-					result = NULL;
-					field = NULL;
 				}
-				aux = g_list_next(aux); /*obtenemos el proximo elemento*/
+				aux = g_list_next (aux); /*obtenemos el proximo elemento*/
 			}
 			/*liberamos el semaforo*/
 			if (sem_post (&self->mutex) != 0 )
@@ -75,22 +76,35 @@ static user_t *syncusrlist_sfind (syncusrlist_t *self, const char *(*usr_func)(u
 }
 
 
-syncusrlist_t *syncusrlist_create (void)
+syncusrlist_t *syncusrlist_create (user_t *usr)
 {
 	syncusrlist_t *result = NULL;
 	
 	result = (syncusrlist_t *) calloc (1, sizeof (struct _syncusrlist_t));
+	
 	ASSERT (result != NULL);
 
 	if (result != NULL) {
-		if (sem_init (&result->mutex, 0, 1) != 0) {
-			/*no se pudo crear el semaforo*/
-			pdebug("No se pudo generar el semaphore");
+		result->list = NULL;
+		
+		if (sem_init (&result->mutex, 0, 1) != 0 || usr == NULL) {
+			/*no se pudo crear el semaforo o el usuario == NULL*/
+			pdebug("No se pudo generar el semaphore || usr == NULL");
 			free (result);
 			return NULL;
 		}
 		/*se genero correctamente*/
 		result->list = g_list_alloc();	/*generamos la glist*/
+		if (result->list != NULL) {
+			result->list->data = (user_t *) usr;
+		} else {
+			/*!ERROR al crear la glist*/
+			pdebug("Error creando la glist");
+			g_list_free (result->list);
+			free (result); result = NULL;
+			return NULL;
+		}
+		
 	}
 	
 	return result;
@@ -229,13 +243,16 @@ void syncusrlist_remove_first (syncusrlist_t *self)
 			/*!*******	zona critica	********/
 			
 			aux = g_list_first (self->list);
+			
+			/*!veamos que esto nos devuelve la celda dummy*/
 			if (aux != NULL) {
 				/*obtenemos el usuario*/
 				usr = (user_t*) aux->data;
 				/*lo eliminamos de la lista*/
 				self->list = g_list_remove (self->list, usr);
 				/*lo liberamos de memoria*/
-				usr = user_destroy (usr);
+				if (usr != NULL)
+					usr = user_destroy (usr);
 			}
 			
 			/*liberamos el semaforo*/
@@ -268,9 +285,11 @@ void syncusrlist_remove_last (syncusrlist_t *self)
 				/*obtenemos el usuario*/
 				usr = (user_t*) aux->data;
 				/*lo eliminamos de la lista*/
+				
 				self->list = g_list_remove (self->list, usr);
 				/*lo liberamos de memoria*/
-				usr = user_destroy (usr);
+				if (usr != NULL)
+					usr = user_destroy (usr);
 			}
 			
 			/*liberamos el semaforo*/
@@ -313,7 +332,7 @@ void syncusrlist_remove_user (syncusrlist_t *self, user_t * usr)
 	RETURNS:
 		NULL
 */
-void syncusrlist_destroy (syncusrlist_t *self)
+syncusrlist_t* syncusrlist_destroy (syncusrlist_t *self)
 {
 	GList *aux = NULL;
 	user_t *usr = NULL;
@@ -329,16 +348,48 @@ void syncusrlist_destroy (syncusrlist_t *self)
 		while (aux != NULL) {
 			usr = NULL;
 			usr = (user_t*) aux->data;
-			usr = user_destroy (usr);
+			if (usr != NULL)
+				usr = user_destroy (usr);
 			aux = g_list_next (aux);
 		}
-		
+		g_list_free (self->list);
 		/*ahora liberamos la estructura en si*/
 		free (self); self = NULL;
 	}
 	else
 		pdebug("intentando destruir syncusrlist == NULL");
 	
+	return (syncusrlist_t *)NULL;
+	
 }
 			
 		
+
+/*!DEBUG*/
+void syncusrlist_pprint (syncusrlist_t *self)
+{
+	GList *aux = NULL;
+	user_t * usr = NULL;
+	
+	
+	ASSERT (self != NULL);
+	if (self != NULL) {
+		aux = g_list_first (self->list);
+		
+		while (aux != NULL) {
+			usr = NULL;
+			usr = (user_t *) aux->data;
+			if (usr != NULL) {
+				printf ("********	USER	***********\n");
+				printf ("nombre: %s\n",user_get_name (usr));
+				printf ("nick: %s\n",user_get_nick (usr));
+				printf ("number: %s\n",user_get_number (usr));
+				printf ("dni: %s\n",user_get_dni (usr));
+				printf ("date: %s\n",user_get_date (usr));
+				printf ("********	USER	***********\n");
+			}
+			aux = g_list_next (aux);
+		}
+	}
+}
+

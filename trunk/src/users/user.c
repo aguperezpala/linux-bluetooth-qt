@@ -39,28 +39,28 @@ static char* user_get_first_name (char *name)
  		true ==> seteado correctamente
 		false en caso contrario
 */
-static bool user_set_field (char *field, char * data, int max_field_size)
+static bool user_set_field (char **field,const char * data, int max_field_size)
 {
 	bool result = false;
 	size_t aux = 0;
-	unsigned int i = 0;
+/*	unsigned int i = 0;*/
 	/*primero chequeamos que data != EMPTY*/
 	if (data == EMPTY) {
 		/*si es null entonces vamos a setear field = EMPTY*/
-		if (field != EMPTY)
-			free (field);
-		field = EMPTY;
+		if (*field != EMPTY)
+			free (*field);
+		*field = EMPTY;
 		return false;
 	}
 	else {	/*estamos en data != EMPTY */
-		if (field == EMPTY) {
+		if (*field == EMPTY) {
 			/*generamos memoria para field*/
 			ASSERT (max_field_size > 0);
-			field = (char *) calloc (max_field_size, sizeof (char));
-			ASSERT (field != EMPTY);
-			if (field != EMPTY) {
+			*field = (char *) calloc (max_field_size+1, sizeof (char));
+			ASSERT (*field != EMPTY);
+			if (*field != EMPTY) {
 				/*copiamos los datos*/
-				strncpy (data, field, max_field_size);
+				strncpy (*field, data, max_field_size);
 				result = true;
 			}
 			else
@@ -68,13 +68,15 @@ static bool user_set_field (char *field, char * data, int max_field_size)
 		} else {
 			/*data != EMPTY && field != EMPTY*/
 			/*primero limpiamos el string por las dudas*/
-			aux = strnlen (field, (size_t) max_field_size);
+			aux = strnlen (*field, (size_t) max_field_size);
+			
 			/*a lo negro*/
-			for (i = 0; i < aux; i++) {
-				field[i] = '\0';
-			}
+			/*for (i = 0; i < aux; i++) {
+				*field[i] = '\0';
+				printf ("aux :%d\n",(int)i);
+			}*/
 			/*ahora copiamos*/
-			strncpy (field, data, max_field_size);
+			strncpy (*field, data, max_field_size);
 			result = true;
 		}
 	}
@@ -96,17 +98,17 @@ user_t *user_new (char *name, char *nick, char *num)
 	
 	if (result != NULL) {
 		/*ahora vamos a chequear los parametros*/
-		if (!user_set_field (result->name, name, USR_MAX_NAME_SIZE))
+		if (!user_set_field (&result->name, name, USR_MAX_NAME_SIZE))
 			pdebug ("name == EMPTY");
 		
 		if (nick != EMPTY) {
-			user_set_field (result->nick, nick, USR_MAX_NICK_SIZE);
+			user_set_field (&result->nick, nick, USR_MAX_NICK_SIZE);
 				
 		} else {
 			pdebug ("nick == EMPTY");
-			result->nick = user_get_first_name (name);
+			if (name != EMPTY) result->nick = user_get_first_name (name);
 		}
-		if (!user_set_field (result->number, num, USR_MAX_NUM_SIZE))
+		if (!user_set_field (&result->number, num, USR_MAX_NUM_SIZE))
 			pdebug ("num == EMPTY");
 			
 	}
@@ -125,7 +127,7 @@ bool user_set_name (user_t *self, char *name)
 	ASSERT (self != NULL);
 	
 	if (self != NULL)
-		return user_set_field (self->name, name, USR_MAX_NAME_SIZE);
+		return user_set_field (&self->name, name, USR_MAX_NAME_SIZE);
 	else
 		return false;
 }
@@ -136,7 +138,7 @@ bool user_set_nick (user_t *self, char *nick)
 	ASSERT (self != NULL);
 	
 	if (self != NULL)
-		return user_set_field (self->nick, nick, USR_MAX_NICK_SIZE);
+		return user_set_field (&self->nick, nick, USR_MAX_NICK_SIZE);
 	else
 		return false;
 }
@@ -146,7 +148,7 @@ bool user_set_number (user_t *self, char *num)
 	ASSERT (self != NULL);
 	
 	if (self != NULL)
-		return user_set_field (self->number, num, USR_MAX_NUM_SIZE);
+		return user_set_field (&self->number, num, USR_MAX_NUM_SIZE);
 	else
 		return false;
 }
@@ -156,7 +158,7 @@ bool user_set_dni (user_t *self, char *dni)
 	ASSERT (self != NULL);
 	
 	if (self != NULL)
-		return user_set_field (self->dni, dni, USR_MAX_DNI_SIZE);
+		return user_set_field (&self->dni, dni, USR_MAX_DNI_SIZE);
 	else
 		return false;
 	
@@ -167,7 +169,7 @@ bool user_set_date (user_t *self, char *date)
 	ASSERT (self != NULL);
 	
 	if (self != NULL)
-		return user_set_field (self->date, date, USR_MAX_DATE_SIZE);
+		return user_set_field (&self->date, date, USR_MAX_DATE_SIZE);
 	else
 		return false;
 }
@@ -236,6 +238,7 @@ const char* user_get_date (user_t *self)
 
 user_t *user_destroy (user_t *self)
 {
+	ASSERT (self != NULL);
 	if (self != NULL) {
 		if (self->name != EMPTY) {
 			free (self->name); self->name = EMPTY;
