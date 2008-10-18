@@ -3,14 +3,14 @@
 struct _syncusrlist_t {
 	GList *list;	/*lista de glib donde se basa el el modulo*/
 	sem_t mutex;	/*mutex :D*/
-}
+};
 
 
 /*funcion que determina si dos strings son iguales, no requirer nada*/
 
 static bool syncusrlist_strequals (const char* c1, const char* c2, size_t tam)
 {
-	return;
+	return (c1==c2);
 }
 
 
@@ -30,11 +30,11 @@ static bool syncusrlist_strequals (const char* c1, const char* c2, size_t tam)
  		user_t = NULL (si no se encontro o hubo error)
  		user_t != NULL caso contrario.
 */
-static user_t *syncusrlist_sfind (syncusrlist *self, (const char*) (*usr_func) (user_t *), const char* find)
+static user_t *syncusrlist_sfind (syncusrlist_t *self, const char *(*usr_func)(user_t *), const char* find)
 {
 	user_t *result = NULL;
 	GList *aux = NULL;	/*lo vamos a usar para hacer una busqueda manual*/
-	char *field = NULL;
+	const char *field = NULL;
 	bool mustContinue = true;
 
 	ASSERT (self != NULL);
@@ -42,9 +42,9 @@ static user_t *syncusrlist_sfind (syncusrlist *self, (const char*) (*usr_func) (
 	
 	if (self != NULL) {
 		/*vamos a buscar de forma "atomica" para evitar problemas de sync*/
-		if (sem_wait (&self->mutex) != 0)
-			pdebug ("Error tomando el mutex");
-		else {
+		if (sem_wait (&self->mutex) != 0) {
+			pdebug("Error tomando el mutex");
+		} else {
 			/*!ZONA CRITICA*/
 			
 			aux = g_list_first (self->list); /*obtenemos el ptr a la 1º celda*/
@@ -55,7 +55,7 @@ static user_t *syncusrlist_sfind (syncusrlist *self, (const char*) (*usr_func) (
 				result = (user_t *) aux->data;
 				
 				/*obtenemos el char * del user_t obtenido*/
-				field = usr_func (result, result);
+				field = usr_func (result);
 				mustContinue = syncusrlist_strequals (find, field, (size_t) SUL_MAX_STR_SIZE);
 				
 				if (mustContinue) {
@@ -67,7 +67,7 @@ static user_t *syncusrlist_sfind (syncusrlist *self, (const char*) (*usr_func) (
 			}
 			/*liberamos el semaforo*/
 			if (sem_post (&self->mutex) != 0 )
-				pdebug ("error al soltar el mutex"); 
+				pdebug("error al soltar el mutex"); 
 		}
 	}
 	
@@ -85,7 +85,7 @@ syncusrlist_t *syncusrlist_create (void)
 	if (result != NULL) {
 		if (sem_init (&result->mutex, 0, 1) != 0) {
 			/*no se pudo crear el semaforo*/
-			pdebug ("No se pudo generar el semaphore");
+			pdebug("No se pudo generar el semaphore");
 			free (result);
 			return NULL;
 		}
@@ -116,16 +116,16 @@ bool syncusrlist_insert (syncusrlist_t *self, user_t *usr)
 	ASSERT (self != NULL);
 	if (self != NULL) {
 		/*tomamos el semaforo*/
-		if (sem_wait (&self->mutex) != 0) 
-			pdebug ("error al tomar el mutex");
-		else {
+		if (sem_wait (&self->mutex) != 0) {
+			pdebug("error al tomar el mutex");
+		} else {
 			/********	zona critica	********/
 			/* insertamos el usuario*/
 			self->list = g_list_append (self->list, (gpointer) usr);
 			result = true;
 			/*liberamos el semaforo*/
 			if (sem_post (&self->mutex) != 0 )
-				pdebug ("error al soltar el mutex"); 
+				pdebug("error al soltar el mutex"); 
 		}
 		
 	}
@@ -137,20 +137,20 @@ bool syncusrlist_insert (syncusrlist_t *self, user_t *usr)
 unsigned int syncusrlist_get_size (syncusrlist_t *self)
 {
 	unsigned int result = 0;
-	c
+	
 	ASSERT (self != NULL);
 	if (self != NULL) {
 		/*tomamos el semaforo*/
-		if (sem_wait (&self->mutex) != 0) 
-			pdebug ("error al tomar el mutex");
-		else {
+		if (sem_wait (&self->mutex) != 0) {
+			pdebug("error al tomar el mutex");
+		} else {
 			/********	zona critica	********/
 
 			result = g_list_length (self->list);
 
 			/*liberamos el semaforo*/
 			if (sem_post (&self->mutex) != 0 )
-				pdebug ("error al soltar el mutex"); 
+				pdebug("error al soltar el mutex"); 
 		}
 		
 	}
@@ -163,7 +163,7 @@ unsigned int syncusrlist_get_size (syncusrlist_t *self)
 user_t *syncusrlist_by_name (syncusrlist_t *self, const char *name)
 {
 	if (name == EMPTY) { /*no buscamos nada retornamos directamente*/
-		pdebug ("recibimos name == NULL");
+		pdebug("recibimos name == NULL");
 		return (user_t *) NULL;
 	}
 	
@@ -175,7 +175,7 @@ user_t *syncusrlist_by_name (syncusrlist_t *self, const char *name)
 user_t *syncusrlist_by_number (syncusrlist_t *self, const char *numb)
 {
 	if (numb == EMPTY) { /*no buscamos nada retornamos directamente*/
-		pdebug ("recibimos numb == NULL");
+		pdebug("recibimos numb == NULL");
 		return (user_t *) NULL;
 	}
 	
@@ -187,7 +187,7 @@ user_t *syncusrlist_by_number (syncusrlist_t *self, const char *numb)
 user_t *syncusrlist_by_nick (syncusrlist_t *self, const char *nick)
 {
 	if (nick == EMPTY) { /*no buscamos nada retornamos directamente*/
-		pdebug ("recibimos nick == NULL");
+		pdebug("recibimos nick == NULL");
 		return (user_t *) NULL;
 	}
 	
@@ -199,7 +199,7 @@ user_t *syncusrlist_by_nick (syncusrlist_t *self, const char *nick)
 user_t *syncusrlist_by_dni (syncusrlist_t *self, const char *dni)
 {
 	if (dni == EMPTY) { /*no buscamos nada retornamos directamente*/
-		pdebug ("recibimos dni == NULL");
+		pdebug("recibimos dni == NULL");
 		return (user_t *) NULL;
 	}
 	
@@ -223,9 +223,9 @@ void syncusrlist_remove_first (syncusrlist_t *self)
 	
 	if (self != NULL) {
 		/*tomamos el semaforo*/
-		if (sem_wait (&self->mutex) != 0) 
-			pdebug ("error al tomar el mutex");
-		else {
+		if (sem_wait (&self->mutex) != 0) {
+			pdebug("error al tomar el mutex");
+		} else {
 			/*!*******	zona critica	********/
 			
 			aux = g_list_first (self->list);
@@ -240,11 +240,11 @@ void syncusrlist_remove_first (syncusrlist_t *self)
 			
 			/*liberamos el semaforo*/
 			if (sem_post (&self->mutex) != 0 )
-				pdebug ("error al soltar el mutex"); 
+				pdebug("error al soltar el mutex"); 
 		}
 	}
 	else
-		pdebug ("syncusrlist == NULL");
+		pdebug("syncusrlist == NULL");
 	
 }
 
@@ -258,9 +258,9 @@ void syncusrlist_remove_last (syncusrlist_t *self)
 	
 	if (self != NULL) {
 		/*tomamos el semaforo*/
-		if (sem_wait (&self->mutex) != 0) 
-			pdebug ("error al tomar el mutex");
-		else {
+		if (sem_wait (&self->mutex) != 0) {
+			pdebug("error al tomar el mutex");
+		} else {
 			/*!*******	zona critica	********/
 			
 			aux = g_list_last (self->list);
@@ -275,11 +275,11 @@ void syncusrlist_remove_last (syncusrlist_t *self)
 			
 			/*liberamos el semaforo*/
 			if (sem_post (&self->mutex) != 0 )
-				pdebug ("error al soltar el mutex"); 
+				pdebug("error al soltar el mutex"); 
 		}
 	}
 	else
-		pdebug ("syncusrlist == NULL");
+		pdebug("syncusrlist == NULL");
 	
 }
 
@@ -289,9 +289,9 @@ void syncusrlist_remove_user (syncusrlist_t *self, user_t * usr)
 	
 	if (self != NULL) {
 		/*tomamos el semaforo*/
-		if (sem_wait (&self->mutex) != 0) 
-			pdebug ("error al tomar el mutex");
-		else {
+		if (sem_wait (&self->mutex) != 0) {
+			pdebug("error al tomar el mutex");
+		} else {
 			/*!*******	zona critica	********/
 			
 			self->list = g_list_remove (self->list, usr);
@@ -300,11 +300,11 @@ void syncusrlist_remove_user (syncusrlist_t *self, user_t * usr)
 			
 			/*liberamos el semaforo*/
 			if (sem_post (&self->mutex) != 0 )
-				pdebug ("error al soltar el mutex"); 
+				pdebug("error al soltar el mutex"); 
 		}
 	}
 	else
-		pdebug ("syncusrlist == NULL");
+		pdebug("syncusrlist == NULL");
 }
 
 /*Destructor
@@ -313,4 +313,32 @@ void syncusrlist_remove_user (syncusrlist_t *self, user_t * usr)
 	RETURNS:
 		NULL
 */
-void syncusrlist_destroy (syncusrlist_t *self);
+void syncusrlist_destroy (syncusrlist_t *self)
+{
+	GList *aux = NULL;
+	user_t *usr = NULL;
+	
+	ASSERT (self != NULL);
+	if (self != NULL) {
+		/*destruimos primero el semaforo*/
+		if (sem_destroy (&self->mutex) != 0) {
+			pdebug("hubo error destruyendo el mutex");
+		}
+		/*Ahora liberamos cada uno de los elementos de la lista*/
+		aux = g_list_first (self->list);
+		while (aux != NULL) {
+			usr = NULL;
+			usr = (user_t*) aux->data;
+			usr = user_destroy (usr);
+			aux = g_list_next (aux);
+		}
+		
+		/*ahora liberamos la estructura en si*/
+		free (self); self = NULL;
+	}
+	else
+		pdebug("intentando destruir syncusrlist == NULL");
+	
+}
+			
+		
