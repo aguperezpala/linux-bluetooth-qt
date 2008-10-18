@@ -14,7 +14,22 @@ struct _user_t {
 /* Result != EMPTY... osea que genera memoria*/
 static char* user_get_first_name (char *name)
 {
+	unsigned int s = 0;
+	char c = '\0';
+	char *result = NULL;
+	
 	ASSERT (name != EMPTY);
+	if (name != EMPTY) {
+		for (s = 0; s < strnlen (name, USR_MAX_NAME_SIZE) && (c != ' ' || c != '\t' || c != '\0'); s++)
+			c = name[s];
+		
+		result = (char *) calloc (s+2, sizeof (char));
+		if (result != NULL)
+			strncpy (result, name, s+1);
+		
+	}
+		
+	return result;
 	
 }
 
@@ -28,7 +43,7 @@ static bool user_set_field (char *field, char * data, int max_field_size)
 {
 	bool result = false;
 	size_t aux = 0;
-	int i = 0;
+	unsigned int i = 0;
 	/*primero chequeamos que data != EMPTY*/
 	if (data == EMPTY) {
 		/*si es null entonces vamos a setear field = EMPTY*/
@@ -56,7 +71,7 @@ static bool user_set_field (char *field, char * data, int max_field_size)
 			aux = strnlen (field, (size_t) max_field_size);
 			/*a lo negro*/
 			for (i = 0; i < aux; i++) {
-				field[i] = "\0";
+				field[i] = '\0';
 			}
 			/*ahora copiamos*/
 			strncpy (field, data, max_field_size);
