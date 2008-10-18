@@ -88,7 +88,8 @@ void syncusrlist_remove_last (syncusrlist_t *self);
 /*esta podria ser para eliminar un determinado usuario si es que existe*/
 void syncusrlist_remove_user (syncusrlist_t *self, user_t * usr);
 
-/*Destructor
+/*Destructor: Libera TODA la memoria. Osea que libera cada uno de los usuarios
+ *	      que se encuentran dentro de la lista.
 	REQUIRES:
 		self != NULL
 	RETURNS:
