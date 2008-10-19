@@ -45,7 +45,7 @@ void SmsTable::insertBack (SmsObject* sms)
 		/*vamos a mostrar el mensaje en la tabla*/
 		this->insertRow (this->rowCount());
 		
-		dprintf ("Estamos encolando : %s\n",(char *) (*(sms->getName())).toStdString().c_str());
+		/*dprintf ("Estamos encolando : %s\n",(*(sms->getName())).toStdString().c_str());*/
 		item = new  QTableWidgetItem (*(sms->getMesg()),0);
 		if (item != NULL){
 			this->setItem (this->rowCount()-1,this->columnCount()-1,item);
@@ -54,7 +54,7 @@ void SmsTable::insertBack (SmsObject* sms)
 			this->resizeRowToContents (this->rowCount()-1);
 		}
 		else
-			dprintf ("No se pudo crear el item en insertItem\n");
+			dprintf("No se pudo crear el item en insertItem\n");
 		
 	} else {
 		dprintf ("Recibimos un sms NULL en insertBack\n");

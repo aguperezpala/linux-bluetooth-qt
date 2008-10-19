@@ -74,7 +74,11 @@ int main (void)
 	user_t * usr = NULL;		/*objetos de debug*/
 	syncusrlist_t * usrlist = NULL;
 	user_t *aux = NULL;
-		
+	char * agu = NULL;
+	
+	printf ("size agustr: %d\n",(int)sizeof(agu));
+	agu = (char*) calloc (30, sizeof (char));
+	printf ("size agustr: %d\n",(int) sizeof(agu));
 	
 	/*check_user_module();*/
 	
@@ -86,7 +90,7 @@ int main (void)
 	
 	print("encolando usuarios");
 	usr = user_new ("Agustin Perez Paladini", "Agu", "3516545682");
-	usrlist = syncusrlist_create (usr);
+	usrlist = syncusrlist_create ();
 	printf ("cola size: %d\n",(int) syncusrlist_get_size(usrlist));
 	
 	usr = user_new ("Juan loco", "Juan", "12345678");
@@ -96,7 +100,7 @@ int main (void)
 	usr = user_new ("Andre Lorenzon", "Andrews", "9998887545");
 	syncusrlist_insert (usrlist, usr);
 	printf ("cola size: %d\n",(int) syncusrlist_get_size(usrlist));
-	syncusrlist_pprint (usrlist);
+	/*syncusrlist_pprint (usrlist);*/
 		
 	/*print("Buscando usuario by name (buscando name = Juan loco)");
 	aux = syncusrlist_by_name (usrlist,"Juan loco");
@@ -123,7 +127,7 @@ int main (void)
 	print ("Borrando marito");
 	aux = syncusrlist_by_nick (usrlist,"marito");
 	syncusrlist_remove_user (usrlist, aux);
-	syncusrlist_pprint (usrlist);
+	/*syncusrlist_pprint (usrlist);*/
 	printf ("cola size: %d\n",(int) syncusrlist_get_size(usrlist));
 	
 	usrlist = syncusrlist_destroy (usrlist);

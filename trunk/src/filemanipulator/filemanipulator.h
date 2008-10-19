@@ -5,7 +5,9 @@
 
 #include <QString>
 #include <QFileInfo>
+
 #include "../qparser/parser.h"
+#include "../textwindow/smsobject.h"
 
 class FileManipulator
 {
@@ -48,6 +50,15 @@ class FileManipulator
 		*/
 		QString* getFileContent (QString& file);
 		
+		
+		/*esta funcion nos parsea un sms desde un archivo
+			REQUIRES:
+				file != NULL
+			RETURNS:
+				NULL == ERROR
+				SmsObject* en caso contrario
+		*/
+		SmsObject* parseSmsFromFile (QString& file);
 		
 		/*setear maximo tamaño*/
 		void setMaxTxtSize (qint64 s){ maxTextFileSize = s; }
