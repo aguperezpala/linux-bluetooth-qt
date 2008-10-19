@@ -12,9 +12,9 @@
 #include "ui_maintxtwindow.h"
 #include "smstable.h"
 #include "textwindow.h"
-#include "../users/user.h"
+/*#include "../users/user.h"
 #include "../users/syncusrlist.h"
-
+*/
 class MainTxtWindow : public QWidget, private Ui::MainTxtWindow 
 {
 	Q_OBJECT
@@ -58,7 +58,7 @@ private:
 	
 	
 	
-	syncusrlist_t *usrlist;	/*lista de usuarios habilitados*/
+	//syncusrlist_t *usrlist;	/*lista de usuarios habilitados*/
 	SmsTable *smsTable; 	/*tabla para mostrar los sms*/
 	TextWindow *tw;		/*ventana donde vamos a mostrar los sms*/
 	QMessageBox *msg;	/*para mostrar algunos mensajes*/
