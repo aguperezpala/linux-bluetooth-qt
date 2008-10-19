@@ -10,7 +10,7 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	this->tw = NULL;
 	this->msg = new QMessageBox(0);
 	this->fmanipulator = NULL;
-	//this->usrlist = NULL;
+	this->usrlist = NULL;
 	
 	/*cargamos el archivo*/
 	setupUi(this);
@@ -42,16 +42,13 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 		
 	
 	/*!creamos la userlist*/
-	/*this->usrlist = syncusrlist_create ();
+	this->usrlist = new UserList();
+	
 	if (this->usrlist == NULL) {
 		msg->setText (QString ("Error al crear la lista de usuarios"));
 		msg->show();
 		this->close();
 	}
-	*/
-		
-	
-	
 	
 	/*!PRUIEBAAA*/
 	this->tw->setMesg (QString ("Agustin daniel perez de los jodidididisimos andes"));
@@ -144,64 +141,10 @@ void MainTxtWindow::on_txtbuttonSetFontColor_clicked()
 void MainTxtWindow::on_txttextFileReciber_textChanged()
 {
 	QString aux = this->txttextFileReciber->toPlainText();
-	QString *smsContent = NULL;
-	QMessageBox *msgFile = NULL;
-	QAbstractButton *okbtn = NULL;
-	QAbstractButton *cancelbtn = NULL;
-	SmsObject *sms = NULL;
-	//QTextEdit *txtfile = NULL;	/*dnd vamos a mostrar el archivo*/
-	//QPushButton *btnOk = NULL;
-	//QPushButton *btnCancel = NULL;
-	//QVBoxLayout *flayout = NULL;
-	
-	if (!aux.isNull() && !aux.isEmpty()) {
-		this->fmanipulator->parseFilePath (aux);
 		
-		if (!this->fmanipulator->getFileType (aux) == FileManipulator::FK_TEXT){
-			dprintf ("Error de tipo de archivo, se espera un archivo de texto\n");
-			msg->setText ("Error de tipo de archivo, se espera un archivo de texto");
-			msg->show();
-		} else {
-			/*Todo esta perfecto entonces lo abrimos*/
-			/*generamos todo los componentes*/
-			msgFile = new QMessageBox (this);
-			okbtn = msgFile->addButton(tr("Aceptar"), QMessageBox::AcceptRole);
-			cancelbtn = msgFile->addButton(tr("Cancel"), QMessageBox::RejectRole);
-			
-			/*cargamos el contenido del archivo*/
-			/*!Tener en cuenta que aca deberiamos parsearlo antes*/
-			smsContent = this->fmanipulator->getFileContent (aux);
-			
-			
-			
-			if (smsContent != NULL){
-				msgFile->setText (*smsContent);
-				msgFile->exec();
-			
-				if (msgFile->clickedButton() == okbtn) {
-					dprintf ("se acepto el elemento\n");
-					/*encolamos*/
-					/*!recordar que antes de mandar el texto asi nomas tenemos que mandarlo
-					 *en formato como queremos que se muestre, Nombre:xxxx ... etc*/
-					/*!PRUEBA*/
-					sms = new SmsObject;
-					if (sms != NULL) {
-						//this->tw->setMesg (*smsContent);
-						sms->setMesg(*smsContent);
-						this->smsTable->insertBack (sms);
-					}
-			
-				} else { /*cualquier otro caso*/
-					dprintf ("No se acepto el elemento\n");
-				}
-			} else
-					dprintf ("El archivo estaba vacio\n");
-			
-			delete smsContent;
-			delete okbtn;
-			delete cancelbtn;
-			delete msgFile;
-		}
+	if (!aux.isNull() && !aux.isEmpty()) {
+		/* llamamos a la funcion que va a desencadenar todo el proceso*/
+		getSmsFromFile (aux);
 		this->txttextFileReciber->clear();
 	}
 	
@@ -247,6 +190,8 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 {
 	QString filename(fn);	/*hacemos una copia por las dudas*/
 	SmsObject *sms = NULL;	/*donde vamos a almacenar el Sms*/
+	const QString *number = NULL;	/*aca vamos a almacenar momentaneamete el numero*/
+	
 	
 	if (!filename.isNull() && !filename.isEmpty()) {
 			
@@ -258,9 +203,25 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 			/*Todo esta perfecto entonces lo abrimos*/
 			sms = this->fmanipulator->parseSmsFromFile (filename);
 			if (sms != NULL) {
-				/*!ahora chequeamos que este en la lista
-				
-				*/
+				/*ahora chequeamos que este en la lista*/
+				number = sms->getNumber();
+				if (number != NULL) {
+					if (this->usrlist->existNumber(number)) {
+						/*!MOSTRAMOS EL MENSAJE PARA VER SI
+						 *DEBE SER ENCOLADO O NO*/
+						
+						if (acceptSms (*sms->getMesg())) {
+							/*!Debe ser encolado*/
+							this->smsTable->insertBack (sms);
+						} else {
+							/*!se rechazo por el administrador
+							 y lo borramos de la maquina*/
+							
+						}
+					} else {
+						/*!mensaje descartado porque no estaba registrado.. */
+					}
+				}
 			}
 		}
 	this->txttextFileReciber->clear();
