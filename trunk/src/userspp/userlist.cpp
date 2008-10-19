@@ -112,6 +112,11 @@ UserObject* UserList::getUserByDni (const QString& name)
 	return result;
 }
 	
+bool existNumber (const QString& n)
+{
+	return (getUserByNumber (n) != NULL);
+}
+
 
 UserList::~UserList()
 {

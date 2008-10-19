@@ -2,11 +2,6 @@
 # ------------------------------------------- 
 # Subdirectorio relativo al directorio principal del proyecto: .
 # El destino es una aplicaci??n: 
-
-
-MAKEFILE = src/users/Makefile
-
-
 CONFIG += uitools
 
 FORMS += src/mainwidget.ui \
@@ -21,7 +16,9 @@ HEADERS += src/controllerwindow.h \
            src/textwindow/maintxtwindow.h \
            src/textwindow/smsobject.h \
            src/textwindow/smstable.h \
-           src/textwindow/textwindow.h 
+           src/textwindow/textwindow.h \
+           src/userspp/userobject.h \
+           src/userspp/userlist.h
 SOURCES += src/controllerwindow.cpp \
            src/main.cpp \
            src/mainwidget.cpp \
@@ -32,16 +29,18 @@ SOURCES += src/controllerwindow.cpp \
            src/textwindow/maintxtwindow.cpp \
            src/textwindow/smsobject.cpp \
            src/textwindow/smstable.cpp \
-           src/textwindow/textwindow.cpp 
-DEPENDPATH = . 
+           src/textwindow/textwindow.cpp \
+           src/userspp/userobject.cpp \
+           src/userspp/userlist.cpp
+DEPENDPATH = .
 INCLUDEPATH += . \
-               src \
-               src/imagewindow \
-               src/textwindow \
-               src/qparser \
-               src/filemanipulator \
-               src/users \
-               pruebas/wiggly 
+src \
+src/imagewindow \
+src/textwindow \
+src/qparser \
+src/filemanipulator \
+src/users \
+pruebas/wiggly
 CONFIG += release \
-          warn_on 
-TEMPLATE = app 
+warn_on
+TEMPLATE = app

@@ -20,12 +20,14 @@ public:
 	bool DeleteUserptr (UserObject* usr);
 	
 	
-	/*!devolvemos NULL si no se encontro*/
+	/*!devolvemos NULL si no se encontro
+	 * ESTAS FUNCIONES SON LAS DUSQUEDA*/
 	UserObject* getUserByName (const QString& name);
 	UserObject* getUserByNumber (const QString& n);
 	UserObject* getUserByNick (const QString& n);
 	UserObject* getUserByDni (const QString& d);
 	
+	bool existNumber (const QString&);
 
 
 
