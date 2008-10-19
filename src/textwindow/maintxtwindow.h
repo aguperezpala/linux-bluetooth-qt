@@ -12,7 +12,8 @@
 #include "ui_maintxtwindow.h"
 #include "smstable.h"
 #include "textwindow.h"
-
+#include "../users/user.h"
+#include "../users/syncusrlist.h"
 
 class MainTxtWindow : public QWidget, private Ui::MainTxtWindow 
 {
@@ -39,6 +40,25 @@ private slots:
 	
 
 private:
+	/*esta funcion nos obtiene un sms desde un archivo
+		REQUIRES:
+			filename == parsed	(ya parseado)
+	*/
+	void getSmsFromFile (QString& filname);
+	
+	/*esta funcion nos va a mostrar un mensaje y nos dice si queremos o no
+	 *encolarlo
+		REQUIRES:
+			data != NULL
+		RETURNS:
+			true == accept message
+			false == error || !accept
+	*/
+	bool acceptSms (QString& data);
+	
+	
+	
+	syncusrlist_t *usrlist;	/*lista de usuarios habilitados*/
 	SmsTable *smsTable; 	/*tabla para mostrar los sms*/
 	TextWindow *tw;		/*ventana donde vamos a mostrar los sms*/
 	QMessageBox *msg;	/*para mostrar algunos mensajes*/

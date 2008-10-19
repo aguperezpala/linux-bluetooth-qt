@@ -10,7 +10,7 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	this->tw = NULL;
 	this->msg = new QMessageBox(0);
 	this->fmanipulator = NULL;
-	
+	this->usrlist = NULL;
 	
 	/*cargamos el archivo*/
 	setupUi(this);
@@ -41,18 +41,23 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	}
 		
 	
+	/*!creamos la userlist*/
+	this->usrlist = syncusrlist_create ();
+	if (this->usrlist == NULL) {
+		msg->setText (QString ("Error al crear la lista de usuarios"));
+		msg->show();
+		this->close();	/*!chequear esto*/
+	}
+
+		
+	
+	
 	
 	/*!PRUIEBAAA*/
 	this->tw->setMesg (QString ("Agustin daniel perez de los jodidididisimos andes"));
 	//this->tw->setWindowFlags (SW_WITHOUT_BORDERS);
 	
-	
-	
-	
-	
 }
-
-
 
 void MainTxtWindow::on_txtbuttonSetSize_clicked()
 {
@@ -200,6 +205,64 @@ void MainTxtWindow::on_txttextFileReciber_textChanged()
 		this->txttextFileReciber->clear();
 	}
 	
+}
+
+
+
+bool MainTxtWindow::acceptSms (QString& data)
+{
+	bool result = false;
+	QMessageBox *msgFile = NULL;
+	QAbstractButton *okbtn = NULL;
+	QAbstractButton *cancelbtn = NULL;
+	
+	if (data.isNull() || data.isEmpty ()) {
+		return false;
+	} else {
+		msgFile = new QMessageBox (this);
+		
+		if (msgFile != NULL) {
+			okbtn = msgFile->addButton(tr("Aceptar"), QMessageBox::AcceptRole);
+			cancelbtn = msgFile->addButton(tr("Cancelar"), QMessageBox::RejectRole);
+			
+			msgFile->setText (data);
+			msgFile->exec();
+			
+			if (msgFile->clickedButton() == okbtn) {
+				dprintf ("se acepto el elemento\n");
+				result = true;
+			} else { /*cualquier otro caso*/
+					dprintf ("No se acepto el elemento\n");
+					result = false;
+			}
+			delete okbtn;
+			delete cancelbtn;
+			delete msgFile;
+		}
+		
+	}
+}
+
+void MainTxtWindow::getSmsFromFile (QString& fn)
+{
+	QString filename(fn);	/*hacemos una copia por las dudas*/
+	SmsObject *sms = NULL;	/*donde vamos a almacenar el Sms*/
+	
+	if (!filename.isNull() && !filename.isEmpty()) {
+			
+		if (!this->fmanipulator->getFileType (filename) == FileManipulator::FK_TEXT){
+			dprintf ("Error de tipo de archivo, se espera un archivo de texto\n");
+			msg->setText ("Error de tipo de archivo, se espera un archivo de texto");
+			msg->show();
+		} else {
+			/*Todo esta perfecto entonces lo abrimos*/
+			sms = this->fmanipulator->parseSmsFromFile (filename);
+			if (sms != NULL) {
+				/*ahora chequeamos que este en la lista*/
+			}
+		}
+	this->txttextFileReciber->clear();
+	}
 }
 
 

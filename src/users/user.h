@@ -1,5 +1,9 @@
 /* Las partes del "objeto" user las vamos a manejar todas con char* para facilitar
  * el trabajo de "matcheo"
+ * 
+ */
+ /*!DEBEMOS TENER EN CUENTA QUE LOS STRINGS NO DEBEN CONTENER ESPACIOS EN BLANCO
+  * NI \n\t\r O LO QUE SEA
  */
 #ifndef USER_C_H
 #define USER_C_H
@@ -22,6 +26,8 @@
 
 
 #define EMPTY	NULL	/*por conveniencia*/
+
+
 
 typedef struct _user_t user_t;
 

@@ -11,6 +11,8 @@ struct _user_t {
 };
 
 
+
+
 /* Result != EMPTY... osea que genera memoria*/
 static char* user_get_first_name (char *name)
 {

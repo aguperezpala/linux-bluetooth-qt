@@ -5,71 +5,31 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>817</width>
-    <height>597</height>
+    <width>90</width>
+    <height>16</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="verticalLayoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>249</x>
-     <y>440</y>
-     <width>161</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="txtsizeLayout" >
-    <property name="spacing" >
-     <number>2</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" >
-      <item>
-       <widget class="QLineEdit" name="txtsizeX" >
-        <property name="inputMask" >
-         <string/>
-        </property>
-        <property name="text" >
-         <string>X</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="txtsizeY" >
-        <property name="text" >
-         <string>Y</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QPushButton" name="txtbuttonSetSize" >
-      <property name="text" >
-       <string>Set tamaño</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="verticalLayoutWidget_2" >
    <property name="geometry" >
     <rect>
-     <x>520</x>
-     <y>450</y>
+     <x>10</x>
+     <y>10</y>
      <width>161</width>
-     <height>61</height>
+     <height>348</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2" >
     <property name="spacing" >
-     <number>2</number>
+     <number>0</number>
     </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+      <property name="spacing" >
+       <number>0</number>
+      </property>
       <item>
        <widget class="QLineEdit" name="txtposX" >
         <property name="inputMask" >
@@ -96,15 +56,140 @@
       </property>
      </widget>
     </item>
+    <item>
+     <layout class="QVBoxLayout" name="txtsizeLayout" >
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLineEdit" name="txtsizeX" >
+          <property name="inputMask" >
+           <string/>
+          </property>
+          <property name="text" >
+           <string>X</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="txtsizeY" >
+          <property name="text" >
+           <string>Y</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="txtbuttonSetSize" >
+        <property name="text" >
+         <string>Set tamaño</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="txtbuttonSetVelocity" >
+          <property name="text" >
+           <string>Set Velocidad</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="txttextVelocity" />
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QPushButton" name="txtbuttonSetFont" >
+      <property name="text" >
+       <string>Set Fuente</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="txtbuttonSetBackColor" >
+      <property name="text" >
+       <string>Set backcolor</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="txtbuttonSetFontColor" >
+      <property name="text" >
+       <string>Set fontcolor</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_4" >
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="txtbuttonStart" >
+        <property name="text" >
+         <string>Comenzar</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="txtbuttonStop" >
+        <property name="text" >
+         <string>Frenar</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="txtbuttonHideWindow" >
+          <property name="text" >
+           <string>Esconder</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="txtbuttonShowWindow" >
+          <property name="text" >
+           <string>Mostrar</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
    </layout>
+   <zorder>txtbuttonSetPos</zorder>
+   <zorder>horizontalLayoutWidget_2</zorder>
+   <zorder>verticalLayoutWidget</zorder>
+   <zorder>txtbuttonSetFont</zorder>
+   <zorder>txtbuttonSetBackColor</zorder>
+   <zorder>txtbuttonSetFontColor</zorder>
+   <zorder>verticalLayoutWidget_5</zorder>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget" >
    <property name="geometry" >
     <rect>
-     <x>20</x>
-     <y>520</y>
-     <width>300</width>
-     <height>80</height>
+     <x>10</x>
+     <y>360</y>
+     <width>731</width>
+     <height>131</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3" >
@@ -144,73 +229,26 @@
      </widget>
     </item>
    </layout>
-   <zorder>label</zorder>
    <zorder>txttextFileReciber</zorder>
+   <zorder>label</zorder>
+   <zorder>gridLayoutWidget</zorder>
+   <zorder>horizontalLayoutWidget_3</zorder>
    <zorder>verticalLayoutWidget_4</zorder>
-  </widget>
-  <widget class="QWidget" name="verticalLayoutWidget_3" >
-   <property name="geometry" >
-    <rect>
-     <x>79</x>
-     <y>349</y>
-     <width>91</width>
-     <height>64</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout" >
-    <property name="spacing" >
-     <number>2</number>
-    </property>
-    <item>
-     <widget class="QPushButton" name="txtbuttonHideWindow" >
-      <property name="text" >
-       <string>Esconder</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="txtbuttonShowWindow" >
-      <property name="text" >
-       <string>Mostrar</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget_2" >
-   <property name="geometry" >
-    <rect>
-     <x>210</x>
-     <y>30</y>
-     <width>171</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_4" >
-    <item>
-     <widget class="QPushButton" name="txtbuttonSetVelocity" >
-      <property name="text" >
-       <string>Set Velocidad</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="txttextVelocity" />
-    </item>
-   </layout>
-   <zorder>txttextVelocity</zorder>
-   <zorder>txtbuttonSetVelocity</zorder>
+   <zorder>verticalLayoutWidget_6</zorder>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget_4" >
    <property name="geometry" >
     <rect>
-     <x>430</x>
+     <x>170</x>
      <y>10</y>
-     <width>381</width>
+     <width>571</width>
      <height>351</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3" >
+    <property name="spacing" >
+     <number>0</number>
+    </property>
     <item>
      <widget class="QLabel" name="label_2" >
       <property name="font" >
@@ -236,89 +274,16 @@
      </widget>
     </item>
    </layout>
+   <zorder>txtbuttonDeleteSms</zorder>
+   <zorder>label_3</zorder>
+   <zorder>horizontalLayoutWidget_2</zorder>
+   <zorder>txtbuttonSetFont</zorder>
+   <zorder>txtbuttonSetFontColor</zorder>
+   <zorder>txtbuttonSetBackColor</zorder>
+   <zorder>verticalLayoutWidget_5</zorder>
+   <zorder>verticalLayoutWidget_2</zorder>
+   <zorder>verticalLayoutWidget</zorder>
   </widget>
-  <widget class="QWidget" name="verticalLayoutWidget_5" >
-   <property name="geometry" >
-    <rect>
-     <x>30</x>
-     <y>229</y>
-     <width>101</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_4" >
-    <property name="spacing" >
-     <number>0</number>
-    </property>
-    <item>
-     <widget class="QPushButton" name="txtbuttonStart" >
-      <property name="text" >
-       <string>Comenzar</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="txtbuttonStop" >
-      <property name="text" >
-       <string>Frenar</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QPushButton" name="txtbuttonSetFont" >
-   <property name="geometry" >
-    <rect>
-     <x>40</x>
-     <y>80</y>
-     <width>95</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Set Fuente</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="txtbuttonSetBackColor" >
-   <property name="geometry" >
-    <rect>
-     <x>40</x>
-     <y>110</y>
-     <width>111</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Set backcolor</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="txtbuttonSetFontColor" >
-   <property name="geometry" >
-    <rect>
-     <x>40</x>
-     <y>140</y>
-     <width>111</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Set fontcolor</string>
-   </property>
-  </widget>
-  <zorder>verticalLayoutWidget</zorder>
-  <zorder>verticalLayoutWidget_2</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>verticalLayoutWidget_3</zorder>
-  <zorder>horizontalLayoutWidget_2</zorder>
-  <zorder>verticalLayoutWidget_4</zorder>
-  <zorder>verticalLayoutWidget_5</zorder>
-  <zorder>textEdit</zorder>
-  <zorder>textEdit</zorder>
-  <zorder>pushButton</zorder>
-  <zorder>txtbuttonSetFont</zorder>
-  <zorder>txtbuttonSetBackColor</zorder>
-  <zorder>txtbuttonSetFontColor</zorder>
-  <zorder>label_2</zorder>
  </widget>
  <resources/>
  <connections/>

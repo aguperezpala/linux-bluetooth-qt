@@ -76,7 +76,7 @@ static user_t *syncusrlist_sfind (syncusrlist_t *self, const char *(*usr_func)(u
 }
 
 
-syncusrlist_t *syncusrlist_create (user_t *usr)
+syncusrlist_t *syncusrlist_create (void)
 {
 	syncusrlist_t *result = NULL;
 	
@@ -87,17 +87,15 @@ syncusrlist_t *syncusrlist_create (user_t *usr)
 	if (result != NULL) {
 		result->list = NULL;
 		
-		if (sem_init (&result->mutex, 0, 1) != 0 || usr == NULL) {
-			/*no se pudo crear el semaforo o el usuario == NULL*/
-			pdebug("No se pudo generar el semaphore || usr == NULL");
+		if (sem_init (&result->mutex, 0, 1) != 0) {
+			/*no se pudo crear el semaforo*/
+			pdebug("No se pudo generar el semaphore");
 			free (result);
 			return NULL;
 		}
 		/*se genero correctamente*/
 		result->list = g_list_alloc();	/*generamos la glist*/
-		if (result->list != NULL) {
-			result->list->data = (user_t *) usr;
-		} else {
+		if (result->list == NULL) {
 			/*!ERROR al crear la glist*/
 			pdebug("Error creando la glist");
 			g_list_free (result->list);
@@ -243,6 +241,7 @@ void syncusrlist_remove_first (syncusrlist_t *self)
 			/*!*******	zona critica	********/
 			
 			aux = g_list_first (self->list);
+			aux = g_list_next (aux);
 			
 			/*!veamos que esto nos devuelve la celda dummy*/
 			if (aux != NULL) {

@@ -92,5 +92,23 @@ QString* FileManipulator::getFileContent (QString& file)
 	
 	return result;
 }
+
+SmsObject* FileManipulator::parseSmsFromFile (QString& file)
+{
+	SmsObject *result = NULL;
 	
+	result = new SmsObject();
 	
+	ASSERT (result != NULL);
+	
+	if (result != NULL) {
+		/*!eso por ahoar despues cambiarlo, osea parsear todos los datos
+		 *del sms y agregarlos a la estructura
+		*/
+		result->setMesg (*getFileContent (file));
+	}
+	
+	return result;
+}
+
+
