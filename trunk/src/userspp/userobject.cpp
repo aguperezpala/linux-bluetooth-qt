@@ -1,18 +1,23 @@
-//
-// C++ Implementation: userobject
-//
-// Description: 
-//
-//
-// Author: Agustin Perez,,, <agustin@200-127-22-55>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+
 #include "userobject.h"
 
 UserObject::UserObject()
 {
+	this->dni = QString("");
+	this->name = QString("");
+	this->nick = QString("");
+	this->number = QString("");
+	this->date = QString("");
+}
+
+bool UserObject::operator==(const UserObject& other)
+{
+	return (this->number == other.number);	
+}
+
+bool UserObject::operator!=(const UserObject& other)
+{
+	return (this->number != other.number);
 }
 
 
