@@ -10,7 +10,7 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	this->tw = NULL;
 	this->msg = new QMessageBox(0);
 	this->fmanipulator = NULL;
-	this->usrlist = NULL;
+	//this->usrlist = NULL;
 	
 	/*cargamos el archivo*/
 	setupUi(this);
@@ -42,13 +42,13 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 		
 	
 	/*!creamos la userlist*/
-	this->usrlist = syncusrlist_create ();
+	/*this->usrlist = syncusrlist_create ();
 	if (this->usrlist == NULL) {
 		msg->setText (QString ("Error al crear la lista de usuarios"));
 		msg->show();
-		this->close();	/*!chequear esto*/
+		this->close();
 	}
-
+	*/
 		
 	
 	
@@ -258,7 +258,9 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 			/*Todo esta perfecto entonces lo abrimos*/
 			sms = this->fmanipulator->parseSmsFromFile (filename);
 			if (sms != NULL) {
-				/*ahora chequeamos que este en la lista*/
+				/*!ahora chequeamos que este en la lista
+				
+				*/
 			}
 		}
 	this->txttextFileReciber->clear();

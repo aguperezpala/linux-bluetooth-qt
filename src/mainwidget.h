@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QPushButton>
+#include <QtGui>
+#include <QtUiTools>
 
 QT_BEGIN_NAMESPACE
 class QLabel;

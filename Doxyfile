@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = blue.kdevelop
+PROJECT_NAME           = bluetooth.kdevelop
 PROJECT_NUMBER         = $VERSION$
 OUTPUT_DIRECTORY       = 
 CREATE_SUBDIRS         = NO
@@ -25,7 +25,7 @@ ABBREVIATE_BRIEF       = "The $name class" \
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
-STRIP_FROM_PATH        = /home/agustin/programacion/C++/bluetooth/
+STRIP_FROM_PATH        = /home/agustin/programacion/C++/bluetooth/linux-bluetooth-qt/
 STRIP_FROM_INC_PATH    = 
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
@@ -239,7 +239,7 @@ SKIP_FUNCTION_MACROS   = YES
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
 TAGFILES               = 
-GENERATE_TAGFILE       = blue.tag
+GENERATE_TAGFILE       = bluetooth.tag
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
 PERL_PATH              = /usr/bin/perl
