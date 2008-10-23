@@ -112,3 +112,18 @@ SmsObject* FileManipulator::parseSmsFromFile (QString& file)
 }
 
 
+bool FileManipulator::removeFile (QString& filename)
+{
+	const char *fname = NULL;
+	bool result = false;
+	
+	fname = filename.toStdString().c_str();
+	
+	if (fname != NULL) {
+		/*borramos el archivo, si se pudo result = true..*/
+		result = (remove (fname) == 0);
+	}
+	
+	return resul;
+}
+

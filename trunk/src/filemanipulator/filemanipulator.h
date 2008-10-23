@@ -64,6 +64,13 @@ class FileManipulator
 		void setMaxTxtSize (qint64 s){ maxTextFileSize = s; }
 		void setMaxImgSize (qint64 s){ maxImageFileSize = s; }
 		
+		/*borra un archivo.
+			RETURNS:
+					true == si pudo borrar
+					false == error o no se pudo borrar
+		*/
+		bool removeFile (QString& filename);
+		
 	
 	private:
 		QFileInfo *fi;

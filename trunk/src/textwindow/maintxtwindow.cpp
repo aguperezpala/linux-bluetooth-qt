@@ -19,7 +19,7 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	/*cargamos la tabla de sms y la posicionamos dentro del layout*/
 	smsTable = new SmsTable(0);
 	verticalLayout_3->addWidget (smsTable);
-	connect (smsTable,SIGNAL(cellClicked(int,int)),this,SLOT (on_smsTable_cellClicked(int,int))); 
+	connect (smsTable,SIGNAL(cellClicked(int,int)),this,SLOT (on_smsTable_cellClicked(int,int)));
 	
 	/*generamos la ventana donde se van a mostrar los sms*/
 	this->tw = new TextWindow(0);
