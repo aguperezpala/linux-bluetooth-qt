@@ -7,7 +7,12 @@ QUE HAY QUE HACER
 ********************************************************************************
 * Sacarle todos los espacios al final y al principio de cada char * en cada campo
 de users. (sacar \t \n ... etc).
-* Fijarse la funcion de comprobacion (osea matcheo) de strings en syncusrlist.
+
+--* Fijarse la funcion de comprobacion (osea matcheo) de strings en syncusrlist.
+
+* Tener en cuenta cuando se busca un telefono en userlist que el telefono tenga 
+el mismo formato (por ejemplo +54.... o lo que sea). O directamente guardar todos
+con el mismo formato y listo.
 
 
 ********************************************************************************
