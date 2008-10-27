@@ -61,7 +61,7 @@ void FileManipulator::parseFilePath (QString& str)
 	
 }
 
-QString* FileManipulator::getFileContent (QString& file) 
+QString* FileManipulator::getFileContent (const QString& file) 
 {
 	/*! BIEN AL ESTILO C CAMBIARLO por el parser*/
 	FILE * fp = NULL;
@@ -75,7 +75,7 @@ QString* FileManipulator::getFileContent (QString& file)
 		return NULL;
 	/*convertimos en char**/
 	fname = (char *) file.toStdString().c_str();
-	dprintf ("el archivo se llama @%s@\n",fname);
+	/*dprintf ("el archivo se llama @%s@\n",fname);*/
 	
 	
 	fp = fopen (file.toStdString().c_str(), "r");
@@ -83,7 +83,7 @@ QString* FileManipulator::getFileContent (QString& file)
 		return NULL;
 	}
 	
-	dprintf ("se abrio %s\n",fname);
+	/*dprintf ("se abrio %s\n",fname);*/
 	cresult = fgets (cresult,(size_t)this->maxTextFileSize, fp);
 	
 	result = new QString (cresult);
@@ -96,6 +96,7 @@ QString* FileManipulator::getFileContent (QString& file)
 SmsObject* FileManipulator::parseSmsFromFile (QString& file)
 {
 	SmsObject *result = NULL;
+	QString *aux = NULL;
 	
 	result = new SmsObject();
 	
@@ -105,7 +106,12 @@ SmsObject* FileManipulator::parseSmsFromFile (QString& file)
 		/*!eso por ahoar despues cambiarlo, osea parsear todos los datos
 		 *del sms y agregarlos a la estructura
 		*/
-		result->setMesg (*getFileContent (file));
+		aux = getFileContent (file);
+		result->setMesg (*aux);
+		delete aux;
+		aux = new QString ("3516545682");
+		result->setNumber(*aux);
+		delete aux;
 	}
 	
 	return result;
@@ -124,6 +130,6 @@ bool FileManipulator::removeFile (QString& filename)
 		result = (remove (fname) == 0);
 	}
 	
-	return resul;
+	return result;
 }
 

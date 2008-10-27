@@ -13,11 +13,11 @@ class UserList{
 public:
 	UserList();
 	/*REQUIRES: usr != NULL*/
-	void InsertUser (UserObject* usr);
+	void insertUser (UserObject* usr);
 	
 	/*REQUIRES: usr != NULL*/
-	bool DeleteUser (UserObject* usr);
-	bool DeleteUserptr (UserObject* usr);
+	bool deleteUser (UserObject* usr);
+	bool deleteUserptr (UserObject* usr);
 	
 	
 	/*!devolvemos NULL si no se encontro
@@ -28,11 +28,15 @@ public:
 	UserObject* getUserByDni (const QString& d);
 	
 	bool existNumber (const QString&);
+	
+	
+	/*!DEBUG*/
+	void printList();
 
 
 
 
-    ~UserList();
+	~UserList(); /*borramos todos los usuarios dentro de la lista*/
 
 private:
 	QList<UserObject*> *list;

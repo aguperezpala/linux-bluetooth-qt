@@ -152,7 +152,7 @@ void MainTxtWindow::on_txttextFileReciber_textChanged()
 
 
 
-bool MainTxtWindow::acceptSms (QString& data)
+bool MainTxtWindow::acceptSms (const QString& data)
 {
 	bool result = false;
 	QMessageBox *msgFile = NULL;
@@ -172,10 +172,10 @@ bool MainTxtWindow::acceptSms (QString& data)
 			msgFile->exec();
 			
 			if (msgFile->clickedButton() == okbtn) {
-				dprintf ("se acepto el elemento\n");
+				/*dprintf ("se acepto el elemento\n");*/
 				result = true;
 			} else { /*cualquier otro caso*/
-					dprintf ("No se acepto el elemento\n");
+					/*dprintf ("No se acepto el elemento\n");*/
 					result = false;
 			}
 			delete okbtn;
@@ -184,6 +184,7 @@ bool MainTxtWindow::acceptSms (QString& data)
 		}
 		
 	}
+	return result;
 }
 
 void MainTxtWindow::getSmsFromFile (QString& fn)
@@ -194,8 +195,10 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 	
 	
 	if (!filename.isNull() && !filename.isEmpty()) {
-			
-		if (!this->fmanipulator->getFileType (filename) == FileManipulator::FK_TEXT){
+		
+		this->fmanipulator->parseFilePath (filename);
+		
+		if (this->fmanipulator->getFileType (filename) != FileManipulator::FK_TEXT){
 			dprintf ("Error de tipo de archivo, se espera un archivo de texto\n");
 			msg->setText ("Error de tipo de archivo, se espera un archivo de texto");
 			msg->show();
@@ -206,20 +209,24 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 				/*ahora chequeamos que este en la lista*/
 				number = sms->getNumber();
 				if (number != NULL) {
-					if (this->usrlist->existNumber(number)) {
+					if (this->usrlist->existNumber(*number)) {
 						/*!MOSTRAMOS EL MENSAJE PARA VER SI
 						 *DEBE SER ENCOLADO O NO*/
 						
-						if (acceptSms (*sms->getMesg())) {
+						if (acceptSms (*(sms->getMesg()))) {
 							/*!Debe ser encolado*/
 							this->smsTable->insertBack (sms);
+							/*ahora lo borramos*/
+							/*this->fmanipulator->removeFile(filename);*//*!ANDA*/
 						} else {
 							/*!se rechazo por el administrador
 							 y lo borramos de la maquina*/
-							
+							/*lo borramos*/
+							/*this->fmanipulator->removeFile(filename);*//*!ANDA*/
 						}
 					} else {
 						/*!mensaje descartado porque no estaba registrado.. */
+						dprintf ("Mensaje descartado porque no estaba registrado");
 					}
 				}
 			}

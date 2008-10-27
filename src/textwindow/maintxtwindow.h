@@ -55,7 +55,7 @@ private:
 			true == accept message
 			false == error || !accept
 	*/
-	bool acceptSms (QString& data);
+	bool acceptSms (const QString& data);
 	
 	
 	
