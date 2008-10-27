@@ -3,6 +3,8 @@ Cambiar las variables de configuracion en los archivos que llaman a las funcione
 * Los destructores de todas las clases... falta hacer
 * El parser y modificar todas los comentarios en AZUL para tener en cuenta
 
+
+
 ********************************************************************************
 				Ventana principal
 ********************************************************************************
@@ -19,3 +21,22 @@ Variables de configuracion
 * MaxImageFileSize
 * Variables X, Y, Width, Height de la textwindow
 * Velocidad que pasa el texto
+
+
+
+********************************************************************************
+DIAGRAMA
+********************************************************************************
+La mainTxtWindow es la ventana controladora de todo lo que se refiere a los sms
+de texto. Basicamente lo que hace es, el usuario tira los sms sobre la ventana,
+esta los parsea (convierte en smsObject) y los muestra para ver si son aceptables
+o no. Si son aceptables se encolan en la SmsTable, desde la cual van a ser retirados
+los sms (en orden de llegada) desde la TextWindow (esta debe tener un puntero a la
+SmsTable de la mainTxtWindow).
+
+
+
+MainTxtWindow----->TextWindow
+			|----->filemanipulator
+			|----->user*
+			|----->SmsTable

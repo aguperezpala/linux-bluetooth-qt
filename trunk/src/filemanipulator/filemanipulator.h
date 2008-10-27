@@ -48,7 +48,7 @@ class FileManipulator
 				NULL si hubo error
 				QString con contenido caso contrario
 		*/
-		QString* getFileContent (QString& file);
+		QString* getFileContent (const QString& file);
 		
 		
 		/*esta funcion nos parsea un sms desde un archivo
@@ -64,7 +64,7 @@ class FileManipulator
 		void setMaxTxtSize (qint64 s){ maxTextFileSize = s; }
 		void setMaxImgSize (qint64 s){ maxImageFileSize = s; }
 		
-		/*borra un archivo.
+		/*borra un archivo. DEBE ESTAR PARSEADO el nombre del archivo
 			RETURNS:
 					true == si pudo borrar
 					false == error o no se pudo borrar
