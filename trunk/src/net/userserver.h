@@ -46,7 +46,7 @@ public:
 	REQUIRES:
 			UserList != NULL;
 	*/
-	UserServer(UserList*);
+	UserServer(UserList *l);
 	
 	/*esta funcion nos va a a poner a escuchar en algun puerto del rango
 	especificado
@@ -76,13 +76,13 @@ public:
 	~UserServer();
 	
 private:
-	/*esta funcion lo que nos hace es setear el campo src, segun lo obtenido
-	 *del cliente y el tipo de var que es
+	/*esta funcion lo que nos devuelve el string correspondiente al valor de la
+	 *variable var, sacandolo de el string src.(recordar el formato)
 		REQUIRES:
 				var != NULL
 				src != NULL
 	*/
-	void parseVar (QString& src, const char *var);
+	QString& parseVar (QString& src, const char *var);
 	
 	bool status;
 	UserList *userlist;
