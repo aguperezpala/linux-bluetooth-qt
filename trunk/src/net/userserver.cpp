@@ -6,6 +6,7 @@ QString& UserServer::parseVar (QString& src, const char *var)
 	QString result = "";
 	QString aux = "";
 	int pos = -1;
+	int pos2 = -1;
 	
 	if (var != NULL) {
 		aux.append ("$");			/*agregamos el parametro de comparacion*/
@@ -15,7 +16,13 @@ QString& UserServer::parseVar (QString& src, const char *var)
 		pos = src.indexOf(QString(var),0, Qt::CaseInsensitive);
 		if (pos >= 0) {
 			/*entonces encontramos alguna cadena*/
+			/*ahora buscamos hasta la proxima $ o \n*/
+			pos2 = src.indexOf(QString("$"), pos ,Qt::CaseInsensitive);
 			
+			if (pos2 < 0 || pos2 < pos)
+				return result;
+			
+			/*por seguridad vamos a hacer una busqueda mas*/
 			
 		}
 	
