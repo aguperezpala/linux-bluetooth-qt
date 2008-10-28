@@ -220,6 +220,8 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 							this->smsTable->insertBack (sms);
 							/*ahora lo borramos*/
 							/*this->fmanipulator->removeFile(filename);*//*!ANDA*/
+							/*activamos el textwindow*/
+							this->tw->signalNewMesg();
 						} else {
 							/*!se rechazo por el administrador
 							 y lo borramos de la maquina*/

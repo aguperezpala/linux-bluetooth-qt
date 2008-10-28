@@ -18,6 +18,7 @@ HEADERS += src/controllerwindow.h \
            src/textwindow/smstable.h \
            src/textwindow/textwindow.h \
            src/userspp/userobject.h \
+           src/net/userserver.h \
            src/userspp/userlist.h
 SOURCES += src/controllerwindow.cpp \
            src/main.cpp \
@@ -31,6 +32,7 @@ SOURCES += src/controllerwindow.cpp \
            src/textwindow/smstable.cpp \
            src/textwindow/textwindow.cpp \
            src/userspp/userobject.cpp \
+           src/net/userserver.cpp \
            src/userspp/userlist.cpp
 DEPENDPATH = .
 INCLUDEPATH += . \

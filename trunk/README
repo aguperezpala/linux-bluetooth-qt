@@ -8,7 +8,8 @@ Cambiar las variables de configuracion en los archivos que llaman a las funcione
 ********************************************************************************
 							QUE FALTA HACER
 ********************************************************************************
-* El modulo que escucha todo el tiempo un determinado puero y espera para recibir
+* DONDE SE MUESTRA EL TEXTO!!!!!!!!
+* El modulo que escucha todo el tiempo un determinado puerto y espera para recibir
 los numeros mandados desde la otra pc.
 * UserList->toFile(); y UserList->fromFile(); por las dudas de que se apague la
 pc o algo raro (tambien implementar el contador para determinar la cantidad de gente
