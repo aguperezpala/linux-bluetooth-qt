@@ -71,6 +71,7 @@ class FileManipulator
 		*/
 		bool removeFile (QString& filename);
 		
+		~FileManipulator();
 	
 	private:
 		QFileInfo *fi;

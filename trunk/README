@@ -2,14 +2,21 @@
 Cambiar las variables de configuracion en los archivos que llaman a las funciones
 * Los destructores de todas las clases... falta hacer
 * El parser y modificar todas los comentarios en AZUL para tener en cuenta
-
+* Cambiar los comentarios en la parte donde se borran los archivos*/
 
 
 ********************************************************************************
-				Ventana principal
+							QUE FALTA HACER
 ********************************************************************************
-La ventana principal la vamos a usar en mainwidget.ui que SIEMPRE debe estar en
-la carpeta /src
+* El modulo que escucha todo el tiempo un determinado puero y espera para recibir
+los numeros mandados desde la otra pc.
+* UserList->toFile(); y UserList->fromFile(); por las dudas de que se apague la
+pc o algo raro (tambien implementar el contador para determinar la cantidad de gente
+que va ingresando.
+* Terminar el update_text() de textwindow.c.
+* SmsTable->toFile();	SmsTable->fromFile();
+*	CHEQUEAR en general (guardas y leaks).
+
 
 
 
@@ -25,14 +32,15 @@ Variables de configuracion
 
 
 ********************************************************************************
-DIAGRAMA
+								DIAGRAMA
 ********************************************************************************
 La mainTxtWindow es la ventana controladora de todo lo que se refiere a los sms
 de texto. Basicamente lo que hace es, el usuario tira los sms sobre la ventana,
 esta los parsea (convierte en smsObject) y los muestra para ver si son aceptables
 o no. Si son aceptables se encolan en la SmsTable, desde la cual van a ser retirados
 los sms (en orden de llegada) desde la TextWindow (esta debe tener un puntero a la
-SmsTable de la mainTxtWindow).
+SmsTable de la mainTxtWindow). Cada vez que la textwindow termine de mostrar un sms
+automaticamente va a extraer el proximo de la smsTable y lo va a borrar de la misma.
 
 
 

@@ -10,7 +10,7 @@
 ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 {
 	iw = new ImageWindow (0);
-	tw = new TextWindow (0);
+	tw = new TextWindow (0,NULL);
 	parser = new Parser;
 	/*configuramos ImageWindow*/
 	//iw->setWindowFlags (SW_WITHOUT_BORDERS);
