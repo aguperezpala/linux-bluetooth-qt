@@ -8,6 +8,7 @@ Cambiar las variables de configuracion en los archivos que llaman a las funcione
 ********************************************************************************
 							QUE FALTA HACER
 ********************************************************************************
+* EL MODULO DE NETWORK
 * DONDE SE MUESTRA EL TEXTO!!!!!!!!
 * El modulo que escucha todo el tiempo un determinado puerto y espera para recibir
 los numeros mandados desde la otra pc.
