@@ -20,11 +20,15 @@ class SmsTable : public QTableWidget
 public:
 	SmsTable(QWidget *parent = 0);
 
-	/*removemos el item en la fila r */
+	/*removemos el item en la fila r BORRANDO el smsobject de la queue */
 	void deleteItem (int r);
 	void deleteSelectedItem ();
 	
-	SmsObject* popFront ();	/*tambien elimina el item*/
+	bool isEmpty (){return this->queue.isEmpty();};
+	
+	/*Extrae el 1º item, tambien elimina el item de la tabla
+	 *DEBE SER LIBERADO DESPUES el smsobject*/
+	SmsObject* popFront ();
 	void insertBack (SmsObject*);
 inline	void setSelectedCurrent (int r, int c){this->setCurrentCell (r,c);};
 

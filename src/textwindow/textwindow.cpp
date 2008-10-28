@@ -4,40 +4,41 @@
 /*esta funcion modifica el texto que se esta mostrando en pantalla*/
 void TextWindow::update_text ()
 {
-	/*primero vamos a agregar una letra del str*/
-	if (this->str.size() == 0){
-		if (this->strcount >= MAX_STR_BUFF) {
-			this->timer->stop();
-			this->text->clear();
-		} else {
-			this->text->insertPlainText (QString (" "));
-			this->strcount++;
+	/*debemos distinguir si ya se termino de mostrar uno asi mostramos "between"*/
+	if (this->pos - metrics->width(str) > this->width() - metrics->width (between)) {
+		SmsObject *sms = NULL;
+		
+		this->pos = 0;	/*posicionamos de nuevo el puntero a la derecha de todo*/
+		
+		/*Chequeamos que haya elementos en la tabla*/
+		if (!this->smsTable->isEmpty()) {
+			/*si no es vacia sacamos el sms de la tabla/cola*/
+			sms = this->smsTable->popFront();
+			if (sms != NULL) {
+				/*lo metemos para mostrar*/
+				this->setMesg (*(sms->getMesg()));
+				/*ahora borramos el sms*/
+				/*!TENER EN CUENTA SI QUEREMOS AGREGAR NICKNAME*/
+				delete sms;
+			}
+		} else { /*la cola esta vacia*/
+			this->timer->stop();	/*frenamos el timer*/
 		}
-	} else {
-		this->text->insertPlainText(QString (this->str[0]));
-		this->str.remove (0,1); /*sacamos el primer caracter*/
 	}
-	this->text->moveCursor (QTextCursor::End);
-	this->text->ensureCursorVisible();
 }
 	
 
-TextWindow::TextWindow(QWidget *parent)
+TextWindow::TextWindow(QWidget *parent, SmsTable * table)
  : ShowWindow(parent)
 {
 	this->timer = NULL;
-	this->text = NULL;
 	this->strcount = 0;
 	
-	text = new QTextEdit (0);
-	if (this->text == NULL){
-		dprintf ("No se puede inicializar el QTextEdit\n");
-		this->close(); /*error, no se puede inicializar el timer*/
-	}
+	/*nos aseguramos que table != NULL*/
+	assert (table != NULL);
+	this->smsTable = table;
 	
 	
-	
-	layout = new QVBoxLayout;
 	
 	/*creamos el timer*/
 	this->timer = new QBasicTimer();
@@ -46,21 +47,14 @@ TextWindow::TextWindow(QWidget *parent)
 		dprintf ("No se puede inicializar el timer\n");
 		this->close(); /*error, no se puede inicializar el timer*/
 	}
-	
-	
-	layout->addWidget (text);
-	
-	this->setLayout (layout);
+		
 	
 	/***************configuraciones principales****************/
 	this->vel = 100;	
-	this->text->setAlignment (Qt::AlignRight);
-	this->text->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-	this->text->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-	this->text->setLineWrapMode (QTextEdit::NoWrap); /*1 renglon*/
-	this->text->setSizePolicy (QSizePolicy::Ignored,QSizePolicy::Ignored);
-	
-	
+	this->metrics = new QFontMetrics(this->font());
+	this->step = 0;
+	this->pos = 0;
+	this->between = ".....   ";
 }
 
 void TextWindow::setMesg (const QString& mensaje)
@@ -70,25 +64,27 @@ void TextWindow::setMesg (const QString& mensaje)
 	 *espacios en blanco*/
 	aux.replace( "\n", " ");
 	str.append(aux);
+	str.append (this->between);	/*le agregamos el espacio between*/
 	
-	this->strcount = 0;
-	/*if (!this->timer->isActive()) {
+	this->pos = 0;
+	
+	if (!this->timer->isActive()) {
 		this->timer->start (this->vel, this);
-	}*/
+	}
 	
 }
 
  void TextWindow::paintEvent(QPaintEvent * /* event */)
-{
-	/*QFontMetrics metrics(this->text->font());
-	int x = (this->text->width() - metrics.width(this->text->text())) / 2;
-	int y = (this->text->height() + metrics.ascent() - metrics.descent()) / 2;
+{	
+	int x = this->width();
+	int y = (this->height() + metrics->ascent() - metrics->descent()) / 2;
+	
 	QPainter painter(this);
-	painter.setPen(this->color);
-	for (int i = 0; i < this->text->size(); ++i) {
-		painter.drawText (x + vel, y, QString (this->text[i]));
-		x += metrics.width(this->text->toPlainText()[i]);
-	}*/
+	painter.setPen(color);
+	for (int i = 0; i < str.size(); ++i) {
+		painter.drawText(x-pos, y, QString(str[i]));
+		x += metrics->width(str[i]);
+	}
 }
 
  void TextWindow::timerEvent(QTimerEvent *event)
@@ -97,8 +93,9 @@ void TextWindow::setMesg (const QString& mensaje)
 		/*if (str.isEmpty()){
 			this->timer->stop(); 
 		} else {*/
-			update_text();
-			update();
+		this->pos+=this->step;
+		update_text();
+		update();
 	} else {
 		QWidget::timerEvent(event);
 	}
@@ -127,10 +124,8 @@ void TextWindow::setVelocity (int v)
 
 TextWindow::~TextWindow()
 {
-	delete this->text; /*aca es donde vamos a ir mostrando el texto*/
-	delete this->layout;
 	delete this->timer;
-	
+	delete this->metrics;
 }
 
 

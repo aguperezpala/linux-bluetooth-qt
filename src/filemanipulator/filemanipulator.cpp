@@ -133,3 +133,8 @@ bool FileManipulator::removeFile (QString& filename)
 	return result;
 }
 
+FileManipulator::~FileManipulator()
+{
+	delete this->fi;
+	delete this;
+}

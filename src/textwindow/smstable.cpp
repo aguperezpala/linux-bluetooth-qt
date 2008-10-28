@@ -63,6 +63,15 @@ void SmsTable::insertBack (SmsObject* sms)
 
 SmsObject* SmsTable::popFront ()
 {
+	SmsObject *result = NULL;
+	
+	if (!this->queue.isEmpty()) {
+		result = (SmsObject*) this->queue.dequeue();
+		/*ahora removemos el primer elemento de la tabla*/
+		this->removeRow (0);
+	}
+	
+	return result;
 }
 
 

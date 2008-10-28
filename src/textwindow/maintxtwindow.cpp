@@ -11,6 +11,7 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	this->msg = new QMessageBox(0);
 	this->fmanipulator = NULL;
 	this->usrlist = NULL;
+	this->smsTable = NULL;
 	
 	/*cargamos el archivo*/
 	setupUi(this);
@@ -18,11 +19,12 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	
 	/*cargamos la tabla de sms y la posicionamos dentro del layout*/
 	smsTable = new SmsTable(0);
+	assert (smsTable != NULL);
 	verticalLayout_3->addWidget (smsTable);
 	connect (smsTable,SIGNAL(cellClicked(int,int)),this,SLOT (on_smsTable_cellClicked(int,int)));
 	
 	/*generamos la ventana donde se van a mostrar los sms*/
-	this->tw = new TextWindow(0);
+	this->tw = new TextWindow(0, this->smsTable);
 	if (this->tw == NULL) {
 		msg->setText (QString ("Error al crear la ventana 'mostrar mensajes'"));
 		msg->show();
