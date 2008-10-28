@@ -1,28 +1,45 @@
 #include "textwindow.h"
-
+#include <assert.h>
+/*agrega un mensaje para mostrar en pantalla
+	RETURNS:
+			true == si se pudo agregar
+			false == cc
+*/
+bool TextWindow::add_sms()
+{
+	SmsObject *sms = NULL;
+	bool result = false;
+	
+	dprintf ("estamos agregando sms\n");
+	/*Chequeamos que haya elementos en la tabla*/
+	if (!this->smsTable->isEmpty()) {
+		/*si no es vacia sacamos el sms de la tabla/cola*/
+		sms = this->smsTable->popFront();
+		if (sms != NULL) {
+			/*lo metemos para mostrar*/
+			this->setMesg (*(sms->getMesg()));
+			dprintf ("setMesg\n");
+			/*ahora borramos el sms*/
+			/*!TENER EN CUENTA SI QUEREMOS AGREGAR NICKNAME*/
+			delete sms;
+			result = true;
+		}
+	}
+	
+	return result;
+}
 
 /*esta funcion modifica el texto que se esta mostrando en pantalla*/
 void TextWindow::update_text ()
 {
 	/*debemos distinguir si ya se termino de mostrar uno asi mostramos "between"*/
 	if (this->pos - metrics->width(str) > this->width() - metrics->width (between)) {
-		SmsObject *sms = NULL;
 		
 		this->pos = 0;	/*posicionamos de nuevo el puntero a la derecha de todo*/
-		
-		/*Chequeamos que haya elementos en la tabla*/
-		if (!this->smsTable->isEmpty()) {
-			/*si no es vacia sacamos el sms de la tabla/cola*/
-			sms = this->smsTable->popFront();
-			if (sms != NULL) {
-				/*lo metemos para mostrar*/
-				this->setMesg (*(sms->getMesg()));
-				/*ahora borramos el sms*/
-				/*!TENER EN CUENTA SI QUEREMOS AGREGAR NICKNAME*/
-				delete sms;
-			}
-		} else { /*la cola esta vacia*/
-			this->timer->stop();	/*frenamos el timer*/
+		if (!add_sms()) {
+			/*frenamos el timer*/
+			this->timer->stop();
+			this->canWakeUp = true;
 		}
 	}
 }
@@ -47,7 +64,7 @@ TextWindow::TextWindow(QWidget *parent, SmsTable * table)
 		dprintf ("No se puede inicializar el timer\n");
 		this->close(); /*error, no se puede inicializar el timer*/
 	}
-		
+	
 	
 	/***************configuraciones principales****************/
 	this->vel = 100;	
@@ -55,6 +72,8 @@ TextWindow::TextWindow(QWidget *parent, SmsTable * table)
 	this->step = 0;
 	this->pos = 0;
 	this->between = ".....   ";
+	this->canWakeUp = true;
+	this->timer->stop();
 }
 
 void TextWindow::setMesg (const QString& mensaje)
@@ -73,6 +92,23 @@ void TextWindow::setMesg (const QString& mensaje)
 	}
 	
 }
+
+
+void TextWindow::signalNewMesg()
+{
+	/*chequeamos que si esta activo el timer, entonces quiere decir que esta
+	 funcionando*/
+	
+	if (!this->timer->isActive() && canWakeUp) {
+		/*agregamos un sms de la smstable*/
+		add_sms();
+		dprintf ("signal\n");
+		/*activamos el timer*/
+		this->timer->start (this->vel, this);
+	}
+}
+		
+
 
  void TextWindow::paintEvent(QPaintEvent * /* event */)
 {	

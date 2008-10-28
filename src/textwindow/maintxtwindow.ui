@@ -5,9 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>90</width>
-    <height>16</height>
+    <width>770</width>
+    <height>532</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
@@ -175,13 +181,6 @@
      </layout>
     </item>
    </layout>
-   <zorder>txtbuttonSetPos</zorder>
-   <zorder>horizontalLayoutWidget_2</zorder>
-   <zorder>verticalLayoutWidget</zorder>
-   <zorder>txtbuttonSetFont</zorder>
-   <zorder>txtbuttonSetBackColor</zorder>
-   <zorder>txtbuttonSetFontColor</zorder>
-   <zorder>verticalLayoutWidget_5</zorder>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget" >
    <property name="geometry" >
@@ -231,10 +230,6 @@
    </layout>
    <zorder>txttextFileReciber</zorder>
    <zorder>label</zorder>
-   <zorder>gridLayoutWidget</zorder>
-   <zorder>horizontalLayoutWidget_3</zorder>
-   <zorder>verticalLayoutWidget_4</zorder>
-   <zorder>verticalLayoutWidget_6</zorder>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget_4" >
    <property name="geometry" >
@@ -274,15 +269,6 @@
      </widget>
     </item>
    </layout>
-   <zorder>txtbuttonDeleteSms</zorder>
-   <zorder>label_3</zorder>
-   <zorder>horizontalLayoutWidget_2</zorder>
-   <zorder>txtbuttonSetFont</zorder>
-   <zorder>txtbuttonSetFontColor</zorder>
-   <zorder>txtbuttonSetBackColor</zorder>
-   <zorder>verticalLayoutWidget_5</zorder>
-   <zorder>verticalLayoutWidget_2</zorder>
-   <zorder>verticalLayoutWidget</zorder>
   </widget>
  </widget>
  <resources/>
