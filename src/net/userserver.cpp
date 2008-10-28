@@ -1,12 +1,34 @@
 #include "userserver.h"
 
-UserServer::UserServer(UserList *list)
+
+QString& UserServer::parseVar (QString& src, const char *var)
+{
+	QString result = "";
+	QString aux = "";
+	int pos = -1;
+	
+	if (var != NULL) {
+		aux.append ("$");			/*agregamos el parametro de comparacion*/
+		aux.append (QString (var)); /*sagregamos la variable a buscar*/
+		aux.append ("=");			/*agregamos el =*/
+		/*ahora buscamos*/
+		pos = src.indexOf(QString(var),0, Qt::CaseInsensitive);
+		if (pos >= 0) {
+			/*entonces encontramos alguna cadena*/
+			
+			
+		}
+	
+	
+}
+
+UserServer::UserServer(UserList *l)
 {
 	/*inicializamos el servidor*/
 	this->status = false;
-	assert (list != NULL);
+	assert (l != NULL);
 	
-	this->userlist = list;
+	this->userlist = l;
 	
 }
 
@@ -85,31 +107,24 @@ bool UserServer::startListenOn(int port)
 }
 	
 
-void start()
+void UserServer::start()
 {
 	while (this->status)
 	{	
-		int clientfd;
+		int clientfd = 0;
 		struct sockaddr_in client_addr;
-		int addrlen = sizeof(client_addr);
+		socklen_t addrlen = sizeof(client_addr);
 		ssize_t sizeGet = 0;
 		/*---accept a connection (creating a data pipe)---*/
-		clientfd = accept(sockfd, (struct sockaddr*)&client_addr, &addrlen);
+		clientfd = accept((this->sock), (struct sockaddr*)&client_addr, &addrlen);
 		/*send(clientfd, buffer, recv(clientfd, buffer, MAXBUF, 0), 0);*/
 		
 		if (clientfd) {
 			
-		sizeGet = recv(clientfd,(void*) this->buffer,US_MAX_BUFFER_SIZE, 0);
-			
-		if (buf != NULL)
-			printf ("el buffer %s\ntamaño recibido: %d",(char *)buf,(int)tam);
-		else
-			printf ("buf = NULL\n");
+			sizeGet = recv(clientfd,(void*) this->buffer,US_MAX_BUFFER_SIZE, 0);
+		}
+		
 	
-		/*---Echo back anything sent---*/
-			
-	
-		/*---Close data connection---*/
 		close(clientfd);
 	}
 }
@@ -122,7 +137,7 @@ bool UserServer::isActive()
 	
 int UserServer::getPort()
 {
-	return inet_ntoa(this->self.sin_port);
+	return (int)(this->self.sin_port);
 }
 
 void UserServer::closeServer()
@@ -130,6 +145,7 @@ void UserServer::closeServer()
 	if (this->sock != 0) {
 		this->status = false;	/*para terminarlo del listen*/
 		close(this->sock);
+	}
 }
 
 UserServer::~UserServer()
