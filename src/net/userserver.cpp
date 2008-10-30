@@ -1,33 +1,50 @@
-#include "userserver.h"
+#include "userserver.h"#include "userserver.h"
 
 
-QString& UserServer::parseVar (QString& src, const char *var)
+QString* UserServer::parseVar (QString& src, const char *var)
 {
-	QString result = "";
+	QString *result = NULL;
 	QString aux = "";
 	int pos = -1;
 	int pos2 = -1;
+	int eqpos = -1;		/*donde vamos almacenar la posicion del =*/
+	int endpos = -1;	/*\n*/
+	
+	/*simplificamos el src (sacamos espacios y eso)*/
+	src.simplified();
 	
 	if (var != NULL) {
 		aux.append ("$");			/*agregamos el parametro de comparacion*/
 		aux.append (QString (var)); /*sagregamos la variable a buscar*/
 		aux.append ("=");			/*agregamos el =*/
 		/*ahora buscamos*/
+		printf ("QString aux =: %s\n",aux.toStdString().c_str());
 		pos = src.indexOf(QString(var),0, Qt::CaseInsensitive);
 		if (pos >= 0) {
 			/*entonces encontramos alguna cadena*/
 			/*ahora buscamos hasta la proxima $ o \n*/
-			pos2 = src.indexOf(QString("$"), pos ,Qt::CaseInsensitive);
+			pos2 = src.indexOf(QChar('$'), pos+1 ,Qt::CaseInsensitive);
+			eqpos = src.indexOf(QChar('='), pos+1 ,Qt::CaseInsensitive);
+			endpos = src.indexOf(QChar(';'), pos+1 ,Qt::CaseInsensitive);
 			
-			if (pos2 < 0 || pos2 < pos)
+			if (pos2 < 0 || pos2 < pos || eqpos > pos2 || endpos < pos2) {
+				dprintf ("error parseVar, no se encontro la cadena \n");
 				return result;
-			
-			/*por seguridad vamos a hacer una busqueda mas*/
+			}
+			/*ahora sabemos que tenemos que tomar los datos que estan entre
+			eqpos+1 y pos2-1*/
+			result = new QString ("");
+			if (result != NULL) {
+				(*result).append (src.mid (eqpos + 1, pos2 - eqpos - 2));
+				dprintf ("parseVar: %s\n",(*result).toStdString().c_str());
+			}
 			
 		}
+	}
 	
-	
+	return result;
 }
+
 
 UserServer::UserServer(UserList *l)
 {
@@ -64,6 +81,7 @@ bool UserServer::startListen()
 			dprintf("no se pudo conectar al puerto %d\n",i);
 		} else {
 			/*si nos pudimos conectar entonces tenemos que salir del ciclo*/
+			printf ("UserServer: Escuchando en el puerto %d\n", i);
 			i = US_MAYOR_PORT_RANGE;	/*por las dudas*/
 			break;
 		}
@@ -97,7 +115,7 @@ bool UserServer::startListenOn(int port)
 	this->self.sin_port = htons(port);
 	/*ahora intentamos conectarnos*/
 	if ( bind(this->sock, (struct sockaddr*)&(this->self), sizeof(this->self)) != 0 ) {
-			dprintf("no se pudo conectar al puerto %d\n",i);
+			dprintf("no se pudo conectar al puerto %d\n",port);
 			this->status = false;
 			return false;
 		}
@@ -116,23 +134,64 @@ bool UserServer::startListenOn(int port)
 
 void UserServer::start()
 {
+	int clientfd = 0;
+	struct sockaddr_in client_addr;
+	socklen_t addrlen = sizeof(client_addr);
+	ssize_t sizeGet = 0;
+	UserObject *usr = NULL;
+	QString *number = NULL;
+	QString *aux = NULL;
+	
 	while (this->status)
 	{	
-		int clientfd = 0;
-		struct sockaddr_in client_addr;
-		socklen_t addrlen = sizeof(client_addr);
-		ssize_t sizeGet = 0;
+		number = NULL;
+		usr = NULL;
+		clientfd = 0;
+		sizeGet = 0;
+		aux = NULL;
+		
 		/*---accept a connection (creating a data pipe)---*/
 		clientfd = accept((this->sock), (struct sockaddr*)&client_addr, &addrlen);
 		/*send(clientfd, buffer, recv(clientfd, buffer, MAXBUF, 0), 0);*/
 		
 		if (clientfd) {
-			
+			/*limpiamos el buffer*/
+			memset (buffer, 0, US_MAX_BUFFER_SIZE *sizeof (char));
+			/*recibimos los datos*/
 			sizeGet = recv(clientfd,(void*) this->buffer,US_MAX_BUFFER_SIZE, 0);
+			/*los parseamos*/
+			if (sizeGet > 0) {
+				/*aca deberiamos parsear todas las variables*/
+				aux = new QString (buffer);
+				if (aux != NULL) {
+					number = parseVar (*aux, US_VAR_NUMBER);
+					if (number != NULL) {
+						/*ahora lo que debemos hacer es agregar el numero a la lista*/
+						/*creamos el usuario*/
+						usr = new UserObject();
+						if (usr != NULL) {
+							usr->setNumber (*number);
+							this->userlist->insertUser (usr);
+							dprintf ("UserServer: Numero recibido %s\n",
+									 (*number).toStdString().c_str());
+							/*!le devolvemos un "OK"*/
+							send (clientfd, US_OK_RESPONSE, strlen (US_OK_RESPONSE), 0);
+						}
+						delete number;	/*eliminamos el nombre ya que user COPIA todo*/
+					} else {
+						/*!ahora devolvemos un "ERROR"*/
+						send (clientfd, US_ERROR_RESPONSE, strlen (US_ERROR_RESPONSE), 0);
+						dprintf ("UserServer: no se parseo nada\n");
+					}
+					delete aux;
+					
+				}
+			}
+				
+			
+			/*cerramos la coneccion*/
+			close(clientfd);
 		}
-		
-	
-		close(clientfd);
 	}
 }
 

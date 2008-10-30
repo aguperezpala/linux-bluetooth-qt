@@ -15,7 +15,10 @@ public:
 	/*REQUIRES: usr != NULL*/
 	void insertUser (UserObject* usr);
 	
-	/*REQUIRES: usr != NULL*/
+	/* elimina la memoria del usuerobject
+		REQUIRES: usr != NULL
+	*/
+	
 	bool deleteUser (UserObject* usr);
 	bool deleteUserptr (UserObject* usr);
 	

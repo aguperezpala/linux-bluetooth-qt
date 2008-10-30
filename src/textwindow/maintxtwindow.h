@@ -7,6 +7,7 @@
 #include <QFontDialog>
 #include <QFont>
 #include <QMetaObject>
+#include <assert.h>
 
 #include "../filemanipulator/filemanipulator.h"
 #include "ui_maintxtwindow.h"
