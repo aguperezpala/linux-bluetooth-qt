@@ -53,7 +53,7 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	}
 	
 	/*!PRUIEBAAA*/
-	this->tw->setMesg (QString ("Agustin daniel perez de los jodidididisimos andes"));
+	//this->tw->signalNewMesg (QString ("Agustin daniel perez de los jodidididisimos andes"));
 	//this->tw->setWindowFlags (SW_WITHOUT_BORDERS);
 	
 }
@@ -209,12 +209,13 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 			sms = this->fmanipulator->parseSmsFromFile (filename);
 			if (sms != NULL) {
 				/*ahora chequeamos que este en la lista*/
+				
 				number = sms->getNumber();
 				if (number != NULL) {
+					
 					if (this->usrlist->existNumber(*number)) {
 						/*!MOSTRAMOS EL MENSAJE PARA VER SI
 						 *DEBE SER ENCOLADO O NO*/
-						
 						if (acceptSms (*(sms->getMesg()))) {
 							/*!Debe ser encolado*/
 							this->smsTable->insertBack (sms);

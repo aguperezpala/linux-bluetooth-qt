@@ -3,6 +3,7 @@
 # Subdirectorio relativo al directorio principal del proyecto: .
 # El destino es una aplicaci??n: 
 CONFIG += uitools
+DEFINES += __DEBUG
 
 FORMS += src/mainwidget.ui \
          src/textwindow/maintxtwindow.ui 
@@ -17,6 +18,7 @@ HEADERS += src/controllerwindow.h \
            src/textwindow/smsobject.h \
            src/textwindow/smstable.h \
            src/textwindow/textwindow.h \
+           src/textwindow/marquesinobj.h \
            src/userspp/userobject.h \
            src/net/userserver.h \
            src/userspp/userlist.h
@@ -31,6 +33,7 @@ SOURCES += src/controllerwindow.cpp \
            src/textwindow/smsobject.cpp \
            src/textwindow/smstable.cpp \
            src/textwindow/textwindow.cpp \
+           src/textwindow/marquesinobj.cpp \
            src/userspp/userobject.cpp \
            src/net/userserver.cpp \
            src/userspp/userlist.cpp

@@ -3,21 +3,20 @@ Cambiar las variables de configuracion en los archivos que llaman a las funcione
 * Los destructores de todas las clases... falta hacer
 * El parser y modificar todas los comentarios en AZUL para tener en cuenta
 * Cambiar los comentarios en la parte donde se borran los archivos*/
-
+* FIJARSE cada vez que se llama userobject QUE SE BORREN LOS STRINGS ya que este
+modulo copia todos los datos en sus propios strings.
 
 ********************************************************************************
 							QUE FALTA HACER
 ********************************************************************************
-* EL MODULO DE NETWORK
+* CHEQUEOS GENERALES (testeo de todos los modulos por separado)
 * DONDE SE MUESTRA EL TEXTO!!!!!!!!
-* El modulo que escucha todo el tiempo un determinado puerto y espera para recibir
-los numeros mandados desde la otra pc.
 * UserList->toFile(); y UserList->fromFile(); por las dudas de que se apague la
 pc o algo raro (tambien implementar el contador para determinar la cantidad de gente
 que va ingresando.
 * Terminar el update_text() de textwindow.c.
 * SmsTable->toFile();	SmsTable->fromFile();
-*	CHEQUEAR en general (guardas y leaks).
+
 
 
 
