@@ -17,6 +17,7 @@
 #include "../debug.h"
 #include "smstable.h"
 #include "smsobject.h"
+#include "marquesinobj.h"
 
 #define MAX_STR_BUFF	800	/*cantidad de caracteres que pueden estar en pantalla*/
 
@@ -71,16 +72,14 @@ private:
 	bool canWakeUp;		/*para determinar si debemos despertar o no al text*/
 	int vel;			/*refresh time*/
 	int step;			/*step size*/
-	int pos;
-	int firstptr;			/*variable auxiliar para almacenar la pos inicial del str*/
-	int lastptr;			/*posicion final del string (seria el principio de la prox*/
+		
 	QBasicTimer *timer;
-	QString str;		/*Donde vamos a mostrar el mensaje*/
 	QString between;	/*string entre medio de cada mensaje*/
 	int strcount;
 	SmsTable *smsTable;
 	QColor color;
 	QFontMetrics *metrics;
+	QList<MarquesinObj *> mlist;	/*marquesin list,*/
 	
 };
 
