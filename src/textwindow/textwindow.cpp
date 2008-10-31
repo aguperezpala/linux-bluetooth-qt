@@ -13,7 +13,7 @@ bool TextWindow::add_sms()
 	
 	/*Chequeamos que haya elementos en la tabla*/
 	if (!this->smsTable->isEmpty()) {
-		dprintf ("estamos agregando sms\n");
+		
 		/*si no es vacia sacamos el sms de la tabla/cola*/
 		sms = this->smsTable->popFront();
 		if (sms != NULL) {
@@ -46,9 +46,12 @@ void TextWindow::update_text ()
 			if (data != NULL) {
 				/*chequeamos si debemos agregar otro sms*/
 				size = this->metrics->width(*data);
-				if (size < (this->width() - mobj->getShowPos())) {
+				if (mobj->getShowPos() + size < this->width() ) {
 					/*debemos agregar otro*/
-					add_sms();
+					/*verificamos que no hayamos agregado ya alguno*/
+					if (!mobj->addSomeOne) {
+						mobj->addSomeOne = add_sms();
+					}
 				}
 			} /*else no hacemos nada*/
 		}
@@ -62,7 +65,7 @@ void TextWindow::update_text ()
 			if (data != NULL) {
 				/*vemos si lo debemos sacar o no de la lista*/
 				size = this->metrics->width(*data);
-				if ((this->width() - mobj->getShowPos() + size) < 0) {
+				if (mobj->getShowPos() + size < 0) {
 					/*debemos sacarlo*/
 					delete data;
 					delete mobj; /*liberamos memoria*/
@@ -73,8 +76,14 @@ void TextWindow::update_text ()
 		}
 		
 	} else {
-		/*no hay nada para hacer.. frenamos el timer*/
-		//this->timer->stop();
+		/*no tenemos nada que hacer*/
+		if (!this->smsTable->isEmpty()) {
+			/*no tenemos nada en la lista pero si hay mensajes en la cola*/
+			add_sms();
+		} else {
+				/*no hay ni mensajes en la lista ni en la cola*/
+				this->timer->stop();
+		}
 	}
 }
 
@@ -82,14 +91,17 @@ void TextWindow::update_text ()
 TextWindow::TextWindow(QWidget *parent, SmsTable * table)
  : ShowWindow(parent)
 {
+	this->metrics = NULL;
 	this->timer = NULL;
-	this->strcount = 0;
+	
 	
 	/*nos aseguramos que table != NULL*/
 	assert (table != NULL);
 	this->smsTable = table;
 	
 	
+	this->metrics = new QFontMetrics(this->font());
+	assert (this->metrics != NULL);
 	
 	/*creamos el timer*/
 	this->timer = new QBasicTimer();
@@ -102,28 +114,28 @@ TextWindow::TextWindow(QWidget *parent, SmsTable * table)
 	
 	/***************configuraciones principales****************/
 	this->vel = 100;	
-	this->metrics = new QFontMetrics(this->font());
+	
 	this->step = 10;
-	this->between = ".....   ";
-	this->canWakeUp = true;
+	this->between = "    ";
+	
 	
 }
 
 void TextWindow::setMesg (const QString& mensaje)
 {
 	MarquesinObj *mobj = NULL;
-	QString aux = mensaje;
 	QString *straux = NULL;
 	/*copiamos el string sobre el cual vamos a trabajar y le sacamos los
 	 *espacios en blanco*/
-	aux.replace( "\n", " ");
 	
-	straux = new QString (aux);
+	
+	straux = new QString (mensaje);
 	if (straux != NULL){
+		straux->replace( "\n", " ");
 		straux->append (this->between);
 		
 		/*creamos el marquesinobj en la posicion final*/
-		mobj = new MarquesinObj (straux, 0);
+		mobj = new MarquesinObj (straux, this->width());
 		if (mobj != NULL) {
 			/*la agregamos a la lista*/
 			this->mlist.append (mobj);
@@ -143,15 +155,8 @@ void TextWindow::signalNewMesg()
 {
 	/*chequeamos que si esta activo el timer, entonces quiere decir que esta
 	 funcionando*/
-	if (this->mlist.isEmpty())
-		add_sms();
-	if (!this->timer->isActive() && canWakeUp) {
-		/*agregamos un sms de la smstable*/
+	this->timer->start (this->vel, this);
 	
-		dprintf ("signal\n");
-		/*activamos el timer*/
-		this->timer->start (this->vel, this);
-	}
 }
 		
 
@@ -160,7 +165,6 @@ void TextWindow::signalNewMesg()
 {	
 	int x = this->width();
 	int y = (this->height() + metrics->ascent() - metrics->descent()) / 2;
-	int delta = 0;
 	MarquesinObj *mobj = NULL;
 	QString *str = NULL;
 	
@@ -170,17 +174,16 @@ void TextWindow::signalNewMesg()
 	for (int j = 0; j < mlist.size(); j++){
 		/*vamos a recorrer la cantidad de MarquesinObj que tengamos*/
 		mobj = NULL;
-		x = this->width();
 		str = NULL;
 		
 		mobj = this->mlist.at(j);	/*obtenemos el j MarquesinObj*/
 		if (mobj != NULL) {
+			x = mobj->getShowPos();
 			str = mobj->getData();
 			for (int i = 0; i < str->size(); ++i) {
-				delta = x - mobj->getShowPos();
-				if (delta > 0) {
+				if (x <= this->width()) {
 					/*si estamos dentro del tamaño de la pantalla dibujamos*/
-					painter.drawText(delta, y, QString((*str)[i]));
+					painter.drawText(x, y, QString((*str)[i]));
 					x += metrics->width((*str)[i]);
 				} else {
 					/*no tenemos que dibujar mas.. salimos del ciclo*/
@@ -203,7 +206,7 @@ void TextWindow::signalNewMesg()
 			mobj = NULL;
 			mobj = this->mlist.at(i);
 			if (mobj != NULL) 
-				mobj->setShowPos ((mobj->getShowPos() + this->step));
+				mobj->setShowPos ((mobj->getShowPos() - this->step));
 		}
 		
 		update_text();
@@ -223,6 +226,22 @@ void TextWindow::setFontSize (int size)
 {
 	this->text->setFont (QFont(this->text->fontFamily(), size, this->text->fontWeight()));
 }*/
+
+void TextWindow::setNewMetricsFont()
+{
+	delete this->metrics;
+	this->metrics = NULL;
+	this->metrics = new QFontMetrics(this->font());
+}
+
+
+void TextWindow::setBackColor (const QColor& c)
+{
+	QPalette p;
+	
+	p.setColor (QPalette::Window, c);
+	this->setPalette (p);
+}
 
 
 void TextWindow::setVelocity (int v)

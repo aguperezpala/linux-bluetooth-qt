@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>770</width>
-    <height>532</height>
+    <width>742</width>
+    <height>536</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -16,15 +16,15 @@
    </sizepolicy>
   </property>
   <property name="windowTitle" >
-   <string>Form</string>
+   <string>Sms Text Control Window</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget_2" >
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>7</y>
      <width>161</width>
-     <height>348</height>
+     <height>361</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2" >
@@ -186,7 +186,7 @@
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>360</y>
+     <y>400</y>
      <width>731</width>
      <height>131</height>
     </rect>
@@ -228,8 +228,8 @@
      </widget>
     </item>
    </layout>
-   <zorder>txttextFileReciber</zorder>
    <zorder>label</zorder>
+   <zorder>txttextFileReciber</zorder>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget_4" >
    <property name="geometry" >
@@ -237,7 +237,7 @@
      <x>170</x>
      <y>10</y>
      <width>571</width>
-     <height>351</height>
+     <height>361</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -267,6 +267,28 @@
        <string>Eliminar</string>
       </property>
      </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_2" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>370</y>
+     <width>731</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_5" >
+    <item>
+     <widget class="QPushButton" name="txtbuttonSetBetween" >
+      <property name="text" >
+       <string>Separador</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="txtlineBetween" />
     </item>
    </layout>
   </widget>
