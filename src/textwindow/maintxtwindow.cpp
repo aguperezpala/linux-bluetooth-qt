@@ -106,7 +106,6 @@ void MainTxtWindow::on_txtbuttonSetVelocity_clicked()
 	velocity = txttextVelocity->text().toInt(&ok, 10);
 	if (ok)
 		this->tw->setVelocity (velocity);
-	dprintf ("aaaasetvelocity\n");
 }
 void MainTxtWindow::on_txtbuttonDeleteSms_clicked()
 {

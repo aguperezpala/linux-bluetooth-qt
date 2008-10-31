@@ -255,8 +255,10 @@ void TextWindow::setVelocity (int v)
 
 TextWindow::~TextWindow()
 {
-	delete this->timer;
-	delete this->metrics;
+	if (this->timer != NULL)
+		delete this->timer;
+	if (this->metrics != NULL)
+		delete this->metrics;
 }
 
 

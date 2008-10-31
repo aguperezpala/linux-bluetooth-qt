@@ -135,6 +135,6 @@ bool FileManipulator::removeFile (QString& filename)
 
 FileManipulator::~FileManipulator()
 {
-	delete this->fi;
-	delete this;
+	if (this->fi != NULL)
+		delete this->fi;
 }
