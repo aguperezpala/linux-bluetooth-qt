@@ -84,7 +84,7 @@ QString* FileManipulator::getFileContent (const QString& file)
 	}
 	
 	/*dprintf ("se abrio %s\n",fname);*/
-	cresult = fgets (cresult,(size_t)this->maxTextFileSize, fp);
+	fgets (cresult,(size_t)this->maxTextFileSize, fp);
 	
 	result = new QString (cresult);
 	fclose (fp);

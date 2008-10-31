@@ -9,6 +9,7 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+	int result = 0;
     //ControllerWindow test(0);
     MainTxtWindow mtw(0);
     //MainWidget xa(0);
@@ -16,5 +17,7 @@ int main(int argc, char *argv[])
     mtw.show();
     //xa.show();
     //test.show();
-    return app.exec();
+	result = app.exec();
+	
+    return result;
 }

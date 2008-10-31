@@ -46,17 +46,19 @@ public:
 	void setStep (int s) {this->step = s;};	/*step size*/
 	
 	void setBetween (QString& b) {this->between = b;};
-	/*void setFontType (QString& font_name, int size, QFont::Weight type);
-	void setFontSize (int size);*/
-inline	void setTextFont (QFont& f){this->setFont(f);};
+	
+	void setTextFont (QFont& f){this->setFont(f);setNewMetricsFont();};
 	
 inline	const QFont& getTextFont (){return this->font();};
 	
-	void start(){if (!timer->isActive())timer->start(this->vel,this); canWakeUp = true;};	/*comienzan a moverse las letras*/
-	void stop(){timer->stop(); canWakeUp = false;};	/*frena el movimiento de las letras*/
+	void start(){if (!timer->isActive())timer->start(this->vel,this);};	/*comienzan a moverse las letras*/
+	void stop(){timer->stop();};	/*frena el movimiento de las letras*/
 	
-inline	void setBackColor (const QColor& c){/*this->setTextBackgroundColor (c);*/};
+	void setBackColor (const QColor& c);
 inline	void setFontColor (const QColor& c){this->color = c;};
+
+inline const QColor& getBackColor (){return ((this->palette()).color(QPalette::Window));};
+inline QColor& getFontColor (){return this->color;};
 		
 	
 
@@ -66,16 +68,16 @@ protected:
 	void timerEvent(QTimerEvent *event);
 
 private:
+	/*esta funcion actualiza las metrics cuando se cambio el tipo de fuente*/
+	void setNewMetricsFont();
 	void update_text();
 	bool add_sms();
 	
 	bool canWakeUp;		/*para determinar si debemos despertar o no al text*/
 	int vel;			/*refresh time*/
 	int step;			/*step size*/
-		
 	QBasicTimer *timer;
 	QString between;	/*string entre medio de cada mensaje*/
-	int strcount;
 	SmsTable *smsTable;
 	QColor color;
 	QFontMetrics *metrics;
