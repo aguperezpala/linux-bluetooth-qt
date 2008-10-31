@@ -18,6 +18,6 @@ int main(int argc, char *argv[])
     //xa.show();
     //test.show();
 	result = app.exec();
-	
+		
     return result;
 }
