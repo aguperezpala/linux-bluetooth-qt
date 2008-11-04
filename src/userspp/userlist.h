@@ -38,8 +38,8 @@ public:
 
 
 
-
-	~UserList(); /*borramos todos los usuarios dentro de la lista*/
+	/*!borramos todos los usuarios dentro de la lista*/
+	~UserList(); 
 
 private:
 	QList<UserObject*> *list;

@@ -49,3 +49,18 @@ MainTxtWindow----->TextWindow
 			|----->filemanipulator
 			|----->user*
 			|----->SmsTable
+			
+			
+			
+			
+			
+			
+			
+			
+			
+********************************************************************************
+							MODULOS CHEQUEADOS
+********************************************************************************
+* UserServer
+* UserList
+* QParser	(primera parte)

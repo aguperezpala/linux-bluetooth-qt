@@ -24,6 +24,15 @@ class MainTxtWindow : public QWidget, private Ui::MainTxtWindow
 public:
 	MainTxtWindow(QWidget *parent = 0);
 	~MainTxtWindow();
+	
+	/*Funcion que devuelve la usrList para poder usarla desde otros lugares
+	como el modulo UserServer o algun otro lado
+		RETURNS:
+				NULL == NO EXISTE O ALGO RARO
+				UserList == todo bien
+	*/
+inline	UserList* getUserList () {return this->usrlist;};
+	
 
 private slots:
 	void on_txtbuttonSetSize_clicked();
