@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	result = app.exec();
 	/*********************************************************/
 	
-	server->closeServer();
+	server.closeServer();
 	
 	/*esperamos los threads*/
 	if (pthread_join (tserver, NULL) != 0)

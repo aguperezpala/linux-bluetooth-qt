@@ -243,6 +243,29 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 }
 
 
+void MainTxtWindow::getExternSms (SmsObject* sms)
+{
+	const QString *number = NULL;
+	
+	if (sms != NULL) {
+		/*obtenemos el numero momentaneamente*/
+		number = sms->getNumber();
+		if (this->usrlist->existNumber(*number)) {
+					/*!MOSTRAMOS EL MENSAJE PARA VER SI
+					 *DEBE SER ENCOLADO O NO*/
+			if (acceptSms (*(sms->getMesg()))) {
+				/*!Debe ser encolado*/
+				this->smsTable->insertBack (sms);
+				this->tw->signalNewMesg();
+			}
+		} else {
+			/*!mensaje descartado porque no estaba registrado.. */
+			dprintf ("getExternSms: Mensaje descartado porque no estaba registrado\n");
+		}
+	}
+}
+
+
 
 MainTxtWindow::~MainTxtWindow()
 {
