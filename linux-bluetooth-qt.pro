@@ -21,6 +21,7 @@ HEADERS += src/controllerwindow.h \
            src/textwindow/marquesinobj.h \
            src/userspp/userobject.h \
            src/net/userserver.h \
+           src/reader/smsreader.h \
            src/userspp/userlist.h
 SOURCES += src/controllerwindow.cpp \
            src/main.cpp \
@@ -36,6 +37,7 @@ SOURCES += src/controllerwindow.cpp \
            src/textwindow/marquesinobj.cpp \
            src/userspp/userobject.cpp \
            src/net/userserver.cpp \
+           src/reader/smsreader.cpp \
            src/userspp/userlist.cpp
 DEPENDPATH = .
 INCLUDEPATH += . \

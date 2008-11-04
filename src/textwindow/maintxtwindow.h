@@ -25,6 +25,16 @@ public:
 	MainTxtWindow(QWidget *parent = 0);
 	~MainTxtWindow();
 	
+	
+	/*Funcion que va a tomar un SmsObject y va a ser mostrado al usuario
+	para saber si tiene que ser aceptado o no
+		REQUIRES:
+				sms != NULL
+	
+	Nota: NO DEBE SER LIBERADO el sms (es liberado luego automaticamente)
+	*/
+	void getExternSms (SmsObject* sms);
+	
 	/*Funcion que devuelve la usrList para poder usarla desde otros lugares
 	como el modulo UserServer o algun otro lado
 		RETURNS:
@@ -57,6 +67,8 @@ private:
 			filename == parsed	(ya parseado)
 	*/
 	void getSmsFromFile (QString& filname);
+	
+	
 	
 	/*esta funcion nos va a mostrar un mensaje y nos dice si queremos o no
 	 *encolarlo
