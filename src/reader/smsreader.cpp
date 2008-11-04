@@ -14,12 +14,12 @@ SmsReader::SmsReader(MainTxtWindow* m)
 
 void SmsReader::startReading()
 {
-	QString str("");
+	QString str("");			/*buffer auxiliar*/
 	SmsObject *smsobj = NULL;
 	QString *sms = NULL;
 	QString *number = NULL;
 	QString *text = NULL;
-	int c;
+	int c = 0;
 	
 	this->status = true;		/*habilitamos*/
 	
@@ -60,7 +60,8 @@ void SmsReader::startReading()
 				delete sms;	sms = NULL;
 			}
 			/* lo volvemos a abrir*/
-			this->fifo = fopen ("fifo", "r");
+			if (this->filename != NULL)
+				this->fifo = fopen (this->filename.toStdString().c_str(), "r");
 		} else {
 			/*agregamos un str*/
 			str.append (QChar (c));
@@ -84,6 +85,7 @@ bool SmsReader::setFile(const char *fname)
 	if (fname == NULL)
 		return false;
 	
+	this->filename = QString (fname);
 	this->fifo = fopen (fname, "r");	/*abrimos con permiso de lectura*/
 	result = (this->fifo != NULL);		/*comprobamos que se haya abierto*/
 	
@@ -95,6 +97,7 @@ SmsReader::~SmsReader()
 {
 	if (this->fifo != NULL)
 		fclose (this->fifo);
+	
 }
 
 
