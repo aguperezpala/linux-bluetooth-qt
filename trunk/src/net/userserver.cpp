@@ -18,7 +18,6 @@ QString* UserServer::parseVar (QString& src, const char *var)
 		aux.append (QString (var)); /*sagregamos la variable a buscar*/
 		aux.append ("=");			/*agregamos el =*/
 		/*ahora buscamos*/
-		printf ("QString aux =: %s\n",aux.toStdString().c_str());
 		pos = src.indexOf(QString(var),0, Qt::CaseInsensitive);
 		if (pos >= 0) {
 			/*entonces encontramos alguna cadena*/
@@ -82,6 +81,7 @@ bool UserServer::startListen()
 		} else {
 			/*si nos pudimos conectar entonces tenemos que salir del ciclo*/
 			printf ("UserServer: Escuchando en el puerto %d\n", i);
+			this->status = true;
 			i = US_MAYOR_PORT_RANGE;	/*por las dudas*/
 			break;
 		}
@@ -128,6 +128,8 @@ bool UserServer::startListenOn(int port)
 		return(false);
 	}
 	
+	this->status = true;
+	
 	return result;
 }
 	
@@ -172,7 +174,7 @@ void UserServer::start()
 						if (usr != NULL) {
 							usr->setNumber (*number);
 							this->userlist->insertUser (usr);
-							dprintf ("UserServer: Numero recibido %s\n",
+							printf ("UserServer: Numero recibido %s\n",
 									 (*number).toStdString().c_str());
 							/*!le devolvemos un "OK"*/
 							send (clientfd, US_OK_RESPONSE, strlen (US_OK_RESPONSE), 0);
