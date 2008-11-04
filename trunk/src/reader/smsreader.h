@@ -50,6 +50,7 @@ inline	void stopReading(){this->status = false;};
 	
 private:
 	FILE *fifo;
+	QString filename;
 	MainTxtWindow *txtwindow;
 	Parser parser;
 };
