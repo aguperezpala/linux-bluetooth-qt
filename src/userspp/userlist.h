@@ -34,8 +34,10 @@ public:
 	
 	
 	/*!DEBUG*/
+#ifdef __DEBUG
 	void printList();
-
+	void add_debug_user (const char* number);
+#endif
 
 
 	/*!borramos todos los usuarios dentro de la lista*/

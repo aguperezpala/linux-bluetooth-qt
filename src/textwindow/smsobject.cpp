@@ -20,7 +20,7 @@ void SmsObject::print ()
 	if (!this->name.isEmpty())
 		dprintf ("Name: %s \n",this->name.toStdString().c_str());
 	if (!this->number.isEmpty())
-		dprintf ("Number: %s \n",this->number.toStdString().c_str());
+		dprintf (" Number: **%s** \n",this->number.toStdString().c_str());
 		
 }
 

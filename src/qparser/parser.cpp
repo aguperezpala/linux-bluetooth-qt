@@ -47,13 +47,19 @@ QString* Parser::getNumberField (QString *sms)
 		
 		if (end > begin) {
 			result = new QString ("");
+			/*actualizamos la posicion de begin*/
+			begin = begin + aux.length() + 1;
 			if (result != NULL) {
 				/*agregamos el numero*/
+				
 				result->append (sms->mid (begin, end - begin));
 				/*reemplazamos las comillas*/
 				result->replace (QChar ('"'), QString (""));
 				/*sacamos los espacios*/
-				result->replace (QString(" "), QString (""));
+				//result->replace (QString(" "), QString (""));
+				result->simplified();
+				
+				printf ("length:%d\t-%s-\n",result->length(),result->toStdString().c_str());
 			}
 		}
 	}
