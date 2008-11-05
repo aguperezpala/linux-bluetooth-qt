@@ -47,9 +47,7 @@ void SmsReader::startReading()
 							delete text; text = NULL;
 						}
 						delete sms; sms = NULL;
-#ifdef __DEBUG
-						smsobj->print();	/*!debug*/
-#endif
+						
 						sms = parser.getFirstSms (str);
 						/*!ahora lo agregamos a la txtwindow*/
 						this->txtwindow->getExternSms (smsobj);
@@ -60,7 +58,7 @@ void SmsReader::startReading()
 				delete sms;	sms = NULL;
 			}
 			/* lo volvemos a abrir*/
-			if (this->filename != NULL)
+			if (!this->filename.isNull() && !this->filename.isEmpty())
 				this->fifo = fopen (this->filename.toStdString().c_str(), "r");
 		} else {
 			/*agregamos un str*/
@@ -82,13 +80,13 @@ bool SmsReader::setFile(const char *fname)
 		this->fifo = NULL;
 		this->status = false;
 	}
+	
 	if (fname == NULL)
 		return false;
 	
 	this->filename = QString (fname);
 	this->fifo = fopen (fname, "r");	/*abrimos con permiso de lectura*/
 	result = (this->fifo != NULL);		/*comprobamos que se haya abierto*/
-	
 	
 	return result;
 }

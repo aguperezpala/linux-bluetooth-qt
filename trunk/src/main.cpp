@@ -36,7 +36,12 @@ void *start_sms_reader (void * s)
 	SmsReader *reader = (SmsReader*) s;
 	
 	assert (reader != NULL);
-	
+	if (!reader->setFile (FIFO_FILE_NAME)){
+		printf ("Main: No existe el archivo %s (SmsReader no se puede"
+				"inicializar\n", FIFO_FILE_NAME);
+		exit (1);
+	} else
+		printf ("Main: SmsReader inicializado correctamente.\n");
 	/*empezamos a escuchar*/
 	reader->startReading();
 	printf ("Main: Se termino de leer con reader\n");
@@ -67,16 +72,8 @@ int main(int argc, char *argv[])
 	}
 	/*********************************************************/
 	
-	printf ("AAAAAAAAAAAAAAAAA");
-	
 	
 	/*******************		SMSREADER		***************/
-	if (!reader.setFile (FIFO_FILE_NAME)){
-		printf ("Main: No existe el archivo %s (SmsReader no se puede"
-				"inicializar\n", FIFO_FILE_NAME);
-		exit (1);
-	} else
-		printf ("Main: SmsReader inicializado correctamente.\n");
 	/*creamos los threads*/
 	if (pthread_create (&treader, NULL, &start_sms_reader,(void*) &reader) != 0){
 		printf ("Main: error al crear el thread treaderr\n");

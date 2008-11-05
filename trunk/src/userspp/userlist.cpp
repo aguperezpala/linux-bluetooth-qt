@@ -1,6 +1,25 @@
 #include <assert.h>
 #include "userlist.h"
 
+/*! DEBUG*/
+#ifdef __DEBUG
+void UserList::add_debug_user (const char* number)
+{
+	UserObject *user1 = NULL;
+	QString *auxstr = NULL;
+	user1 = new UserObject();
+	if (user1 != NULL) {
+		auxstr = new QString (number);
+		user1->setNumber (*auxstr);
+		delete auxstr; auxstr = NULL;
+		this->insertUser (user1);
+	}
+	
+}
+
+#endif
+
+
 UserList::UserList()
 {
 	this->list = NULL;
@@ -12,16 +31,16 @@ UserList::UserList()
 	
 	/*!DEBUG*/
 #ifdef __DEBUG
-	UserObject *user1 = NULL;
-	QString *auxstr = NULL;
-	user1 = new UserObject();
-	if (user1 != NULL) {
-		auxstr = new QString ("3516545682");
-		user1->setNumber (*auxstr);
-		delete auxstr; auxstr = NULL;
-		this->insertUser (user1);
-	}
-	
+	add_debug_user ("3516545682");
+	add_debug_user ("+543516065926");
+	add_debug_user ("+543515915105");
+	add_debug_user ("156844728");
+	add_debug_user ("+543515915105");
+	add_debug_user ("+543515589908");
+	add_debug_user ("+543512306042");
+	add_debug_user ("156776035");
+	add_debug_user ("+543513723491");
+	add_debug_user ("+543516314985");
 	this->printList();
 #endif 
 	
