@@ -38,7 +38,7 @@ void *start_sms_reader (void * s)
 	assert (reader != NULL);
 	if (!reader->setFile (FIFO_FILE_NAME)){
 		printf ("Main: No existe el archivo %s (SmsReader no se puede"
-				"inicializar\n", FIFO_FILE_NAME);
+				" inicializar)\n", FIFO_FILE_NAME);
 		exit (1);
 	} else
 		printf ("Main: SmsReader inicializado correctamente.\n");

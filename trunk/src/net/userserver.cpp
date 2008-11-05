@@ -153,7 +153,6 @@ void UserServer::start()
 		sizeGet = 0;
 		aux = NULL;
 		
-		printf ("aaa");
 		/*---accept a connection (creating a data pipe)---*/
 		clientfd = accept((this->sock), (struct sockaddr*)&client_addr, &addrlen);
 		/*send(clientfd, buffer, recv(clientfd, buffer, MAXBUF, 0), 0);*/
