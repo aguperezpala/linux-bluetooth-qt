@@ -42,24 +42,23 @@ QString* Parser::getNumberField (QString *sms)
 	if (sms != NULL && !sms->isEmpty()) {
 		aux.append (" =");
 		begin = sms->indexOf (aux, 0, Qt::CaseInsensitive);
-		if (begin > 0)
-			end = sms->indexOf (QString ("\n"), begin, Qt::CaseInsensitive);
+		if (begin > 0){
+			begin = begin + aux.length();
+			end = sms->indexOf (QChar ('\n'), begin);
+		}
 		
 		if (end > begin) {
-			result = new QString ("");
+			result = new QString (sms->mid (begin, end - begin));
 			/*actualizamos la posicion de begin*/
-			begin = begin + aux.length() + 1;
+			printf ("length:%d\t-%s-\n",result->length(),result->toStdString().c_str());
 			if (result != NULL) {
-				/*agregamos el numero*/
-				
-				result->append (sms->mid (begin, end - begin));
+				result->append (QChar ('\0'));
 				/*reemplazamos las comillas*/
 				result->replace (QChar ('"'), QString (""));
 				/*sacamos los espacios*/
-				//result->replace (QString(" "), QString (""));
+				result->replace (QString(" "), QString (""));
 				result->simplified();
 				
-				printf ("length:%d\t-%s-\n",result->length(),result->toStdString().c_str());
 			}
 		}
 	}
@@ -95,6 +94,8 @@ QString* Parser::getTextField (QString *sms)
 					result->append (sms->mid (begin, end - begin));
 					/*reemplazamos los ';'*/
 					result->replace (QString(";"), QString (""));
+					/*tambien sacamos los \n*/
+					result->replace (QChar('\n'), QString (""));
 				}
 			}
 		}
