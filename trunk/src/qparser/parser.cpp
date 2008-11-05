@@ -50,7 +50,8 @@ QString* Parser::getNumberField (QString *sms)
 		if (end > begin) {
 			result = new QString (sms->mid (begin, end - begin));
 			/*actualizamos la posicion de begin*/
-			printf ("length:%d\t-%s-\n",result->length(),result->toStdString().c_str());
+			/*!ACA MODIFICAR*/
+			/**printf ("length:%d\t-%s-\n",result->length(),result->toStdString().c_str());*/
 			if (result != NULL) {
 				result->append (QChar ('\0'));
 				/*reemplazamos las comillas*/
