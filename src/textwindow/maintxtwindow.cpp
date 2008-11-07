@@ -275,10 +275,14 @@ void MainTxtWindow::new_sms_arrive(void)
 					/*!Debe ser encolado*/
 					this->smsTable->insertBack (sms);
 					this->tw->signalNewMesg();
+				} else {
+					/*no se acepto lo borramos*/
+					delete sms;
 				}
 			} else {
 				/*!mensaje descartado porque no estaba registrado.. */
 				dprintf ("getExternSms: Mensaje descartado porque no estaba registrado\n");
+				delete sms;
 			}
 		}
 		
