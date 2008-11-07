@@ -44,22 +44,20 @@ QString* Parser::getNumberField (QString *sms)
 		begin = sms->indexOf (aux, 0, Qt::CaseInsensitive);
 		if (begin > 0){
 			begin = begin + aux.length();
-			end = sms->indexOf (QChar ('\n'), begin);
+			end = sms->indexOf (QChar ('\n'), begin) - 1;
 		}
-		
+	
 		if (end > begin) {
-			result = new QString (sms->mid (begin, end - begin));
-			/*actualizamos la posicion de begin*/
-			/*!ACA MODIFICAR*/
-			/**printf ("length:%d\t-%s-\n",result->length(),result->toStdString().c_str());*/
+			result = new QString ("");
+			
 			if (result != NULL) {
-				result->append (QChar ('\0'));
+				
+				result->append (sms->mid (begin, end - begin));
 				/*reemplazamos las comillas*/
 				result->replace (QChar ('"'), QString (""));
 				/*sacamos los espacios*/
 				result->replace (QString(" "), QString (""));
 				result->simplified();
-				
 			}
 		}
 	}

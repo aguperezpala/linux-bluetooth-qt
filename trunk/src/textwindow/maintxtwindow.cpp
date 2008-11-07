@@ -23,6 +23,9 @@ MainTxtWindow::MainTxtWindow(QWidget *parent)
 	verticalLayout_3->addWidget (smsTable);
 	connect (smsTable,SIGNAL(cellClicked(int,int)),this,SLOT (on_smsTable_cellClicked(int,int)));
 	
+	/*!conectamos el signal de signal_new_sms*/
+	connect (this,SIGNAL(signal_new_sms(void)),this,SLOT (new_sms_arrive(void)));
+	
 	/*generamos la ventana donde se van a mostrar los sms*/
 	this->tw = new TextWindow(0, this->smsTable);
 	if (this->tw == NULL) {
@@ -166,6 +169,7 @@ bool MainTxtWindow::acceptSms (const QString& data)
 	QAbstractButton *okbtn = NULL;
 	QAbstractButton *cancelbtn = NULL;
 	
+	
 	if (data.isNull() || data.isEmpty ()) {
 		return false;
 	} else {
@@ -245,24 +249,41 @@ void MainTxtWindow::getSmsFromFile (QString& fn)
 
 void MainTxtWindow::getExternSms (SmsObject* sms)
 {
+	/*agregamos el sms a la lista*/
+	smslist.append (sms);
+	emit signal_new_sms();
+
+}
+
+
+void MainTxtWindow::new_sms_arrive(void)
+{
+	SmsObject *sms = NULL;
 	const QString *number = NULL;
-	
-	if (sms != NULL) {
-		/*obtenemos el numero momentaneamente*/
-		number = sms->getNumber();
-		if (this->usrlist->existNumber(*number)) {
+	/*en teoria esta funcion es llamada cuando un nuevo sms es agregado a la smslist*/
+	while (!smslist.isEmpty()) {
+		sms = smslist.first();	/*obtenemos el primero*/
+		if (sms != NULL) {
+			/*obtenemos el numero momentaneamente*/
+			number = sms->getNumber();
+			if (this->usrlist->existNumber(*number)) {
 					/*!MOSTRAMOS EL MENSAJE PARA VER SI
 					 *DEBE SER ENCOLADO O NO*/
-			if (acceptSms (*(sms->getMesg()))) {
-				/*!Debe ser encolado*/
-				this->smsTable->insertBack (sms);
-				this->tw->signalNewMesg();
+			
+				if (acceptSms (*(sms->getMesg()))) {
+					/*!Debe ser encolado*/
+					this->smsTable->insertBack (sms);
+					this->tw->signalNewMesg();
+				}
+			} else {
+				/*!mensaje descartado porque no estaba registrado.. */
+				dprintf ("getExternSms: Mensaje descartado porque no estaba registrado\n");
 			}
-		} else {
-			/*!mensaje descartado porque no estaba registrado.. */
-			dprintf ("getExternSms: Mensaje descartado porque no estaba registrado\n");
 		}
+		smslist.removeFirst();	/*hacemos un pop del primero*/
 	}
+	
+	
 }
 
 
