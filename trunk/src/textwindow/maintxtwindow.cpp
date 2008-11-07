@@ -263,6 +263,7 @@ void MainTxtWindow::new_sms_arrive(void)
 	/*en teoria esta funcion es llamada cuando un nuevo sms es agregado a la smslist*/
 	while (!smslist.isEmpty()) {
 		sms = smslist.first();	/*obtenemos el primero*/
+		smslist.removeFirst();	/*hacemos un pop del primero*/
 		if (sms != NULL) {
 			/*obtenemos el numero momentaneamente*/
 			number = sms->getNumber();
@@ -280,7 +281,7 @@ void MainTxtWindow::new_sms_arrive(void)
 				dprintf ("getExternSms: Mensaje descartado porque no estaba registrado\n");
 			}
 		}
-		smslist.removeFirst();	/*hacemos un pop del primero*/
+		
 	}
 	
 	
@@ -290,8 +291,14 @@ void MainTxtWindow::new_sms_arrive(void)
 
 MainTxtWindow::~MainTxtWindow()
 {
-	delete this->tw;
-	delete this->smsTable;
-	delete this->fmanipulator;
-	delete this->msg;
+	if (this->tw != NULL)
+		delete this->tw;
+	if (this->smsTable != NULL)
+		delete this->smsTable;
+	if (this->fmanipulator != NULL)
+		delete this->fmanipulator;
+	if (this->msg != NULL)
+		delete this->msg;
+	if (this->usrlist != NULL)
+		delete this->usrlist;
 }

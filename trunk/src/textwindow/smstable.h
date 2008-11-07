@@ -19,6 +19,7 @@ class SmsTable : public QTableWidget
 
 public:
 	SmsTable(QWidget *parent = 0);
+	~SmsTable();
 
 	/*removemos el item en la fila r BORRANDO el smsobject de la queue */
 	void deleteItem (int r);

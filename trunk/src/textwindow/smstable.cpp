@@ -82,3 +82,16 @@ void SmsTable::on_smsTable_cellClicked (int r, int c)
 {
 	this->setCurrentCell (r,c);
 }
+
+SmsTable::~SmsTable()
+{
+	SmsObject *sms = NULL;
+	while (!this->queue.isEmpty()) {
+		sms = this->queue.dequeue();
+		if (sms != NULL) {
+			delete sms;
+		}
+		sms = NULL;
+	}
+}
+	
