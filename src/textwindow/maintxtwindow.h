@@ -44,7 +44,7 @@ public:
 inline	UserList* getUserList () {return this->usrlist;};
 	
 
-private slots:
+public slots:
 	void on_txtbuttonSetSize_clicked();
 	void on_txtbuttonSetPos_clicked();
 	void on_txtbuttonHideWindow_clicked();
@@ -59,8 +59,14 @@ private slots:
 	void on_txttextFileReciber_textChanged();
 	void on_txtbuttonSetBetween_clicked();
 	void on_smsTable_cellClicked (int r,int c){smsTable->setSelectedCurrent(r,c);};
-	
+	void new_sms_arrive(void);	/*que va a mostrar al usuario los sms almacenados
+								  en la smslist*/
 
+
+signals:
+	void signal_new_sms (void);
+			
+			
 private:
 	/*esta funcion nos obtiene un sms desde un archivo
 		REQUIRES:
@@ -87,6 +93,10 @@ private:
 	TextWindow *tw;		/*ventana donde vamos a mostrar los sms*/
 	QMessageBox *msg;	/*para mostrar algunos mensajes*/
 	FileManipulator *fmanipulator;
+	
+	/*lista donde vamos almacenar temporalmente los mensajes que vamos a mostrar
+	al administrador para que los "admita/desadmita"*/
+	QList<SmsObject*> smslist;
 
 };
 

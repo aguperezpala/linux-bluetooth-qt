@@ -35,7 +35,7 @@ QString* UserServer::parseVar (QString& src, const char *var)
 			eqpos+1 y pos2-1*/
 			result = new QString ("");
 			if (result != NULL) {
-				(*result).append (src.mid (eqpos + 1, pos2 - eqpos - 2));
+				(*result).append (src.mid (eqpos + 1, pos2 - eqpos - 1));
 				dprintf ("parseVar: %s\n",(*result).toStdString().c_str());
 			}
 			
