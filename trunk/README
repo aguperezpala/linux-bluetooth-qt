@@ -15,7 +15,8 @@ modulo copia todos los datos en sus propios strings.
 al archivo "por default" o al que sea, fijarse que deberia ser borrado o "reseteado"
 en algun momento.
 * Terminar el update_text() de textwindow.c.
-* SmsTable->toFile();	SmsTable->fromFile();
+* SmsTable->toFile();	SmsTable->fromFile(); ? (hace falta?)
+* Cheker of verosimilitud...:)
 
 
 
