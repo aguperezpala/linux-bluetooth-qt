@@ -5,6 +5,28 @@ Parser::Parser ()
 
 }
 
+
+QString* Parser::getDataFromKey (QString& source, QString& key)
+{
+	QString *result = NULL;
+	int begin = -1, end = -1;
+	
+	if (source.isNull() || source.isEmpty () || key.isNull() || key.isEmpty())
+		return NULL;
+	
+	begin = source.indexOf (key, 0, Qt::CaseInsensitive);
+	if (begin >= 0) {
+		/*aumentamos a begin el tamaño mismo de la key +1 del '='*/
+		begin = begin + key.length() + 1;
+		end = source.indexOf (QChar ('\n'), begin, Qt::CaseInsensitive);
+	}
+	
+	if (end > begin)
+		result = new QString (source.mid (begin , end - begin));
+	
+	return result;
+}
+
 QString* Parser::getFirstSms (QString& source)
 {
 	QString *result = NULL;

@@ -1,5 +1,7 @@
 #include <assert.h>
 #include "userlist.h"
+#include <stdio.h>
+#include <string.h>
 
 /*! DEBUG*/
 #ifdef __DEBUG
@@ -41,7 +43,7 @@ UserList::UserList()
 	add_debug_user ("156776035");
 	add_debug_user ("+543513723491");
 	add_debug_user ("+543516314985");
-	this->printList();
+	
 #endif 
 	
 	
@@ -167,6 +169,134 @@ void UserList::printList()
 	}
 	
 }
+
+
+bool UserList::toFile(QString& fname)
+{
+	const char *fileName = NULL;
+	FILE *fd = NULL;
+	int i = 0;
+	UserObject *userObj = NULL;
+	
+	/*obtenemos el nombre del archivo a guardar*/
+	if (fname.isNull () || fname.isEmpty ())
+		fileName = USER_LIST_DEFAULT_NAME;
+	else
+		fileName = fname.toStdString().c_str();
+	
+	fd = fopen (fileName, "w");
+	
+	if (fd == NULL)
+		return false;
+	
+	for (i = 0; i < this->list->size(); ++i) {
+		if (this->list->at(i) != NULL) {
+			userObj = this->list->at(i);
+			fprintf (fd, USER_LIST_FILE_SEPARATOR_UP "\n");	/*separador inicial*/
+			
+			/*ahora imprimimos todos los campos en el archivo, en este caso, solamente
+			vamos a usar NUMERO*/
+			fprintf (fd, USER_LIST_NUMBER_FIELD	"=");
+			fprintf (fd, "%s\n",(userObj->getNumber()).toStdString().c_str());
+			
+			fprintf (fd, USER_LIST_FILE_SEPARATOR_BT "\n");	/*separador final*/
+			
+		}
+	}
+	
+	fclose (fd);
+	
+	return true;
+}
+
+bool UserList::toFile(void)
+{
+	QString dummy("");
+	
+	return this->toFile(dummy);
+}
+
+bool UserList::fromFile(QString& fname)
+{
+	FILE *fd = NULL;
+	UserObject *userObj = NULL;
+	char buff[100]; /*como mucho vamos a tener 100 caracteres en una linea*/
+	QString line(""), key ("");
+	bool startUser = false, endUser = false;
+	QString *field = NULL;
+	
+	if (fname.isNull() || fname.isEmpty())
+		return false;
+	
+	fd = fopen (fname.toStdString().c_str(), "r");
+	if (fd == NULL)
+		return false;
+	
+	memset (buff, '\0', 100);
+	/*ahora tenemos que ir leyendo linea por linea del archivo hasta el final*/
+	
+	while (fgets (buff, 100, fd) != NULL) {
+		if (strlen (buff) > 0) {
+			/*si hay algo que hacer entonces..*/
+			if (!startUser) {
+				/*si todavia no encontramos algun inicio de usuario*/
+				if (strstr (buff, USER_LIST_FILE_SEPARATOR_UP)) {
+					/*encontramos un inicio de usuario*/
+					userObj = new UserObject();
+					startUser = true;
+					endUser = false;
+					
+				}
+			} else if (!endUser) {
+				if (strstr (buff, USER_LIST_FILE_SEPARATOR_BT)) {
+					/*debemos agregar el usuario*/
+					if (userObj != NULL) {
+						insertUser (userObj);
+						userObj = NULL;
+						startUser = false;
+						endUser = true;
+					} else
+						pdebug ("UserList::fromFile: Estamos intentando meter un userObj NULL\n");
+				} else {
+					/*debemos agregar el numero o lo que sea que estamos obteniendo
+					buff*/
+					line = "";
+					line = QString (buff);
+					/*! Aca agregamos solamente EL NUMERO, habria que chequear los 
+					* otros campos (nick/name/dni....etc)
+					*/
+					key = USER_LIST_NUMBER_FIELD;
+					field = this->parser.getDataFromKey (line, key);
+					if (field != NULL) {
+						if (userObj != NULL) {
+							/*seteamos el numero*/
+							userObj->setNumber (*field);
+							pdebug ("UserList: agregando usuario from file\n");
+						}
+						delete field; field = NULL;
+					} else {
+						/*debemos liberar el userObj porque no tiene info adentro*/
+						delete userObj; userObj = NULL;
+					}
+				}
+			}
+			/*limpiamos el buffer, con esto en teoria alcanza*/
+			buff[0] = '\0';
+		}
+	}
+	
+	fclose (fd);
+	
+	return true;	
+}
+
+bool UserList::fromFile(void)
+{
+	QString dummy("");
+	
+	return this->fromFile(dummy);
+}
+
 
 UserList::~UserList(void)
 {

@@ -8,6 +8,22 @@
 
 #include "../debug.h"
 #include "userobject.h"
+#include "../qparser/parser.h"
+
+/**************	FILE CONFIG	********************/
+#define USER_LIST_DEFAULT_NAME	"userlist.default"
+
+#define USER_LIST_FILE_SEPARATOR_UP	"<user_start>"
+#define USER_LIST_FILE_SEPARATOR_BT	"<user_end>"
+
+/*los campos van a tener la siguiente forma FIELD=dato*/
+#define USER_LIST_NAME_FIELD	"Name"
+#define USER_LIST_NUMBER_FIELD	"Number"
+#define USER_LIST_NICK_FIELD	"Nick"
+#define USER_LIST_DNI_FIELD		"DNI"
+
+
+/***********************************************/
 
 class UserList{
 public:
@@ -32,6 +48,17 @@ public:
 	
 	bool existNumber (const QString&);
 	
+	inline int getSize (){return this->list->size();};
+	
+	/* Tener en cuenta que siempre vamos a sobreescribir cualquier archivo
+	 Si:
+		fname == NULL || fname == Empty ==> USER_LIST_DEFAULT_NAME
+	*/
+	bool toFile(QString& fname);	/*guarda la lista en un archivo*/
+	bool toFile(void);				/*!POR CONVENIENCIA*/
+	
+	bool fromFile(QString& fname);	/*carga la lista desde un archivo*/
+	bool fromFile(void);			/*!POR CONVENIENCIA*/
 	
 	/*!DEBUG*/
 #ifdef __DEBUG
@@ -45,7 +72,7 @@ public:
 
 private:
 	QList<UserObject*> *list;
-
+	Parser parser;
 };
 
 #endif

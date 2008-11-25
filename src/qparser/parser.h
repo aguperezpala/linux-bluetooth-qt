@@ -28,6 +28,18 @@ class Parser
 public:
 	Parser();
 	
+	/** Generica (para obtener diferentes configuraciones de la forma
+	KEY=DATA\n , devolviendo hasta el primer \n.
+	GENERA MEMORIA!.
+		REQUIRES:
+			source != NULL 
+			key != NULL
+		RETURNS:
+			new QString * data
+			NULL ==> ERROR
+	 */
+	QString* getDataFromKey (QString& source, QString& key);
+	
 	/*esta funcion va a tomar el primer sms del QString source y ELIMINARLO
 	de source una vez sacado el sms.
 	
@@ -53,6 +65,9 @@ public:
 	
 	/*obtenemos el texto*/
 	QString* getTextField (QString *sms);
+	
+	
+	/******************	USER_LIST	******************************/
 	
 	
 	private:
