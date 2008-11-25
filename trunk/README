@@ -10,11 +10,12 @@ modulo copia todos los datos en sus propios strings.
 							QUE FALTA HACER
 ********************************************************************************
 * CHEQUEOS GENERALES (testeo de todos los modulos por separado)
+***** en mainTxtWindow.h linea 95 (sobre variables generales) saveConfigFile
+y loadConfigFile (hacer esas funciones).
 * DONDE SE MUESTRA EL TEXTO!!!!!!!!
 * Fijarse que cuando se inserta un nuevo usuario en userlist se hace un append
 al archivo "por default" o al que sea, fijarse que deberia ser borrado o "reseteado"
 en algun momento.
-* Terminar el update_text() de textwindow.c.
 * SmsTable->toFile();	SmsTable->fromFile(); ? (hace falta?)
 * Cheker of verosimilitud...:)
 

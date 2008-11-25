@@ -291,7 +291,19 @@ void MainTxtWindow::new_sms_arrive(void)
 	
 }
 
-
+void MainTxtWindow::on_txtbuttonLoadUsers_clicked()
+{
+	QString fileName = QFileDialog::getOpenFileName (this, tr("Open File"),
+			QDir::currentPath());
+	
+	if (!fileName.isEmpty()) {
+		/*cargamos la lista en la lista actual*/
+		if (!this->usrlist->fromFile (fileName)){
+			this->msg->setText("Error al cargar la lista de usuarios.");
+			this->msg->show();
+		}
+	}
+}
 
 MainTxtWindow::~MainTxtWindow()
 {

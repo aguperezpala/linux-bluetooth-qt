@@ -16,6 +16,7 @@
 #include "../userspp/userobject.h"
 #include "../userspp/userlist.h"
 
+#define MAINTXTW_CONFIG_FILE_NAME	"config.conf"
 
 class MainTxtWindow : public QWidget, private Ui::MainTxtWindow 
 {
@@ -61,6 +62,7 @@ public slots:
 	void on_smsTable_cellClicked (int r,int c){smsTable->setSelectedCurrent(r,c);};
 	void new_sms_arrive(void);	/*que va a mostrar al usuario los sms almacenados
 								  en la smslist*/
+	void on_txtbuttonLoadUsers_clicked();
 
 
 signals:
@@ -86,6 +88,11 @@ private:
 	*/
 	bool acceptSms (const QString& data);
 	
+	/*Esta funcion nos guarda el archivo de configuracion, siempre con el nombre
+	del archivo MAINTXTW_CONFIG_FILE_NAME
+		RETURNS:
+				true on succsess*/
+	bool saveConfigFile (void);
 	
 	
 	UserList *usrlist;
