@@ -169,7 +169,7 @@ void TextWindow::signalNewMesg()
 	QString *str = NULL;
 	
 	QPainter painter(this);
-	painter.setPen(color);
+	painter.setPen(this->color);
 		
 	for (int j = 0; j < mlist.size(); j++){
 		/*vamos a recorrer la cantidad de MarquesinObj que tengamos*/

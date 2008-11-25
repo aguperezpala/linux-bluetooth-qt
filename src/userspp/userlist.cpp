@@ -1,6 +1,5 @@
 #include <assert.h>
 #include "userlist.h"
-#include <stdio.h>
 #include <string.h>
 
 /*! DEBUG*/
@@ -29,7 +28,7 @@ UserList::UserList()
 	this->list = new QList<UserObject*>();
 	
 	assert (this->list != NULL); /*nos aseguramos*/
-	
+	this->file = USER_LIST_DEFAULT_NAME;
 	
 	/*!DEBUG*/
 #ifdef __DEBUG
@@ -46,8 +45,6 @@ UserList::UserList()
 	
 #endif 
 	
-	
-	
 }
 
 /*REQUIRES: usr != NULL*/
@@ -56,6 +53,8 @@ void UserList::insertUser (UserObject* usr)
 	/*estamos seguros que list != NULL*/
 	if (usr != NULL) {
 		this->list->append (usr);
+		/*! tener en cuenta aca que hacemos un append*/
+		appendUserToFile (usr);
 	}
 	else
 		pdebug ("recibimos un usr == NULL");
@@ -184,6 +183,8 @@ bool UserList::toFile(QString& fname)
 	else
 		fileName = fname.toStdString().c_str();
 	
+	this->file = fname; /*igualamos el nombre del archivo*/
+	
 	fd = fopen (fileName, "w");
 	
 	if (fd == NULL)
@@ -231,6 +232,8 @@ bool UserList::fromFile(QString& fname)
 	fd = fopen (fname.toStdString().c_str(), "r");
 	if (fd == NULL)
 		return false;
+	
+	this->file = fname; /*igualamos el nombre del archivo*/
 	
 	memset (buff, '\0', 100);
 	/*ahora tenemos que ir leyendo linea por linea del archivo hasta el final*/
@@ -295,6 +298,32 @@ bool UserList::fromFile(void)
 	QString dummy("");
 	
 	return this->fromFile(dummy);
+}
+
+
+bool UserList::appendUserToFile (UserObject* usr)
+{
+	FILE *fd = NULL;
+	
+	/*Guarda nescesaria*/
+	if (this->file.isNull() || this->file.isEmpty() || usr == NULL)
+		return false;
+	
+	fd = fopen (this->file.toStdString().c_str(), "a");
+	if (fd == NULL)
+		return false;
+	
+	fprintf (fd, "\n");	/*por las dudas*/
+	fprintf (fd, USER_LIST_FILE_SEPARATOR_UP "\n");	/*separador inicial*/
+	/*ahora imprimimos todos los campos en el archivo, en este caso, solamente
+	vamos a usar NUMERO*/
+	fprintf (fd, USER_LIST_NUMBER_FIELD	"=");
+	fprintf (fd, "%s\n",(usr->getNumber()).toStdString().c_str());
+	fprintf (fd, USER_LIST_FILE_SEPARATOR_BT "\n");	/*separador final*/
+	
+	pdebug ("Append terminado\n");
+	fclose (fd);
+	return true;
 }
 
 
