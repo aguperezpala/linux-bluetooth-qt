@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>742</width>
-    <height>536</height>
+    <width>741</width>
+    <height>534</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -188,10 +188,13 @@
      <x>10</x>
      <y>400</y>
      <width>731</width>
-     <height>131</height>
+     <height>81</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+    <property name="spacing" >
+     <number>0</number>
+    </property>
     <item>
      <widget class="QLabel" name="label" >
       <property name="text" >
@@ -228,8 +231,6 @@
      </widget>
     </item>
    </layout>
-   <zorder>label</zorder>
-   <zorder>txttextFileReciber</zorder>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget_4" >
    <property name="geometry" >
@@ -280,6 +281,9 @@
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_5" >
+    <property name="spacing" >
+     <number>0</number>
+    </property>
     <item>
      <widget class="QPushButton" name="txtbuttonSetBetween" >
       <property name="text" >
@@ -289,6 +293,25 @@
     </item>
     <item>
      <widget class="QLineEdit" name="txtlineBetween" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_3" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>480</y>
+     <width>731</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_6" >
+    <item>
+     <widget class="QPushButton" name="txtbuttonLoadUsers" >
+      <property name="text" >
+       <string>Cargar Usuarios</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

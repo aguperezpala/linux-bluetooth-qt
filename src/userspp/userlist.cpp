@@ -42,7 +42,6 @@ UserList::UserList()
 	add_debug_user ("156776035");
 	add_debug_user ("+543513723491");
 	add_debug_user ("+543516314985");
-	
 #endif 
 	
 }
@@ -52,9 +51,17 @@ void UserList::insertUser (UserObject* usr)
 {
 	/*estamos seguros que list != NULL*/
 	if (usr != NULL) {
-		this->list->append (usr);
-		/*! tener en cuenta aca que hacemos un append*/
-		appendUserToFile (usr);
+		/*Para mayor seguridad vamos a chequear que el usuario no exista, si no 
+		existe entonces lo agregamos*/
+		if (getUserByNumber (usr->getNumber()) == NULL) {
+			this->list->append (usr);
+			/*! tener en cuenta aca que hacemos un append*/
+			appendUserToFile (usr);
+		} else {
+			/*lo debemos liberar*/
+			delete usr; usr = NULL;
+			dprintf("Usuario ya existente cuando intentamos agregarlo.\n");
+		}
 	}
 	else
 		pdebug ("recibimos un usr == NULL");
@@ -274,7 +281,7 @@ bool UserList::fromFile(QString& fname)
 						if (userObj != NULL) {
 							/*seteamos el numero*/
 							userObj->setNumber (*field);
-							pdebug ("UserList: agregando usuario from file\n");
+							pdebug ("Agregando usuario from file\n");
 						}
 						delete field; field = NULL;
 					} else {
@@ -287,7 +294,7 @@ bool UserList::fromFile(QString& fname)
 			buff[0] = '\0';
 		}
 	}
-	
+	dprintf ("UserList, fromFile: Lista cargada, tamaño: %d\n", getSize());
 	fclose (fd);
 	
 	return true;	
