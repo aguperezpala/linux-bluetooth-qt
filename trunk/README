@@ -11,9 +11,9 @@ modulo copia todos los datos en sus propios strings.
 ********************************************************************************
 * CHEQUEOS GENERALES (testeo de todos los modulos por separado)
 * DONDE SE MUESTRA EL TEXTO!!!!!!!!
-* UserList->toFile(); y UserList->fromFile(); por las dudas de que se apague la
-pc o algo raro (tambien implementar el contador para determinar la cantidad de gente
-que va ingresando.
+* Fijarse que cuando se inserta un nuevo usuario en userlist se hace un append
+al archivo "por default" o al que sea, fijarse que deberia ser borrado o "reseteado"
+en algun momento.
 * Terminar el update_text() de textwindow.c.
 * SmsTable->toFile();	SmsTable->fromFile();
 

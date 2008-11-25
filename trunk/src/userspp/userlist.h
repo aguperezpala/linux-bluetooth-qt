@@ -4,7 +4,7 @@
 
 #include <QString>
 #include <QList>
-
+#include <stdio.h>
 
 #include "../debug.h"
 #include "userobject.h"
@@ -73,6 +73,14 @@ public:
 private:
 	QList<UserObject*> *list;
 	Parser parser;
+	QString file;
+	
+	/* Esta funcion va a agregar un usuario a un archivo si y solo si el
+	QString file != emtpy && file != null..
+	*/
+	bool appendUserToFile (UserObject* usr);
+	
+	
 };
 
 #endif
