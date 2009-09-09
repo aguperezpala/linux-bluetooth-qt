@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 	client = accept(s, (struct sockaddr *)&rem_addr, &opt);
 	
 	ba2str( &rem_addr.rc_bdaddr, buf );
-	fprintf(stderr, "accepted connection from %s\n", buf);
+	fprintf(stdout, "accepted connection from %s\n", buf);
 	memset(buf, 0, sizeof(buf));
 	
 	// read data from the client
