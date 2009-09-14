@@ -7,12 +7,13 @@
 #include <QString>
 #include "../debug.h"
 
+#define MAC_ADDR_SIZE 17	/* no es el tamaño verdadero, es el size "visual" */
 class CUser{
 	public:
 		/* Constructor que pide de una los datos, en caso de que sean
 		 * NULL los string no los copia.
 		 * REQUIRES:
-		 *	mac != NULL && mac->size == 17 / * cacaso * /
+		 *	mac != NULL && mac->size == MAC_ADDR_SIZE / * cacaso * /
 		 * NOTE: copia memoria, liberar con lo que se llamo 
 		 */
 		CUser (QString * nick, QString * mac);

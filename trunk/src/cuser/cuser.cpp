@@ -1,10 +1,9 @@
-
 #include "cuser.h"
 
 CUser::CUser(QString * nick, QString * mac)
 {
 	ASSERT (mac != NULL);
-	ASSERT (mac->size() == 17);
+	ASSERT (mac->size() == MAC_ADDR_SIZE);
 	
 	this->nick = QString::QString (*nick);
 	this->MAC = QString::QString (*mac);
