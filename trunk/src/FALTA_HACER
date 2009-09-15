@@ -6,7 +6,10 @@ Modulos terminados de chequear:
 Modulos en chequeo:
 	...
 	
-	
+UServer:
+	* Hacerlo que soporte multiples clientes?.
+	* Modularizar UServer y agregarle otra clase UClient que maneje las
+	interacciones con el cliente (soporte de multiples clientes).
 * Generar un config_file (parser) para leer las configuraciones de varias cosas:
 	* Posicion de la ventana de la marquesina.
 	* Tamaño de la fuente.
@@ -14,5 +17,11 @@ Modulos en chequeo:
 	* Archivo de base de datos.
 	* Puerto de escucha del UServer.
 	
+	
+	
+	
+Compilacion FINAL:
+	* Sacar el flab -g.
+	* Sacar el define __DEBUG.
 
 

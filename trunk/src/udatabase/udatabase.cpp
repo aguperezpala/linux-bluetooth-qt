@@ -65,10 +65,17 @@ UDataBase::UDataBase (const char * fname)
 */
 bool UDataBase::existUser (const CUser * user)
 {
+	bool result = false;
+	
 	/* pre */
 	ASSERT (user != NULL);
 	
-	return this->hashTable.contains (user->getMAC());
+	/*! atomico */
+	this->mutex.lock();
+	result = this->hashTable.contains (user->getMAC());
+	this->mutex.unlock();
+	
+	return result;
 }
 
 /* Funcion que va a agregar a un usuario SI Y SOLO SI no se 
@@ -93,10 +100,17 @@ bool UDataBase::addUser (CUser * user)
 		/* lo borramos al choripan */
 		delete user;
 	else {
+		/*! hacemos atomico esto */
+		this->mutex.lock();
 		/* agregamos a la hash una nueva entrada */
 		this->hashTable.insert (user->getMAC(), user);
+		this->mutex.unlock();
+		
 		result = true;
+		
 	}
+	
+	
 	
 	return result;
 }
@@ -221,7 +235,8 @@ void UDataBase::clean (void)
 	QHash<QString, CUser*>::iterator i;
 	CUser * user = NULL;
 	
-	
+	/*! atomico */
+	this->mutex.lock();
 	/* iteramos sobre toda la hashtable */
 	for (i = this->hashTable.begin(); i != this->hashTable.end(); ++i) {
 		
@@ -231,6 +246,9 @@ void UDataBase::clean (void)
 			delete user;
 	}
 	this->hashTable.clear();
+	
+	
+	this->mutex.unlock();
 }
 
 /*!DEBUG*/
@@ -254,6 +272,9 @@ void UDataBase::print()
 /* NOTE: libera toda la hash table */
 UDataBase::~UDataBase()
 {
+	/* por las dudas liberamos el mutex */
+	this->mutex.unlock();
+	
 	/* cerramos el archivo */
 	if (this->file)
 		fclose (this->file);

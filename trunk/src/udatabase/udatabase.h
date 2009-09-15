@@ -12,6 +12,7 @@
 #include <QString>
 #include <QChar>
 #include <QHash>
+#include <QMutex>
 
 #include "../cuser/cuser.h"
 #include "../consts.h"
@@ -93,6 +94,7 @@ class UDataBase{
 		QHash<QString, CUser*> hashTable;
 		FILE * file;
 		QString fname;
+		QMutex mutex;
 		
 };
 
