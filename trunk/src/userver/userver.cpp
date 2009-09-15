@@ -62,6 +62,7 @@ int UServer::workClient(int clientfd)
 	QString resp = "";
 	char buff[USP_SSAP_MAZ_SIZE+1] = {0};
 	int bytesReaded = 0;
+	int dummy = 0;
 	CUser * user = NULL;
 	
 	
@@ -78,7 +79,7 @@ int UServer::workClient(int clientfd)
 	while (errCode == 0 && !userRegistered) {
 		/* leemos */
 		bytesReaded = read (clientfd, buff, USP_SSAP_MAZ_SIZE);
-		if (bytesReaded < 0) {
+		if (bytesReaded <= 0) {
 			debugp("UServer::workClient: Error al intentar leer "
 			"el clientefd. No se pudo registrar ademas.\n");
 			errCode = -1;
@@ -106,8 +107,8 @@ int UServer::workClient(int clientfd)
 				/* le mandamos una respuesta :) */
 				resp = "ok";
 				if (this->parser.createResponse (resp))
-					errCode = write (clientfd, 
-							  qstrtochar(resp),
+					dummy = write(clientfd,
+						       qstrtochar(resp),
 							  resp.length());
 				else
 					/* no se pudo crear */
@@ -127,12 +128,13 @@ int UServer::workClient(int clientfd)
 	if (!userRegistered)
 		return errCode; /*! ASSERT (errCode < 0); */
 	
-	/*! aca estamos con el usuario registrado y esperando a seguir 
+	/*! aca estamos con el usuario registrado y esperando a seguir
 	 * recibiendo datos. Ahora solo del tipo <SSAP>MAC,Nick<SSAP> */
+	
 	while (errCode == 0) {
 		/* leemos */
 		bytesReaded = read (clientfd, buff, USP_SSAP_MAZ_SIZE);
-		if (bytesReaded < 0) {
+		if (bytesReaded <= 0) {
 			debugp("UServer::workClient: Error al intentar leer "
 			"el clientefd. No se pudo registrar ademas.\n");
 			errCode = -1;
@@ -141,7 +143,6 @@ int UServer::workClient(int clientfd)
 		buff[bytesReaded] = '\0';
 		/* concatenamos lo que recibimos */
 		req.append(buff);
-		printf ("USERVER: request: %s\n", qstrtochar (req));
 		/* verificamos que este completo con el parser */
 		switch (this->parser.isValidRequest(req)) {
 			case -1: /* esta incompleto, seguimos recibiendo */
@@ -157,8 +158,8 @@ int UServer::workClient(int clientfd)
 					/* mandamos el "ok" */
 					resp = "ok";
 					if (this->parser.createResponse (resp))
-						errCode = write(clientfd,	
-							qstrtochar(resp),
+						 write (clientfd,
+						       qstrtochar(resp),
 							resp.length());
 					 else
 						 /* no se pudo crear */		
@@ -174,7 +175,6 @@ int UServer::workClient(int clientfd)
 		}
 		
 	}
-	
 	
 	return errCode;
 	
