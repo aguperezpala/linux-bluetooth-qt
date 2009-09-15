@@ -1,1 +1,2 @@
 * UDataBase file (de donde vamos a leer/escribir los datos)
+* UServer: startPort & endPort (puertos donde va a escuchar)

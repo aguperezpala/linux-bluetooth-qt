@@ -1,0 +1,26 @@
+Especificacion del protocolo SSAP:
+* Es orientado a la coneccion y trabaja bajo el protocolo TCP/IP
+
+Modo de trabajo:
+	* Toda solicitud es confirmada mediante un ack <SSAP>OK<SSAP>.
+	* Todo tipo de dato se envia entre <SSAP>datos<SSAP>.
+	* Cada solicitud/respuesta no puede ocupar mas de 256 bytes incluyendo
+	los 12 caracteres "<SSAP><SSAP>".
+	* NO soporta multiples pedidos, por lo se debe esperar la respuesta para
+	cada uno antes de poder solicitar otro pedido. Caso contrario sera 
+	considerado un fayo de protocolo.
+	
+Modo de trabajo del servidor:
+	* Primero que todo debera registrarse cada conexion en el sistema de la
+	siguiente manera:
+		1) El cliente envia un paquete: "<SSAP>registrar<SSAP>".
+		2) El servidor envia un paquete "<SSAP>ok<SSAP>" si no hubo
+		error. En caso de error se desconectara automaticamente la
+		conexion.
+	* Para el envio de paquetes:
+		1) El cliente envia paquetes de la forma
+		"<SSAP>MAC,nickname<SSAP>", donde MAC (17 bytes) es la direccion
+		MAC del dispositivo y nickname es el nombre con el que el
+		usuario quiere aparecer en pantalla.
+		2) El servidor responde con un "<SSAP>ok<SSAP>" si se recibio
+		en forma correcta.
