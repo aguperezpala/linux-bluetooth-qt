@@ -7,6 +7,9 @@
 
 #define debugp(x)	printf(x)
 #define ASSERT(x)	assert(x)
+#else
+#define debugp(x)	
+#define ASSERT(x)	
 #endif
 
 /* funcion que saca el char * de un QString */

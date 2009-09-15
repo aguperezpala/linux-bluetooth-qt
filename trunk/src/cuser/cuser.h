@@ -5,6 +5,7 @@
 #define CUSER_H
 
 #include <QString>
+#include "../consts.h"
 #include "../debug.h"
 
 #define MAC_ADDR_SIZE 17	/* no es el tamaño verdadero, es el size "visual" */
@@ -21,8 +22,8 @@ class CUser{
 		/* GETS
 		 * NOTE: devuelve el puntero NO COPIA MEMORIA => NO liberarla
 		 */
-		inline const QString& getNick (){return this->nick;};
-		inline const QString& getMAC (){return this->MAC;};
+		const QString& getNick (void) const {return nick;};
+		const QString& getMAC (void) const {return MAC;};
 		
 		
 		/*! VAMOS A DETERMINAR QUE 2 USUARIOS SON IGUALES POR EL NUMERO
