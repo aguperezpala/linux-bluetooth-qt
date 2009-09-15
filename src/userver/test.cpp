@@ -159,6 +159,10 @@ int main (void)
 	
 	
 	delete db;
+	delete user;
+	delete server;
+	
+	
 	
 	return 0;
 }
