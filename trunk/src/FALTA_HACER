@@ -2,6 +2,7 @@ Modulos terminados de chequear:
 	* CUser terminado
 	* UDataBase terminado, casi completo.
 	* USParser listo :).
+	* UServer terminado :) (probablemente falten casos).
 	
 	
 Modulos en chequeo:
@@ -11,6 +12,8 @@ UServer:
 	* Hacerlo que soporte multiples clientes?.
 	* Modularizar UServer y agregarle otra clase UClient que maneje las
 	interacciones con el cliente (soporte de multiples clientes).
+	
+	
 * Generar un config_file (parser) para leer las configuraciones de varias cosas:
 	* Posicion de la ventana de la marquesina.
 	* Tamaño de la fuente.
