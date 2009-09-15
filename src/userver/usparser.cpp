@@ -26,7 +26,7 @@ int USParser::getReqKind (QString req)
 	
 	if (req == USP_HEADER USP_REGISTER USP_HEADER)
 		respCode = 1;
-	else if (req[MAC_ADDR_SIZE + strlen (USP_HEADER)] == ',') 
+	else if (req[(int) (MAC_ADDR_SIZE + strlen (USP_HEADER))] == ',') 
 		/* si tiene la coma bien puesta => listo */
 		respCode = 0;
 	else
@@ -50,6 +50,7 @@ int USParser::getReqKind (QString req)
 int USParser::isValidRequest(QString & req)
 {
 	int respCode = 0;
+	int pos = 0;
 	QString header = USP_HEADER;
 	
 	/* PRES */
@@ -71,7 +72,9 @@ int USParser::isValidRequest(QString & req)
 	
 	/* si hay mas caracteres o igual entonces => verificamos que son los 
 	 * del header */
-	if (req.indexOf(header) < 0) { /* no encontro el header => error */
+	pos = req.indexOf(header);
+	if (pos < 0 || pos > 0) { 
+		/* no encontro el header o NO esta al comienzo => error */
 		debugp ("USParser::isValidRequest: NO existe el primer "
 		"header\n");
 		return -2;
@@ -168,7 +171,7 @@ bool USParser::createResponse (QString & response)
 	response.append (header);
 	
 	return true;
-	
+}
 
 
 /* destructor que no hace nada :) */

@@ -16,7 +16,7 @@
 #include "../debug.h"
 
 #define USP_SSAP_MAZ_SIZE	256
-#define USP_HEADER		"<SSPA>"
+#define USP_HEADER		"<SSAP>"
 #define USP_REGISTER		"registrar"
 
 class USParser{

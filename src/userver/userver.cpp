@@ -5,7 +5,7 @@
  * 	fd
  *	< 0 on error
  */
-int UServer::listen(unsigned int port)
+int UServer::doListen(unsigned int port)
 {
 	struct sockaddr_in self;
 	
@@ -23,17 +23,17 @@ int UServer::listen(unsigned int port)
 	/* hacemos el bind */
 	if (bind(this->sock, (struct sockaddr*)&self, sizeof(self)) != 0 ) {
 		debugp ("UServer::listen: Error al hacer el bind\n");
-		closer (this->sock);
+		close (this->sock);
 		return -1;
 	}
 	
 	/* escuchamos */
 	if (listen (this->sock, USERVER_CONNECTIONS_LIMIT) != 0 ) {
 		debugp ("UServer::listen: Error al hacer el listen\n");
-		closer (this->sock);
+		close (this->sock);
 		return -1;
 	}
-	debugp ("UServer::listen: escuchando en %u\n", port);
+	debugp ("UServer::listen: escuchando\n");
 	
 	/* devolvemos el socket */
 	return this->sock;
@@ -61,7 +61,7 @@ int UServer::workClient(int clientfd)
 	QString req = "";
 	QString resp = "";
 	char buff[USP_SSAP_MAZ_SIZE+1] = {0};
-	unsigned int bytesReaded = 0;
+	int bytesReaded = 0;
 	CUser * user = NULL;
 	
 	
@@ -105,7 +105,7 @@ int UServer::workClient(int clientfd)
 				userRegistered = true;
 				/* le mandamos una respuesta :) */
 				resp = "ok";
-				if (this->parser->createResponse (resp))
+				if (this->parser.createResponse (resp))
 					errCode = write (clientfd, 
 							  qstrtochar(resp),
 							  resp.length());
@@ -124,7 +124,7 @@ int UServer::workClient(int clientfd)
 	resp = "";
 	memset (buff, '\0', USP_SSAP_MAZ_SIZE);
 	/*! si no esta registrado es porque ta al hornapio esto y es error */
-	if (!userRegisterd)
+	if (!userRegistered)
 		return errCode; /*! ASSERT (errCode < 0); */
 	
 	/*! aca estamos con el usuario registrado y esperando a seguir 
@@ -141,6 +141,7 @@ int UServer::workClient(int clientfd)
 		buff[bytesReaded] = '\0';
 		/* concatenamos lo que recibimos */
 		req.append(buff);
+		printf ("USERVER: request: %s\n", qstrtochar (req));
 		/* verificamos que este completo con el parser */
 		switch (this->parser.isValidRequest(req)) {
 			case -1: /* esta incompleto, seguimos recibiendo */
@@ -155,7 +156,7 @@ int UServer::workClient(int clientfd)
 					this->udb->addUser (user);
 					/* mandamos el "ok" */
 					resp = "ok";
-					if (this->parser->createResponse (resp))
+					if (this->parser.createResponse (resp))
 						errCode = write(clientfd,	
 							qstrtochar(resp),
 							resp.length());
@@ -163,6 +164,8 @@ int UServer::workClient(int clientfd)
 						 /* no se pudo crear */		
 						 errCode = -1;
 				}
+				/* limpiamos el request */
+				req = "";
 				break;
 			
 			default:
@@ -202,13 +205,6 @@ UServer::UServer (UDataBase * udb, int sPort, int ePort)
 	this->startPort = sPort;
 	this->endPort = ePort;
 	this->running = false;
-	this->parser = NULL;
-	this->parser = new USPareser();
-	
-	if (this->parser == NULL) {
-		printf ("UServer: Null al crear el USParser\n");
-		exit(1);
-	}
 }
 
 /* Esta es la funcion mas importante de todas practicamente,
@@ -222,11 +218,12 @@ void UServer::run(void)
 	bool listening = false, error = false;
 	int clientfd = 0;
 	struct sockaddr_in clientAddr;
+	socklen_t addrlen = sizeof (clientAddr);
 	
 	/* primero que todo intentamos ponernos a la escucha dentro del rango
 	 * de puertos */
 	for (i = this->startPort; i <= this->endPort && !listening; i++)
-		if (listen ((unsigned int) i) >= 0)
+		if (doListen ((unsigned int) i) >= 0)
 			/* estamos escuchando en el puerto i */
 			listening = true;
 		
@@ -240,8 +237,8 @@ void UServer::run(void)
 	
 	while (this->running && !error) {
 		/* aceptamos de a una conexion */
-		clientfd = accept (this->sock, &clientAddr, 
-				    sizeof (clientAddr));
+		clientfd = accept (this->sock, (sockaddr*) &clientAddr, 
+				    &addrlen);
 		/*! si queremos info del cliente la tenemos en clientAddr */
 		if (clientfd < 0) {
 			debugp ("UServer::run: Error acpetando una conexion\n");
@@ -272,4 +269,8 @@ void UServer::stop(void)
 
 
 /* Destructor, cierra todo */
-UServer::~UServer();
+UServer::~UServer()
+{
+	/* do nothing */
+	return;
+}

@@ -1,6 +1,7 @@
 Modulos terminados de chequear:
 	* CUser terminado
 	* UDataBase terminado, casi completo.
+	* USParser listo :).
 	
 	
 Modulos en chequeo:
@@ -25,3 +26,8 @@ Compilacion FINAL:
 	* Sacar el define __DEBUG.
 
 
+
+
+TIPS:
+	* Crear el servidor con las interfaces QT => se hace exportable a
+	windows el programa directamente :D.
