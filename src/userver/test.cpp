@@ -114,6 +114,16 @@ static void check_send_user ()
 	/* deberiamos haber recibido una respuesta ok */
 	fail_if (readbuff != "<SSAP>ok<SSAP>");
 	
+	writebuff = "<SSAP>XX:XX:XX:XX:01:DF,usuario numero 2<SSAP>";
+	printf ("Cliente: Enviando EL USUARIO2\n");
+	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
+	readBytes = read (sock, readb, 300);
+	readb[readBytes] = '\0';
+	printf ("Cliente %d: Leimos: %d -%s\n", __LINE__, readBytes, readb);
+	readbuff = readb;
+	/* deberiamos haber recibido una respuesta ok */
+	fail_if (readbuff != "<SSAP>ok<SSAP>");
+	
 	writebuff = "<SSAP>av:de:as:tr:01:DFs,sapepe<SSAP>";
 	printf ("Cliente: Enviando un usuario MALFORMADO\n");
 	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
