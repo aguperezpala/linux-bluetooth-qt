@@ -1,11 +1,18 @@
 Modulos terminados de chequear:
-	* NINGUNO
+	* CUser terminado
+	* UDataBase terminado, casi completo.
 	
 	
 Modulos en chequeo:
-	* CUser (falta chequear muchas cosas, recien terminado el tad, terminar
-	el test.cpp.
+	...
 	
-
+	
+* Generar un config_file (parser) para leer las configuraciones de varias cosas:
+	* Posicion de la ventana de la marquesina.
+	* Tamaño de la fuente.
+	* Tamaño de la ventana.
+	* Archivo de base de datos.
+	* Puerto de escucha del UServer.
+	
 
 
