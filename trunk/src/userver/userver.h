@@ -15,6 +15,7 @@
 #include <arpa/inet.h>
 /* alto nivel */
 #include <QString>
+#include <QThread>
 
 
 #include "usparser.h"
@@ -26,7 +27,7 @@
 /* cantidad de conexiones simultaneas soportadas por el servidor (1 por ahora)*/
 #define USERVER_CONNECTIONS_LIMIT	1
 
-class UServer {
+class UServer: public QThread {
 	public:
 		/* Constructor: Va a pedir la UDataBaser, ya que de esta depende
 		 * para su existencia. Ademas se va a pedir un rango de puertos
@@ -41,6 +42,7 @@ class UServer {
 		 * lo que hace es escuchar en determinado puerto y a toda
 		 * conexion entrante la acepta y comienza a recibir los datos.
 		 * Solo terminara de correr cuando se llame a server.stop();
+		 *//*! NOTE: Se debe llamar como server.start() (por el thread)
 		 */
 		void run(void); 
 		
@@ -69,7 +71,7 @@ class UServer {
 		 * RETURNS:
 		 * 	fd
 		 */
-		int listen(int port);
+		int doListen(unsigned int port);
 		
 		/* Funcion que trabaja sobre un cliente especifico, lo que hace
 		 * es leer hasta recibir un pedido determinado, una vez que
