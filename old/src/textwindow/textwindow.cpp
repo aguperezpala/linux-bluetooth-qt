@@ -1,215 +1,238 @@
 #include "textwindow.h"
-#include <assert.h>
-/*agrega un mensaje para mostrar en pantalla
-	RETURNS:
-			true == si se pudo agregar
-			false == cc
+
+
+/* Funcion que agrega un mensaje a la "cola" mlist para ser mostrado
+* en pantalla.
+* RETURNS;
+*	true 	if success
+*	false	otherwise
 */
-bool TextWindow::add_sms()
+bool TextWindow::addMesg()
 {
-	SmsObject *sms = NULL;
+	QString *msj = NULL;
 	bool result = false;
 	
+	/*! ASSERT (this->getNextMsg != NULL); siempre */
 	
-	/*Chequeamos que haya elementos en la tabla*/
-	if (!this->smsTable->isEmpty()) {
-		
-		/*si no es vacia sacamos el sms de la tabla/cola*/
-		sms = this->smsTable->popFront();
-		if (sms != NULL) {
-			/*lo metemos para mostrar*/
-			this->setMesg (*(sms->getMesg()));
-			/*ahora borramos el sms*/
-			/*!TENER EN CUENTA SI QUEREMOS AGREGAR NICKNAME*/
-			delete sms;
-			result = true;
-		}
+	/* pedimos un msj para agregar */
+	msj = this->getNextMsg();
+	
+	/* si tenemos un nuevo msj => creamos un MarquesinObj y lo metemos
+	 * en la lista.
+	 */
+	if (msj != NULL) {
+		/* si hay */
+		result = true;
+		/* lo encolamos */
+		setMesg(*msj);
+		/* borramos el msj */
+		delete msj; msj = NULL;
 	}
+	
 	
 	return result;
 }
 
-/*esta funcion modifica el texto que se esta mostrando en pantalla*/
-void TextWindow::update_text ()
+
+/* Funcion que hace practicamente todo, actualiza las posiciones,
+* chequea si se debe buscar un nuevo mensaje para mostrar, agregarlo
+* etc.
+* NOTE: esta es la funcion principal
+*/
+void TextWindow::updateText ()
 {
 	MarquesinObj *mobj = NULL;
-	QString *data = NULL;
+	const QString *data = NULL;
 	int size = 0;
 	
-	/*debemos chequear que el primer marquesinobj este dentro del rango visible
-	y a su vez que si la "cola" del mismo ya esta siendo vista, entonces debemos
-	agregar otro marquesinobj*/
-	if (!this->mlist.isEmpty()) {
-		mobj = this->mlist.last();	/*el ultimo tomamos*/
-		if (mobj != NULL) {
-			data = mobj->getData();
-			if (data != NULL) {
-				/*chequeamos si debemos agregar otro sms*/
-				size = this->metrics->width(*data);
-				if (mobj->getShowPos() + size < this->width() ) {
-					/*debemos agregar otro*/
-					/*verificamos que no hayamos agregado ya alguno*/
-					if (!mobj->addSomeOne) {
-						mobj->addSomeOne = add_sms();
-					}
-				}
-			} /*else no hacemos nada*/
+	/* verificamos que la lista no este vacia (si no no deberiamos haber
+	 * llamado a esta funcion...? */
+	if (this->mlist.isEmpty()) {
+		/* verificamos de sacar un nuevo elemento (getNextMsg) */
+		if (addMesg() == false) {
+			/* no podemos agregar nada, frenamos el timer y 
+			 * volvemos ya que no hay nada que hacer */
+			this->timer.stop();
+			return;
 		}
-		/*ahora chequeamos si debemos borrar alguno*/
+		/* si no es porque se agrego un nuevo mensaje y debemos
+		 * trabajarlo */
+	}
+	
+	/* actualizamos las posiciones de los objetos */
+	
+	for (int i = 0; i < this->mlist.size(); i++) {
 		mobj = NULL;
-		data = NULL;
-		
-		mobj = this->mlist.first();	/*el primero tomamos*/
-		if (mobj != NULL) {
-			data = mobj->getData();
-			if (data != NULL) {
-				/*vemos si lo debemos sacar o no de la lista*/
-				size = this->metrics->width(*data);
-				if (mobj->getShowPos() + size < 0) {
-					/*debemos sacarlo*/
-					delete data;
-					delete mobj; /*liberamos memoria*/
-					this->mlist.removeFirst();	/*lo sacamos de la lista*/
-					dprintf ("eliminamos uno de mlist\n");
-				}
-			} /*else no hacemos nada*/
+		mobj = this->mlist.at(i);
+		if (mobj != NULL) 
+			mobj->setShowPos ((mobj->getShowPos() - this->step));
+	}
+	
+	
+	/*! aca ya sabemos que por lo menos tenemos un elemento */
+	mobj = this->mlist.last();
+	ASSERT (mobj != NULL); /*! es imposible */
+	data = mobj->getData();
+	ASSERT (data != NULL); /*! de nuevo, es imposible por marquesinobj */
+	
+	/* chequeamos si debemos agregar otro sms */
+	if (!mobj->addSomeOne) {
+		size = this->metrics->width(*data);
+		if (mobj->getShowPos() + size < this->width() ) {
+			/* El final del objeto esta ya adentro de la pantalla,
+			 * lo que indica que ya podemos agregar otro elemento
+			*/
+			mobj->addSomeOne = addMesg();
 		}
+	}
 		
-	} else {
-		/*no tenemos nada que hacer*/
-		if (!this->smsTable->isEmpty()) {
-			/*no tenemos nada en la lista pero si hay mensajes en la cola*/
-			add_sms();
-		} else {
-				/*no hay ni mensajes en la lista ni en la cola*/
-				this->timer->stop();
-		}
+	/* ahora chequeamos si debemos borrar alguno */
+	mobj = NULL;
+	data = NULL;
+	
+	/* ahora tomamos el primero, que seria el que estaria por terminar 
+	 * primero */
+	mobj = this->mlist.first();
+	ASSERT (mobj != NULL); /*! es imposible */
+	data = mobj->getData();
+	ASSERT (data != NULL); /*! de nuevo, es imposible por marquesinobj */
+	
+	/* vemos si lo debemos sacar o no de la lista */
+	size = this->metrics->width(*data);
+	if (mobj->getShowPos() + size < 0) {
+		/* debemos sacarlo */
+		delete mobj; /*liberamos memoria*/
+		mobj = NULL;
+		this->mlist.removeFirst();	/*lo sacamos de la lista*/
+		debugp2 ("Eliminamos uno de mlist\n");
 	}
 }
 
 
-TextWindow::TextWindow(QWidget *parent, SmsTable * table)
- : ShowWindow(parent)
+/* Constructor: Muestra y crea la nueva ventana.
+* REQUIRES:
+*	getNextMsg != NULL (funcion q obtiene el proximo sms a mostrar)
+* NOTE: tener en cuenta que debe devolver NULL si no hay siguiente
+* mensaje. ### Esta funcion se encarga de liberar el QString, NO debe
+* ser liberado desde otro lado.
+*/
+TextWindow::TextWindow(QString * (*getNextMsg1)(void))
 {
-	this->metrics = NULL;
-	this->timer = NULL;
+	/* pres */
+	ASSERT (getNextMsg1 != NULL);
 	
-	
-	/*nos aseguramos que table != NULL*/
-	assert (table != NULL);
-	this->smsTable = table;
-	
+	if (getNextMsg1 == NULL) {
+		debugp ("Error getNextMsg == NULL");
+		this->close();
+	}
+	this->getNextMsg = getNextMsg1;
 	
 	this->metrics = new QFontMetrics(this->font());
-	assert (this->metrics != NULL);
-	
-	/*creamos el timer*/
-	this->timer = new QBasicTimer();
-	
-	if (this->timer == NULL){
-		dprintf ("No se puede inicializar el timer\n");
-		this->close(); /*error, no se puede inicializar el timer*/
-	}
+	ASSERT (this->metrics != NULL);
 	
 	
-	/***************configuraciones principales****************/
-	this->vel = 100;	
-	
+	this->vel = 100;
 	this->step = 10;
 	this->between = "    ";
 	
 	
 }
 
-void TextWindow::setMesg (const QString& mensaje)
+
+/* Funcion que agrega un un mensaje a la cola. Ademas saca los '\n' para
+* serializar los datos en una misma linea y agrega el espacio "betwen"
+* al final de cada mensaje.
+* REQUIRES:
+*		msj.isNull () == false
+*/    
+void TextWindow::setMesg (const QString& msj)
 {
 	MarquesinObj *mobj = NULL;
 	QString *straux = NULL;
-	/*copiamos el string sobre el cual vamos a trabajar y le sacamos los
-	 *espacios en blanco*/
 	
 	
-	straux = new QString (mensaje);
-	if (straux != NULL){
-		straux->replace( "\n", " ");
-		straux->append (this->between);
-		
-		/*creamos el marquesinobj en la posicion final*/
-		mobj = new MarquesinObj (straux, this->width());
-		if (mobj != NULL) {
-			/*la agregamos a la lista*/
-			this->mlist.append (mobj);
-			dprintf ("se agrego a mlist: size = %d \n", this->mlist.size());
-		} else {
-			delete straux;
-		}
+	ASSERT (msj.isNull() == false);
+	
+	if (msj.isNull()) {
+		debugp ("Error msj.isNull");
+		return;
+	}
+	/* Creamos el string */
+	straux = new QString (msj);
+	
+	if (straux == NULL)
+		return;
+	
+	/* limpiamos los \n */
+	straux->replace( "\n", " ");
+	straux->append (this->between);
+	
+	/* creamos el marquesinobj en la posicion final */
+	mobj = new MarquesinObj (straux, this->width());
+	if (mobj != NULL) {
+		/*la agregamos a la lista*/
+		this->mlist.append (mobj);
+	} else {
+		delete straux;
 	}
 	
-	if (!this->timer->isActive()) {
-		this->timer->start (this->vel, this);
+	
+	if (!this->timer.isActive()) {
+		this->timer.start (this->vel, this);
 	}
 }
 
-
-void TextWindow::signalNewMesg()
-{
-	/*chequeamos que si esta activo el timer, entonces quiere decir que esta
-	 funcionando*/
-	this->timer->start (this->vel, this);
-	
-}
-		
-
-
- void TextWindow::paintEvent(QPaintEvent * /* event */)
+/* Esta funcion es llamada cada vez que se hace un QWidget->update();.
+ * Refresca toda la pantalla
+ */
+void TextWindow::paintEvent(QPaintEvent * /* event */)
 {	
-	int x = this->width();
-	int y = (this->height() + metrics->ascent() - metrics->descent()) / 2;
 	MarquesinObj *mobj = NULL;
-	QString *str = NULL;
+	const QString *str = NULL;
+	int x = 0, j = 0, i = 0;
+	int y = (this->height() + this->metrics->ascent() -
+			this->metrics->descent()) / 2;
 	
-	QPainter painter(this);
-	painter.setPen(this->color);
-		
-	for (int j = 0; j < mlist.size(); j++){
-		/*vamos a recorrer la cantidad de MarquesinObj que tengamos*/
+	this->painter.begin (this);
+	/* vamos a recorrer la cantidad de MarquesinObj que tengamos */
+	for (j = 0; j < mlist.size(); j++){
 		mobj = NULL;
 		str = NULL;
 		
-		mobj = this->mlist.at(j);	/*obtenemos el j MarquesinObj*/
-		if (mobj != NULL) {
-			x = mobj->getShowPos();
-			str = mobj->getData();
-			for (int i = 0; i < str->size(); ++i) {
-				if (x <= this->width()) {
-					/*si estamos dentro del tamaño de la pantalla dibujamos*/
-					painter.drawText(x, y, QString((*str)[i]));
-					x += metrics->width((*str)[i]);
-				} else {
-					/*no tenemos que dibujar mas.. salimos del ciclo*/
-					break;
-				}
-			}
+		/* obtenemos el j MarquesinObj */
+		mobj = this->mlist.at(j); 
+		
+		/* si es null NO DEBERIA, lo salteamos */
+		if (mobj == NULL)
+			continue;
+		
+		x = mobj->getShowPos();
+		str = mobj->getData();
+		
+		for (i = 0; i < str->size(); ++i) {
+			if (x <= this->width()) {
+				/* si estamos dentro del tamaño de la pantalla
+				 * dibujamos */
+				painter.drawText(x, y, QString((*str)[i]));
+				/* aumentamos la posicion de la proxima letra */
+				x += metrics->width((*str)[i]);
+			} else 
+				/* nada que dibujar.. salimos del ciclo */
+				break;
 		}
 	}
+	this->painter.end();
 }
 
- void TextWindow::timerEvent(QTimerEvent *event)
+/* Esta funcion es llamada en cada timeout() event del timer. */
+void TextWindow::timerEvent(QTimerEvent *event)
 {
-	if (event->timerId() == this->timer->timerId()) {
-		MarquesinObj *mobj;
-		/*if (str.isEmpty()){
-			this->timer->stop(); 
-		} else {*/
-		/*debemos actualizar las posiciones de cada MarquesinObj*/
-		for (int i = 0; i < this->mlist.size(); i++) {
-			mobj = NULL;
-			mobj = this->mlist.at(i);
-			if (mobj != NULL) 
-				mobj->setShowPos ((mobj->getShowPos() - this->step));
-		}
-		
-		update_text();
+	if (event->timerId() == this->timer.timerId()) {
+		/* debemos actualizar las posiciones de cada MarquesinObj */
+		updateText();
+		/* ahora refrescamos el Widget e imprimimos todo de nuevo 
+		 * osea llama a paintEvent
+		 */
 		update();
 	} else {
 		QWidget::timerEvent(event);
@@ -217,21 +240,27 @@ void TextWindow::signalNewMesg()
 	
 }
 
-/*void TextWindow::setFontType (QString& font_name, int size, QFont::Weight type)
+void TextWindow::pause(bool p) 
 {
-	this->text->setFont (QFont (font_name, size,  type));
+	if (p) {
+		this->timer.stop();
+	} else
+		if (!this->timer.isActive())
+			this->timer.start(this->vel, this);
 }
-
-void TextWindow::setFontSize (int size)
-{
-	this->text->setFont (QFont(this->text->fontFamily(), size, this->text->fontWeight()));
-}*/
 
 void TextWindow::setNewMetricsFont()
 {
-	delete this->metrics;
+	if (this->metrics != NULL)
+		delete this->metrics;
 	this->metrics = NULL;
 	this->metrics = new QFontMetrics(this->font());
+}
+
+void TextWindow::setNewFont (QFont & font)
+{
+	this->setFont (font);
+	setNewMetricsFont();
 }
 
 
@@ -247,18 +276,28 @@ void TextWindow::setBackColor (const QColor& c)
 void TextWindow::setVelocity (int v)
 {
 	this->vel = v;
-	dprintf ("setvelocity\n");
-	if (this->timer->isActive())
-		this->timer->stop();
-	this->timer->start (this->vel,this);
+	debugp2 ("TextWindow::setVelocity: setearon la velocidad\n");
+	/* lo frenamos y le seteamos el nuevo interval */
+	if (!this->timer.isActive ())
+		this->timer.stop ();
+	/* lo prendemos con el nuevo interval */
+	this->timer.start (v, this);
 }
 
 TextWindow::~TextWindow()
 {
-	if (this->timer != NULL)
-		delete this->timer;
-	if (this->metrics != NULL)
-		delete this->metrics;
+	QList<MarquesinObj*>::iterator i;
+	MarquesinObj * mobj = NULL;
+	
+	/* debemos liberar todos los marquesin object */
+	for (i = this->mlist.begin(); i != this->mlist.end(); ++i) {
+		mobj = (MarquesinObj*) *i;
+		if (mobj != NULL) {
+			delete mobj; mobj = NULL;
+		}
+	}
+	
 }
+
 
 

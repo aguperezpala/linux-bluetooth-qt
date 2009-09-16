@@ -1,88 +1,123 @@
-/*!Lo que va hacer esta clase es:
-
+/*! Es la ventana sola con el texto a mostrar. Esta clase va a tomar una
+ * funcion especial del tipo QString * (*getNextMsg) (void); que lo que va hacer
+ * es obtener el siguiente mensaje a mostrar. (i.e: sacar de la cola el proximo
+ * sms a mostrar.
+ * El funcionamiento general va a ser: Se van obteniendo QStrings para mostrar,
+ * cada vez que se nescesite (osea cuando haya espacio para mostrar otro mensaje
+ * se intenta pedir un nuevo QString, si se obtiene se muestra, si no no).
+ * Cada objeto a mostrar en pantalla sera un MarquesinObj.
+ * NOTE: Es un QWidget.
 */
 
 #ifndef TEXTWINDOW_H
 #define TEXTWINDOW_H
 
 #include <QWidget>
+#include <QThread>
 #include <QBasicTimer>
 #include <QTimerEvent>
+#include <QFontMetrics>
 #include <QColor>
 #include <QPainter>
 #include <QFont>
 #include <QList>
 
-#include "../showwindow.h"
-#include "../debug.h"
-#include "smstable.h"
-#include "smsobject.h"
+#include "../../consts.h"
+#include "../../debug.h"
 #include "marquesinobj.h"
 
-#define MAX_STR_BUFF	800	/*cantidad de caracteres que pueden estar en pantalla*/
+#define MAX_STR_BUFF	800	/*cantidad de caracteres que pueden estar en
+pantalla*/
 
-class TextWindow : public ShowWindow
+class TextWindow : public QWidget
 {
 	Q_OBJECT
 			
 public:
-	/*El constructor requiere que le pasemos como argumento la tabla de donde va
-	 *extraer los elementos para mostrar en la "marquesina"
-		REQUIRES:
-				table != NULL
+	/* Constructor: Muestra y crea la nueva ventana.
+	 * REQUIRES:
+	 *	getNextMsg != NULL (funcion q obtiene el proximo sms a mostrar)
+	 * NOTE: tener en cuenta que debe devolver NULL si no hay siguiente
+	 * mensaje. ### Esta funcion se encarga de liberar el QString, NO debe
+	 * ser liberado desde otro lado.
 	*/
-    TextWindow(QWidget *parent, SmsTable *table);
+	TextWindow(QString * (*getNextMsg)(void));
+	
     
-    /*en esta funcion vamos a mostrar por pantalla el mensaje y agrega el 
-	 * between al final del mensaje (espaciador entre mesajes)
-	 *saca los \n para "serializarlos en una misma linea*/
-    void setMesg (const QString& mensaje);
+	/* Funcion que agrega un un mensaje a la cola. Ademas saca los '\n' para
+	* serializar los datos en una misma linea y agrega el espacio "betwen"
+	* al final de cada mensaje.
+	* REQUIRES:
+	*		msj.isNull () == false
+	*/    
+	void setMesg (const QString& msj);
+    	
 	
+	/* Funcion que pausa (p = true) o continua (p = false) el movimiento
+	 * de las letras.
+	 */
+	void pause(bool p);
 	
-	/*esta funcion la llamamos cuando tenemos un nuevo mensaje en la SmsTable*/
-	void signalNewMesg();
-
-	void setVelocity (int v);	/*Refresh time ms*/
-	void setStep (int s) {this->step = s;};	/*step size*/
-	
+	void setVelocity (int v);		/* Refresh time ms */
+	void setStep (int s) {this->step = s;};	/* step size */	
 	void setBetween (QString& b) {this->between = b;};
 	
-	void setTextFont (QFont& f){this->setFont(f);setNewMetricsFont();};
+	/* setea el color de la fuente */
+	void setFontColor (QColor & c) 
+		{this->color = c; this->painter.setPen(c);}; /*! :( */
+	inline QColor & getFontColor (void){return this->color;};
+	/* setea una nueva fuente para el texto */
+	void setNewFont (QFont & font);
 	
-inline	const QFont& getTextFont (){return this->font();};
-	
-	void start(){if (!timer->isActive())timer->start(this->vel,this);};	/*comienzan a moverse las letras*/
-	void stop(){timer->stop();};	/*frena el movimiento de las letras*/
-	
+	/* setea el color de backgorund */
 	void setBackColor (const QColor& c);
-inline	void setFontColor (const QColor& c){this->color = c;};
 
-inline const QColor& getBackColor (){return ((this->palette()).color(QPalette::Window));};
-inline QColor& getFontColor (){return this->color;};
-		
+	~TextWindow();
 	
-
-    ~TextWindow();
 protected:
 	void paintEvent(QPaintEvent *event);
 	void timerEvent(QTimerEvent *event);
 
 private:
-	/*esta funcion actualiza las metrics cuando se cambio el tipo de fuente*/
-	void setNewMetricsFont();
-	void update_text();
-	bool add_sms();
+	/* funcion actualiza las metrics cuando se cambio el tipo de fuente*/
+	void setNewMetricsFont(void);
+	
+	/* Funcion que hace practicamente todo, actualiza las posiciones,
+	 * chequea si se debe buscar un nuevo mensaje para mostrar, agregarlo
+	 * etc.
+	 * NOTE: esta es la funcion principal
+	 */
+	void updateText(void);
+	
+	/*agrega un mensaje para mostrar en pantalla
+	RETURNS:
+	true == si se pudo agregar
+	false == cc
+	*/
+	
+	/* Funcion que agrega un mensaje a la "cola" mlist para ser mostrado
+	 * en pantalla.
+	 * RETURNS;
+	 *	true 	if success
+	 *	false	otherwise
+	 */
+	bool addMesg(void);
+	
 	
 	bool canWakeUp;		/*para determinar si debemos despertar o no al text*/
-	int vel;			/*refresh time*/
-	int step;			/*step size*/
-	QBasicTimer *timer;
-	QString between;	/*string entre medio de cada mensaje*/
-	SmsTable *smsTable;
-	QColor color;
-	QFontMetrics *metrics;
+	int vel;		/*refresh time*/
+	int step;		/*step size*/
+	
+	QBasicTimer timer;	/* nuestro "thread */
+	QFontMetrics *metrics;	/* para determinar el tamaño de la fuente */
+	QPainter painter;	/* el que dibuja sobre el QWidget */
+	QString between;	/* string entre medio de cada mensaje */
+	QColor color;		/* es el color de la fuente */
+	
 	QList<MarquesinObj *> mlist;	/*marquesin list,*/
 	
+	/*! funcion que obtiene el proximo elemento */
+	QString * (*getNextMsg)(void);
 };
 
 #endif

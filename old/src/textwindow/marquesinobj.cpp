@@ -11,9 +11,22 @@ MarquesinObj::MarquesinObj(QString* str, int showPos)
 }
 
 
+void MarquesinObj::setData (QString * d)
+{
+	ASSERT (d != NULL);
+	
+	if (d == NULL)
+		return;
+	if (this->data != NULL)
+		delete this->data;
+	
+	this->data = d;
+}
+	
+
 int MarquesinObj::getDataSize ()
 {
-	int result = 0;
+	int result = -1;
 	
 	if (this->data != NULL)
 		result = this->data->length();
@@ -25,5 +38,7 @@ int MarquesinObj::getDataSize ()
 
 MarquesinObj::~MarquesinObj()
 {
+	if (this->data != NULL)
+		delete this->data;
 	this->data = NULL;
 }
