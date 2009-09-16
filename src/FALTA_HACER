@@ -3,10 +3,15 @@ Modulos terminados de chequear:
 	* UDataBase terminado, casi completo.
 	* USParser listo :).
 	* UServer terminado :) (probablemente falten casos).
-	
+	* DispObject listo
 	
 Modulos en chequeo:
-	...
+
+Tareas:
+	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
+	modularizar un cacho mas y tratar de trabajar independientemente
+	la marquesina de las demas cosas etc.
+	* Chequear el diagrama si falta algo.
 	
 UServer:
 	* Hacerlo que soporte multiples clientes?.
