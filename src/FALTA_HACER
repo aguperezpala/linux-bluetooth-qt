@@ -4,8 +4,11 @@ Modulos terminados de chequear:
 	* USParser listo :).
 	* UServer terminado :) (probablemente falten casos).
 	* DispObject listo
+	* MarquesinObj listo.
+	* TextWindow pareceria estar listo.
 	
 Modulos en chequeo:
+	* maintxtwindow (reajustar el nombre del diagrama
 
 Tareas:
 	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 

@@ -5,11 +5,16 @@
 #ifdef __DEBUG
 #include <assert.h>
 
-#define debugp(x)	printf(x)
+#define debugp(x,..)	\
+	printf("%s:" x "\t%d\n", __FUNCTION__,__VA_ARGS__,__LINE__)
+#define debugp2(x,..)	printf(x,__VA_ARGS__)
 #define ASSERT(x)	assert(x)
+#else
+#define debugp(x)	
+#define ASSERT(x)	
 #endif
 
-
+/* funcion que saca el char * de un QString */
 #define qstrtochar(x)	x.toStdString().c_str()
 
 
