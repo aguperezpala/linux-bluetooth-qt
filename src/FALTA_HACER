@@ -8,7 +8,8 @@ Modulos terminados de chequear:
 	* TextWindow pareceria estar listo.
 	
 Modulos en chequeo:
-	* maintxtwindow (reajustar el nombre del diagrama
+	* maintxtwindow (reajustar el nombre del diagrama)
+	* dispobjtable NO esta testeado, pero si compilando.
 
 Tareas:
 	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
