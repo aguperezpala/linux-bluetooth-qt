@@ -46,7 +46,7 @@ class UDataBase{
 		 *	true 	si el usuario fue agregado
 		 *	false	caso contrario (ej ya existia o error)
 		 * NOTE: NO se debe liberar user despues de haber llamado a esta
-		 * funcion.
+		 * funcion.*//*! si el usuario ya existe es liberado lo mismo
 		 */
 		bool addUser (CUser * user);
 		

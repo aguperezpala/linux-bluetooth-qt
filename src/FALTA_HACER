@@ -6,12 +6,15 @@ Modulos terminados de chequear:
 	* DispObject listo
 	* MarquesinObj listo.
 	* TextWindow pareceria estar listo.
+	* DispObjFilter
 	
 Modulos en chequeo:
 	* maintxtwindow (reajustar el nombre del diagrama)
 	* dispobjtable NO esta testeado, pero si compilando.
+	
 
 Tareas:
+	* ********* getUserFromMac (en el USER DATA BASE!!!!!) **************
 	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
 	modularizar un cacho mas y tratar de trabajar independientemente
 	la marquesina de las demas cosas etc.
@@ -33,9 +36,10 @@ UServer:
 	
 	
 	
-Compilacion FINAL:
+FINAL:
 	* Sacar el flab -g.
 	* Sacar el define __DEBUG.
+	* Correr el sistema y verificar la memoria que no se vaya con dios
 
 
 

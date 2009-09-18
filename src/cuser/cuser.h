@@ -25,6 +25,11 @@ class CUser{
 		const QString& getNick (void) const {return nick;};
 		const QString& getMAC (void) const {return MAC;};
 		
+		/* Funcion que copia un usuario desde un puntero devolviendo
+		 * una nueva instancia.
+		 * NOTE: GENERA memoria
+		 */
+		CUser * copy(void);
 		
 		/*! VAMOS A DETERMINAR QUE 2 USUARIOS SON IGUALES POR EL NUMERO
 		  * DE MAC */
