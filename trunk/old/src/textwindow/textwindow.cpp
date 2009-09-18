@@ -257,7 +257,7 @@ void TextWindow::setNewMetricsFont()
 	this->metrics = new QFontMetrics(this->font());
 }
 
-void TextWindow::setNewFont (QFont & font)
+void TextWindow::setTextFont (QFont & font)
 {
 	this->setFont (font);
 	setNewMetricsFont();

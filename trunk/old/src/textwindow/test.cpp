@@ -1,6 +1,8 @@
 
 #include <stdio.h>
+#include <unistd.h>
 #include <QApplication>
+#include <QFontDialog>
 #include <QString>
 #include "textwindow.h"
 #include "../../tester.h"
@@ -9,7 +11,7 @@ TextWindow * txtw;
 
 QString * getmsg (void)
 {
-	static int counter = 6;
+	static int counter = 3;
 	
 	counter--;
 	if (counter >= 0) {
@@ -18,6 +20,15 @@ QString * getmsg (void)
 		return pepe;
 	} else
 		return NULL;
+}
+static void test_setFont (void)
+{
+	bool ok = false;
+	
+	QFont font = QFontDialog::getFont(&ok,txtw->font(),txtw);
+	if (ok) 
+		txtw->setTextFont (font);
+	
 }
 int main (int argc, char ** argv)
 {	
@@ -29,6 +40,13 @@ int main (int argc, char ** argv)
 	txtw->pause(false);
 	txtw->setMesg (test);
 	txtw->show();
+	printf ("esperamos\n");
 	
-	return app.exec();
+	
+	test_setFont();
+	printf ("esperamos de nuevo\n");
+	txtw->setMesg(test);
+	app.exec();
+	delete txtw;
+	return 0;
 }
