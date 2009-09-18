@@ -1,0 +1,61 @@
+<ui version="4.0" >
+ <class>Calculator</class>
+ <widget class="QWidget" name="Calculator" >
+  <property name="windowModality" >
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1025</width>
+    <height>822</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <horstretch>255</horstretch>
+    <verstretch>100</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize" >
+   <size>
+    <width>166666</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="baseSize" >
+   <size>
+    <width>300</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="contextMenuPolicy" >
+   <enum>Qt::NoContextMenu</enum>
+  </property>
+  <property name="windowTitle" >
+   <string>Calculator Builder</string>
+  </property>
+  <widget class="QWidget" name="gridLayoutWidget" >
+   <property name="geometry" >
+    <rect>
+     <x>240</x>
+     <y>190</y>
+     <width>361</width>
+     <height>381</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout" >
+    <item row="0" column="0" >
+     <widget class="QPushButton" name="button1" >
+      <property name="text" >
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
