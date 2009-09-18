@@ -67,7 +67,7 @@ public:
 		{this->color = c; this->painter.setPen(c);}; /*! :( */
 	inline QColor & getFontColor (void){return this->color;};
 	/* setea una nueva fuente para el texto */
-	void setNewFont (QFont & font);
+	void setTextFont (QFont & font);
 	
 	/* setea el color de backgorund */
 	void setBackColor (const QColor& c);
