@@ -1,11 +1,14 @@
 /*! En este modulo se van a transportar los objetos que se van a mostrar en
  * pantalla (texto o imagen). Esta diferencia se va a reflejar por un campo
  * interno que va a determinar de que tipo es (un enum)
+ * NOTE: Cada DispObject tiene asociado un archivo (file), al momento de
+ * 	crearlo (recordar setear el path)
  */
 #ifndef DISPOBJECT_H
 #define DISPOBJECT_H
 
 #include <QString>
+#include <QFile>
 
 #include "../cuser/cuser.h"
 #include "../consts.h"
@@ -22,9 +25,14 @@ class DispObject {
 	public:
 		/* Atributos globales */
 		dispObjKind_t kind;	/*! determina de que tipo es el obj */
+		QFile file;		/*! NOTE tiene asociado un file */
 		
-		/* Constructor */
-		DispObject (void);
+		/* Constructor: Toma el nombre del archivo
+		 * REQUIRES:
+		 *	fname.isNull() == false
+		 *	file.exists() == true (file.setFileName(fname))
+		 */
+		DispObject (QString & fname);
 		
 		
 		/* Funcion que se encarga de setear el usuario del dispobj
@@ -54,7 +62,7 @@ class DispObject {
 		 * NOTE: Queda a criterio de quien la toma que se modifique o
 		 *	 no a la informacion.
 		 */
-		QString & getData();
+		const QString & getData(void) const;
 		
 		/* Destructor: Libera el user */
 		~DispObject();
@@ -67,6 +75,7 @@ class DispObject {
 				 * el caso de la imagen sera el nombre del 
 				 * archivo,
 				 */
+		
 		
 		
 };

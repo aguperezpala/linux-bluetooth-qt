@@ -10,6 +10,14 @@ CUser::CUser(QString * nick, QString * mac)
 	
 }
 
+CUser * CUser::copy(void)
+{
+	CUser * result = NULL;
+	
+	result = new CUser(&(this->nick), &(this->MAC));
+	return result;
+}
+
 bool CUser::operator==(const CUser& other)
 {	
 	return (this->MAC == other.MAC);	

@@ -1,9 +1,18 @@
 #include "dispobject.h"
 
 
-/* Constructor */
-DispObject::DispObject (void)
+/* Constructor: Toma el nombre del archivo
+* REQUIRES:
+*	fname.isNull() == false
+*	file.exists() == true (file.setFileName(fname))
+*/
+DispObject::DispObject (QString & fname)
 {
+	/* pres */
+	ASSERT (fname.isNull () == false);
+	this->file.setFileName (fname);
+	ASSERT (this->file.exists());	/*! existe el archivo ? */
+	
 	this->user = NULL;
 }
 
@@ -49,7 +58,7 @@ void DispObject::setData (QString & d)
 * NOTE: Queda a criterio de quien la toma que se modifique o
 *	 no a la informacion.
 */
-QString & DispObject::getData()
+const QString & DispObject::getData() const
 {
 	return this->data;
 }
