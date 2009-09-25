@@ -111,6 +111,7 @@ sdp_session_t* bt_sdp_session_open (uint8_t channel) {
   sdp_data_free(list_formats);
   sdp_list_free(list_proto,0);
   sdp_list_free(list_access,0);
+  
 /*   sdp_record_free(rec); */
 
   return session;

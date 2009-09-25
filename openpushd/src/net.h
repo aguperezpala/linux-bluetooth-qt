@@ -3,6 +3,7 @@
 
 #include "net/core.h"
 
+
 struct net_data {
 	void* arg;
 	obex_t* obex;

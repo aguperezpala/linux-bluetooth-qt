@@ -4,9 +4,11 @@
 #ifndef CUSER_H
 #define CUSER_H
 
+
 #include <QString>
 #include "../consts.h"
 #include "../debug.h"
+
 
 #define MAC_ADDR_SIZE 17	/* no es el tamaño verdadero, es el size "visual" */
 class CUser{

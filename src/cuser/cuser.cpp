@@ -1,5 +1,6 @@
 #include "cuser.h"
 
+
 CUser::CUser(QString * nick, QString * mac)
 {
 	ASSERT (mac != NULL);
@@ -36,6 +37,7 @@ CUser::~CUser()
 #ifdef __DEBUG
 void CUser::printUser()
 {
+	
 	printf ("Nick: %s\tMAC: %s\n",
 		 qstrtochar(this->nick), qstrtochar(this->MAC));
 }

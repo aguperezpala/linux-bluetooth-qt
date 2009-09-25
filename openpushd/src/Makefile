@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = 
+CFLAGS = -g
 LIBS = -lbluetooth -lopenobex
 TARGET = server
 SOURCES = $(shell echo *.c)  $(shell echo net/*.c) 
