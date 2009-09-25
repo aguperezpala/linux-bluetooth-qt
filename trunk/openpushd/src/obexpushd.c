@@ -467,7 +467,9 @@ void handle_client (obex_t* client, struct net_data* net_data) {
 		if (data->type) free(data->type);
 		free(data);
 	}
+	OBEX_FreeInterfaces(client);
 	OBEX_Cleanup(client);
+	printf ("\n\nTERMINAMOS!!!!\n\n");
 	if (nofork < 2)
 		exit(EXIT_SUCCESS);
 }
@@ -529,9 +531,11 @@ int main (int argc, char** argv) {
 	size_t i;
 	int topfd = 0;
 	char* pidfile = NULL;
+	int j = 0;
+	fd_set fds;
 
-	struct net_data* handle[1] = {
-		NULL,
+	struct net_data* handle[5] = {
+		NULL, NULL, NULL, NULL, NULL
 	};
 #define BT_HANDLE         handle[0]
   
@@ -542,7 +546,7 @@ int main (int argc, char** argv) {
 		switch (c) {
 		case 'B':
 		{
-			uint8_t btchan = 9;
+			/*uint8_t btchan = 9;
 			BT_HANDLE = net_data_new();
 			if (optarg) {
 				int arg = atoi(optarg);
@@ -555,7 +559,7 @@ int main (int argc, char** argv) {
 			if (bluetooth_setup(BT_HANDLE, btchan)) {
 				net_cleanup(BT_HANDLE);
 				BT_HANDLE = NULL;
-			}
+			}*/
 			break;
 		}		
 		case 'd':
@@ -593,17 +597,22 @@ int main (int argc, char** argv) {
 	}
 
 	/* check that at least one listener was enabled */
-	for (i = 0; i < sizeof(handle)/sizeof(*handle); ++i) {
-		if (handle[i])
-			break;
-	}
+	for (i = 0; i < 5; ++i) {
+		handle[i] = net_data_new();
+		if (bluetooth_setup(handle[i], i+2)) {
+			net_cleanup(handle[i]);
+			exit(EXIT_FAILURE);
+		}
+		/*if (handle[i])
+			break;*/
+	}/*
 	if (i == sizeof(handle)/sizeof(*handle)) {
 		BT_HANDLE = net_data_new();
 		if (bluetooth_setup(BT_HANDLE, 9)) {
 			net_cleanup(BT_HANDLE);
 			exit(EXIT_FAILURE);
 		}
-	}
+	}*/
 		
 	/* fork if allowed (detach from terminal) */
 	if (nofork < 1) {
@@ -642,7 +651,6 @@ int main (int argc, char** argv) {
 	
 	/* run the multiplexer */
 	do {
-		fd_set fds;
 		FD_ZERO(&fds);
 		for (i = 0; i < sizeof(handle)/sizeof(*handle); ++i) {
 			if (!handle[i])

@@ -110,9 +110,44 @@ bool UDataBase::addUser (CUser * user)
 		
 	}
 	
-	
-	
 	return result;
+}
+
+/* Funcion que devuelve un usuario si existe en la base de datos
+* a partir de la MAC.
+* REQUIRES:
+*	MAC.isNull() == false
+* RETURNS:
+*	usr->copy()	si existe el usuario.
+*	NULL		si no existe.
+* NOTE: devuelve una copia => GENERA MEMORIA
+*/
+CUser * UDataBase::getUserFromMac (QString & MAC)
+{
+	CUser * usr = NULL;
+	bool exist = false;
+	
+	/* pre */
+	ASSERT (MAC.isNull() == false);
+	
+	/* nos fijamos si existe, si no devolvemos null de pecho */
+	if (MAC.isNull())
+		return usr;
+	
+	this->mutex.lock();
+	exist = this->hashTable.contains (MAC);
+	this->mutex.unlock();
+	
+	if (!exist)
+		return usr;
+	
+	/* si estamos aca es porque si existe => lo obtenemos */
+	this->mutex.lock();
+	usr = this->hashTable.value (MAC);
+	this->mutex.unlock();
+
+	/* devolvemos una copia */
+	return usr->copy();
 }
 
 

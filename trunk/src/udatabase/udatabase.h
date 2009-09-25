@@ -13,13 +13,15 @@
 #include <QChar>
 #include <QHash>
 #include <QMutex>
+#include <QThread>
 
 #include "../cuser/cuser.h"
 #include "../consts.h"
 #include "../debug.h"
+#include "udbserver/udbserver.h"
 
 
-class UDataBase{
+class UDataBase: public QThread{
 	public:
 		/* Constructor: Se va a pedir un archivo de texto, el cual
 		 * a medida que se vayan ingresando los usuarios se van a ir
@@ -49,6 +51,29 @@ class UDataBase{
 		 * funcion.*//*! si el usuario ya existe es liberado lo mismo
 		 */
 		bool addUser (CUser * user);
+		
+		/* Funcion que devuelve un usuario si existe en la base de datos
+		 * a partir de la MAC.
+		 * REQUIRES:
+		 *	MAC.isNull() == false
+		 * RETURNS:
+		 *	usr->copy()	si existe el usuario.
+		 *	NULL		si no existe.
+		 * NOTE: devuelve una copia => GENERA MEMORIA
+		 */
+		CUser * getUserFromMac (QString & MAC);
+		
+		
+		/* Funcion que corre el servidor en determinados puertos. Esto
+		 * lo corre en un nuevo thread, por lo que no es bloqueante.
+		 * Esta funcion permite la posibilidad de accesos externos
+		 * a la base de datos respetando el protocolo <SSDBP>
+		 * NOTE: Si esta funcion es llamada y el servidor esta corriendo
+		 * 	no tiene efecto.
+		 * REQUIRES:
+		 *	startPort <= endPort
+		 */
+		void runServer (void);
 		
 		/* Funcion que carga una base de datos desde un archivo
 		 * NOTE: Agrega a la lista ya existente, no BORRA lo que hay
@@ -89,6 +114,12 @@ class UDataBase{
 		*	false	if no error
 		*/
 		bool udb_add_user (QString * MAC, QString * nick);
+		
+		/* Funcion que practicamente carga el server y se ejecuta
+		 * en el thread (es llamada desde runServer())
+		 */
+		void run (void);
+		 
 		
 		/* La tabla hash <key, value>*/
 		QHash<QString, CUser*> hashTable;

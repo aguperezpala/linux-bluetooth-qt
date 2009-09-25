@@ -14,7 +14,22 @@ Modulos en chequeo:
 	
 
 Tareas:
-	* ********* getUserFromMac (en el USER DATA BASE!!!!!) **************
+	* Haciendo SServer, esto va a modificar todas las tareas de abajo.
+	(Que estaba haciendo: fijandome como manejar el tema de aceptar
+	conexiones, en que parte, para hacerlo mas versatil. Probablemente
+	lo deberia dividir en 2 instancias (SServer, SClient). De esta forma
+	puedo aceptar miles de clientes y recibir las cosas y enviar los
+	datos mucho mas facilmente. SI VOY HACER ESO!:D.
+	* Cambiar el diagrama modificando UDBServer UServer ya que van a
+	usar SServer SClient (los agregamos como atributos para	evitar 2121312
+	flechas).
+	* Haciendo UDBServer (verificando la forma de hacerlo: si conviene
+	generalizar el servidor y los protocolos parser, o si conviene hacer
+	las cosas de otra forma). El problema esta en como obtener los datos
+	del servidor, ya sea pasandole una function *, o si el thread
+	crearlo en el modulo "padre" del server (de esta 2º forma lo que se 
+	puede hacer es escuchar, leer (se bloquea) y asi vuelve al padre
+	con los datos una vez leidos).
 	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
 	modularizar un cacho mas y tratar de trabajar independientemente
 	la marquesina de las demas cosas etc.

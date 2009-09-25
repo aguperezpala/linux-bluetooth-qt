@@ -34,7 +34,7 @@ bool DispObjFilter::acceptTextObj (const DispObject * dobj)
 	/* ahora vamos a setear la informacion del archivo */
 	msgFile->setText (dobj->getData());
 	/* seteamos una micro descripcion */
-	msgFile->setInformativeText ("¿Quiere que se muestre esto"
+	msgFile->setInformativeText ("Quiere que se muestre esto "
 					"por pantalla?");
 	/* mostramos la pantalla */
 	retCode = msgFile->exec();

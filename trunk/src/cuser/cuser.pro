@@ -1,3 +1,3 @@
 DEFINES += __DEBUG
-HEADERS += cuser.h ../debug.h
-SOURCES += cuser.cpp  test.cpp        
+HEADERS += filec.h cuser.h ../debug.h 
+SOURCES += filec.c cuser.cpp test.cpp        

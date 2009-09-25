@@ -11,6 +11,7 @@
 
 struct bluetooth_args {
 	uint8_t channel;
+	sdp_session_t* session;
 };
 
 /*@null@*/
@@ -21,8 +22,7 @@ obex_t* _bluetooth_init (
 )
 {
 	obex_t* handle = OBEX_Init(OBEX_TRANS_BLUETOOTH,eventcb,OBEX_FL_KEEPSERVER);
-	sdp_session_t* session;
-  
+	 
 	if (!handle)
 		return NULL;
 
@@ -32,8 +32,8 @@ obex_t* _bluetooth_init (
 	}
 	fprintf(stderr,"Listening on bluetooth channel %u\n",(unsigned int)args->channel);
 
-	session = bt_sdp_session_open(args->channel);
-	if (!session) {
+	args->session = bt_sdp_session_open(args->channel);
+	if (!args->session) {
 		fprintf(stderr,"SDP session setup failed, disabling bluetooth\n");
 		OBEX_Cleanup(handle);
 		return NULL;
@@ -66,6 +66,7 @@ void bluetooth_security_init(
 {
 	_bluetooth_security_init((struct bluetooth_args*)arg);
 }
+
 
 static
 int bluetooth_get_peer(
@@ -104,6 +105,7 @@ static
 struct net_funcs bluetooth_funcs = {
 	.init = bluetooth_init,
 	.get_peer = bluetooth_get_peer,
+	
 	//.security_init = bluetooth_security_init
 };
 
