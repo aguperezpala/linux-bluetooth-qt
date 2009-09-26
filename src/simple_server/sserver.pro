@@ -1,6 +1,8 @@
 DEFINES += __DEBUG
-HEADERS += sserver.h \
-	../test.h \
+HEADERS += sclient.h \
+	sserver.h \
+	../tester.h \
 	../consts.h 
-SOURCES += sserver.cpp \
+SOURCES += sclient.cpp \
+	sserver.cpp \
 	test.cpp

@@ -14,23 +14,27 @@
 #include <sys/socket.h>
 #include <resolv.h>
 #include <arpa/inet.h>
-/* alto nivel */
-#include <QString>
+#include <unistd.h>
+
 
 /* libs propias */
+#include "sclient.h"
 #include "../consts.h"
 #include "../debug.h"
 
-/* cantidad de conexiones simultaneas soportadas por el servidor (1 por ahora)*/
-#define SSERVER_CONNECTIONS_LIMIT	1
 
-class SServer:{
+
+/* cantidad de conexiones simultaneas soportadas por el servidor */
+#define SSERVER_CONNECTIONS_LIMIT	50
+
+class SServer {
 	public:
 		/* Constructor:
 		 * REQUIRES:
 		 *	maxBuffSize > 0
 		 * maxBuffSize == el tamaño maximo del "paquete" que vamos a
-		 * poder recibir por este servidor
+		 * poder recibir por este servidor (es heredado hacia las
+		 * instancias de los SClient's.
 		 */
 		SServer (unsigned int maxBuffSize);
 		
@@ -40,56 +44,42 @@ class SServer:{
 		 * RETURNS:
 		 *	true 	if success
 		 *	false	otherwise
-		 * NOTE: hace el bind tambien y el accept, es BLOQUEANTE.
+		 * NOTE: hace el bind tambien. ES BLOQUEANTE
 		 */
 		bool startListen (unsigned short port);
 		
-		/* Funcion que empieza a recibir datos borrando el contenido
-		 * de los datos recibidos hasta el momento (clearBuffer())
-		 * NOTE: Es bloqueante esta funcion.
+		/* Funcion que accepta conexiones, devuelve una nueva instancia
+		 * de SClient * si es que se se establecio una nueva conexion.
+		 * Toma el primero que este en la cola de conexiones.
+		 * NOTE: ES BLOQUEANTE.
 		 * RETURNS:
-		 *	bytes leidos (> 0)
-		 *	< 0 en caso de error
-		 *	== 0 en caso de cierre de conexion
+		 *	SClient * != NULL (nuevo cliente)
+		 *	NULL	on error
+		 * NOTE: el SClient devuelto es propiedad del que lo obtiene.
+		 *	el servidor no se encarga de liberar estos clientes.
 		 */
-		int readData(void);
+		SClient * acceptClient(void);
 		
-		/* Funcion que empieza a recibir datos sin borrar el contenido
-		* anterior del buffer (hace un data.append()).
-		* NOTE: Es bloqueante esta funcion.
-		* RETURNS:
-		*	bytes leidos (> 0)
-		*	< 0 en caso de error
-		*	== 0 en caso de cierre de conexion
-		*/
-		int continueReading(void);
-		
-		/* Funcion que obtiene el buffer de datos leidos
-		 * RETURNS:
-		 *	const data
-		 * NOTE: data.isNull() == true (si no hay datos)
+		/* Funcion que devuelve el puerto en el que estamos escuchando
 		 */
-		const QString & getData(void);
+		inline unsigned short getPort(void) {return this->port;};
 		
-		/* Funcion que limpia el buffer de recepcion
-		 * (data.clear())
+		/* Funcion que devuelve el sockfd */
+		inline int getSocket (void) {return this->sock;};
+		
+		/* Funcion que cierra el servidor (close(sock))
 		*/
-		void clearBuffer (void);
-		
-		/* Funcion que detiene el servidor */
-		void stop(void);
+		void stopServer();
 		
 		/* Destructor, cierra todo */
-		~UServer();
+		~SServer();
 		
 	private:	
 		
-		unsigned short port;	/* puerto en el que escuchamos */
-		bool running;		/* para determinar cuando pararlo */
+		unsigned short port;	/* puerto en el que escuchamos */	
 		int sock;		/* socket donde escuchamos */
-		QString data;		/* donde recibimos los datos */
 		unsigned int maxBuffSize;/* tamaño maximo del buffer */
-		int clientfd;	/* socket del cliente */
+		
 		
 };
 

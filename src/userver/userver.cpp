@@ -1,45 +1,5 @@
 #include "userver.h"
 
-/* Funcion que escucha en determinado puerto, hasta que alguien se conecta.
- * RETURNS:
- * 	fd
- *	< 0 on error
- */
-int UServer::doListen(unsigned int port)
-{
-	struct sockaddr_in self;
-	
-	this->sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (this->sock < 0) {
-		debugp ("UServer::listen: Error al crear el socket\n");
-		return this->sock;
-	}
-	debugp ("UServer::listen: socket creado correctamente\n");
-	
-	self.sin_family = AF_INET;
-	self.sin_addr.s_addr = INADDR_ANY;
-	self.sin_port = htons(port);
-	
-	/* hacemos el bind */
-	if (bind(this->sock, (struct sockaddr*)&self, sizeof(self)) != 0 ) {
-		debugp ("UServer::listen: Error al hacer el bind\n");
-		close (this->sock);
-		return -1;
-	}
-	
-	/* escuchamos */
-	if (listen (this->sock, USERVER_CONNECTIONS_LIMIT) != 0 ) {
-		debugp ("UServer::listen: Error al hacer el listen\n");
-		close (this->sock);
-		return -1;
-	}
-	debugp ("UServer::listen: escuchando\n");
-	
-	/* devolvemos el socket */
-	return this->sock;
-}
-
-
 
 /* Funcion que trabaja sobre un cliente especifico, lo que hace
 * es leer hasta recibir un pedido determinado, una vez que
@@ -49,12 +9,12 @@ int UServer::doListen(unsigned int port)
 * vuelve con un codigo de error que produce el cierre de la
 * conexion.
 * REQUIRES:
-*	clientfd >= 0	(valido)
+*	client != NULL
 * RETURNS:
 *	< 0 	on error
 *	0 	if NO error
 */
-int UServer::workClient(int clientfd)
+int UServer::workClient(SClient * client)
 {
 	int errCode = 0;
 	bool userRegistered = false;
@@ -66,6 +26,11 @@ int UServer::workClient(int clientfd)
 	CUser * user = NULL;
 	
 	
+	/* PRE */
+	ASSERT (client != NULL);
+	if (client == NULL)
+		return -1;	/* error */
+	
 	/*! El ciclo de trabajo va a ser practicamente esto:
 	 * 1) Recibimos hasta que el cliente se registre (clientLoged = true).
 	 * 1.a) Enviamos un "ok".
@@ -75,19 +40,22 @@ int UServer::workClient(int clientfd)
 	 * 3.b) Si esta todo ok, enviamos un "ok".
 	 */
 	
+	/* limpiamos un cacho */
+	client->clearBuffer();
 	/* primero que todo vamos a cumplir 1) */
 	while (errCode == 0 && !userRegistered) {
 		/* leemos */
-		bytesReaded = read (clientfd, buff, USP_SSAP_MAZ_SIZE);
+		bytesReaded = client->continueReading();
 		if (bytesReaded <= 0) {
 			debugp("UServer::workClient: Error al intentar leer "
-			"el clientefd. No se pudo registrar ademas.\n");
+			"el cliente. No se pudo registrar ademas.\n");
 			errCode = -1;
 			continue;
 		}
-		buff[bytesReaded] = '\0';
-		/* concatenamos lo que recibimos */
-		req.append(buff);
+		/* verificamos lo que leimos */
+		strncpy (buff, client->getData(), client->getDataSize());
+		buff[client->getDataSize()] = '\0';
+		req = buff;
 		/* verificamos que este completo con el parser */
 		switch (this->parser.isValidRequest(req)) {
 			case -1: /* esta incompleto, seguimos recibiendo */
@@ -107,8 +75,8 @@ int UServer::workClient(int clientfd)
 				/* le mandamos una respuesta :) */
 				resp = "ok";
 				if (this->parser.createResponse (resp))
-					dummy = write(clientfd,
-						       qstrtochar(resp),
+					dummy = client->sendData(
+							qstrtochar(resp),
 							  resp.length());
 				else
 					/* no se pudo crear */
@@ -124,6 +92,7 @@ int UServer::workClient(int clientfd)
 	req = "";
 	resp = "";
 	memset (buff, '\0', USP_SSAP_MAZ_SIZE);
+	client->clearBuffer();
 	/*! si no esta registrado es porque ta al hornapio esto y es error */
 	if (!userRegistered)
 		return errCode; /*! ASSERT (errCode < 0); */
@@ -133,16 +102,17 @@ int UServer::workClient(int clientfd)
 	
 	while (errCode == 0) {
 		/* leemos */
-		bytesReaded = read (clientfd, buff, USP_SSAP_MAZ_SIZE);
+		bytesReaded = client->continueReading();
 		if (bytesReaded <= 0) {
 			debugp("UServer::workClient: Error al intentar leer "
-			"el clientefd. No se pudo registrar ademas.\n");
+			"el cliente. No se pudo registrar ademas.\n");
 			errCode = -1;
 			continue;
 		}
-		buff[bytesReaded] = '\0';
-		/* concatenamos lo que recibimos */
-		req.append(buff);
+		/* obtenemos los datos */
+		strncpy (buff, client->getData(), client->getDataSize());
+		buff[client->getDataSize()] = '\0';
+		req = buff;
 		/* verificamos que este completo con el parser */
 		switch (this->parser.isValidRequest(req)) {
 			case -1: /* esta incompleto, seguimos recibiendo */
@@ -158,7 +128,7 @@ int UServer::workClient(int clientfd)
 					/* mandamos el "ok" */
 					resp = "ok";
 					if (this->parser.createResponse (resp))
-						 write (clientfd,
+						 client->sendData(
 						       qstrtochar(resp),
 							resp.length());
 					 else
@@ -177,7 +147,6 @@ int UServer::workClient(int clientfd)
 	}
 	
 	return errCode;
-	
 }
 
 /* Constructor: Va a pedir la UDataBaser, ya que de esta depende
@@ -187,7 +156,7 @@ int UServer::workClient(int clientfd)
 *	udb != NULL
 *	endPort >= startPort
 */
-UServer::UServer (UDataBase * udb, int sPort, int ePort)
+UServer::UServer (UDataBase * udb, unsigned short sPort, unsigned short ePort)
 {
 	/* Pres */
 	ASSERT (udb != NULL);
@@ -201,12 +170,22 @@ UServer::UServer (UDataBase * udb, int sPort, int ePort)
 	if (sPort > ePort)
 		ePort = sPort;
 	
+	/* le pasamos el tamaño maximo que soporta el SSAP protocol */
+	this->server = NULL;
+	this->server = new SServer (USP_SSAP_MAZ_SIZE); 
+	ASSERT (this->server != NULL);
+	
 	this->udb = udb;
 	this->startPort = sPort;
 	this->endPort = ePort;
 	this->running = false;
 }
 
+void UServer::startServer (void)
+{
+	/* ejecutamos el thread */
+	this->start();
+}
 /* Esta es la funcion mas importante de todas practicamente,
 * lo que hace es escuchar en determinado puerto y a toda
 * conexion entrante la acepta y comienza a recibir los datos.
@@ -214,47 +193,50 @@ UServer::UServer (UDataBase * udb, int sPort, int ePort)
 */
 void UServer::run(void)
 {
-	int i = 0;
+	unsigned short int i = 0;
 	bool listening = false, error = false;
-	int clientfd = 0;
-	struct sockaddr_in clientAddr;
-	socklen_t addrlen = sizeof (clientAddr);
+	SClient * client = NULL;
+	
 	
 	/* primero que todo intentamos ponernos a la escucha dentro del rango
 	 * de puertos */
 	for (i = this->startPort; i <= this->endPort && !listening; i++)
-		if (doListen ((unsigned int) i) >= 0)
+		if (server->startListen (i))
 			/* estamos escuchando en el puerto i */
 			listening = true;
 		
 	/* hacemos una verificacion */
-	if (i > this->endPort && !listening) {
+	if (!listening) {
 		debugp ("UServer::run: error al intentar escuchar\n");
 		return; /*! salimos, no podemo hace nada loco */
 	}
 	
 	this->running = true;	/* estamos corriendo */
 	
-	while (this->running && !error) {
-		/* aceptamos de a una conexion */
-		clientfd = accept (this->sock, (sockaddr*) &clientAddr, 
-				    &addrlen);
-		/*! si queremos info del cliente la tenemos en clientAddr */
-		if (clientfd < 0) {
-			debugp ("UServer::run: Error acpetando una conexion\n");
+	/* ahora viene el tema de aceptar clientes y eso, por el momento solo
+	 * vamos a querer un solo cliente. Para ampliar esto lo que se deberia
+	 * hacer es practicamente tener una QList de clientes y sus respectivos
+	 * fd, asi por medio de select se multiplexa la recepcion.. 
+	 */
+	while (this->running && ! error) {
+		client = server->acceptClient();
+		if (client == NULL) {
+			debugp ("UServer::run: error al acceptar un cliente\n");
 			error = true;
-			continue; /* salteamos el while */
+			continue;
 		}
 		debugp ("UServer::run: Aceptamos un nuevo cliente\n");
-		if (workClient (clientfd) < 0) {
-			/* cerramos la conexion, esperamos aceptar otra */
+		
+		/* ahora tenemos el cliente con el que queremos trabajar */
+		
+		if (workClient(client) < 0) {
 			debugp ("UServer::run: Cerrando client conection\n");
-			clientfd = close (clientfd);
+			/* borramos y cerramos el cliente */
+			delete client; client = NULL;
 		}
 	}
 	
-	/* cerramos la conexion del socket que estamos escuchando */
-	this->sock = close (this->sock);
+	
 }
 
 
@@ -263,14 +245,15 @@ void UServer::stop(void)
 {
 	this->running = false;
 	/* force close XD */
-	if (this->sock)
-		this->sock = close (this->sock);
+	this->server->stopServer();
 }
 
 
 /* Destructor, cierra todo */
 UServer::~UServer()
 {
+	if (this->server)
+		delete this->server;
 	/* do nothing */
 	return;
 }
