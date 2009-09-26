@@ -1,19 +1,42 @@
 #include <stdio.h>
+#include <string.h>
+#include <pthread.h>
 #include <QString>
-#include "../cuser/cuser.h"
-#include "../udatabase/udatabase.h"
-#include "usparser.h"
-#include "userver.h"
+#include "sserver.h"
+#include "sclient.h"
 #include "../tester.h"
 #include "../consts.h"
 
-UDataBase * db;
-UServer * server;
-QString req;
+SServer * server;
+SClient * cl1;
 int sock;
-QString readbuff;
-QString writebuff;
+char buffSend[200];
+char buffRecv[200];
+int bs, br;
+pthread_t thread1;
 
+void * send_thread (void* s)
+{
+	s = NULL;
+	bs = send (sock, buffSend, strlen (buffSend),0);
+	
+	return NULL;
+}
+
+void * recv_thread (void* s)
+{
+	s = NULL;
+	int size = (int)strlen(buffSend);
+	br = 0;
+	printf ("*******size(buffSend):%d\n", size);
+	while (br < size ) {
+		br += recv(sock, buffRecv, 200, 0);
+		printf ("recibimos: br:%d\n", br);
+	}
+	
+	return NULL;
+}
+	
 static void connect_server (int a, int b)
 {
 	int i = 0;
@@ -47,130 +70,71 @@ static void connect_server (int a, int b)
 	
 }
 
-static void check_register ()
+static void check_recv (void)
 {
-	int writeBytes = 0;
-	int readBytes = 0;
-	char readb[300];
+	int size = 0;
+	/* enviamos datos */
 	
-	connect_server (1234, 1238);
-	writebuff = "hola papa";
-	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
-	readBytes = read (sock, readb, 300);
-	/* nos deberia haber rechazado la conexion */
-	printf ("Cliente %d: Leimos: %d\n", __LINE__, readBytes);
-	fail_unless (readBytes <= 0);
+	strcpy (buffSend ,"esto es una prueba");
+	size = strlen (buffSend);
+	pthread_create(&thread1, NULL, &send_thread,
+			(void *) &size);	
 	
-	/* nos conectamos de nuevo y ahora nos deberia aceptar */
-	connect_server (1234, 1238);
-	writebuff = "<SSAP>registrar<SSAP>";
-	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
-	readBytes = read (sock, readb, 300);	
-	readb[readBytes] = '\0';
-	printf ("Cliente %d: Leimos: %d -%s\n", __LINE__, readBytes, readb);
-	readbuff = readb;
-	/* deberiamos haber recibido una respuesta ok */
-	fail_if (readbuff != "<SSAP>ok<SSAP>");
 	
-	/* cerramos la conexion */
-	close (sock);
+	/* chequeamos que reciba bien */
+	br = cl1->readData ();
+	while (br != (int) strlen (buffSend))
+		br += cl1->continueReading();
+	strncpy (buffRecv,cl1->getData(), br);
+	printf ("Recibimos: %s \t%d\n",buffRecv, __LINE__);
+	fail_if (strcmp (buffRecv, cl1->getData()) != 0);
+	
+	cl1->clearBuffer();
+	fail_if (cl1->getDataSize () != 0);
+	fail_if (strcmp (cl1->getData(), "") != 0);
+	
+	
+	/* esperamos al thread */
+	pthread_join(thread1, NULL);
+	
 }
 
-static void check_send_user ()
+static void check_send (void)
 {
-	int writeBytes = 0;
-	int readBytes = 0;
-	char readb[300];
 	
+	strcpy (buffSend ,"esto es una prueba");
+	memset (buffRecv, '\0', 200);
+	/* enviamos datos ahora */
+	pthread_create(&thread1, NULL, &recv_thread,
+			(void *)NULL);
 	
-	connect_server (1234, 1238);
-	writebuff = "<SSAP>registrar<SSAP>";
-	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
-	readBytes = read (sock, readb, 300);
-	readb[readBytes] = '\0';
-	printf ("Cliente %d: Leimos: %d -%s\n", __LINE__, readBytes, readb);
-	readbuff = readb;
-	/* deberiamos haber recibido una respuesta ok */
-	fail_if (readbuff != "<SSAP>ok<SSAP>");
+	printf ("Estamos recibiendo por recv_thread\n");
+	bs = cl1->sendData(buffSend, strlen (buffSend));
+	printf ("mandamos: cl1->sendData: size= %d\n",bs);
+	pthread_join(thread1, NULL);
 	
-	writebuff = "<SSAP>av:de:as:tr:01:DF,sapepe<SSAP>";
-	printf ("Cliente: Enviando un usuario\n");
-	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
-	printf ("Cliente: Enviamos %d\n", writeBytes);
-	readBytes = read (sock, readb, 300);
-	readb[readBytes] = '\0';
-	printf ("Cliente %d: Leimos: %d -%s\n", __LINE__, readBytes, readb);
-	readbuff = readb;
-	/* deberiamos haber recibido una respuesta ok */
-	fail_if (readbuff != "<SSAP>ok<SSAP>");
-	
-	writebuff = "<SSAP>av:de:as:tr:01:DF,sapepe<SSAP>";
-	printf ("Cliente: Enviando EL MISMO USUARIO\n");
-	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
-	readBytes = read (sock, readb, 300);
-	readb[readBytes] = '\0';
-	printf ("Cliente %d: Leimos: %d -%s\n", __LINE__, readBytes, readb);
-	readbuff = readb;
-	/* deberiamos haber recibido una respuesta ok */
-	fail_if (readbuff != "<SSAP>ok<SSAP>");
-	
-	writebuff = "<SSAP>XX:XX:XX:XX:01:DF,usuario numero 2<SSAP>";
-	printf ("Cliente: Enviando EL USUARIO2\n");
-	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
-	readBytes = read (sock, readb, 300);
-	readb[readBytes] = '\0';
-	printf ("Cliente %d: Leimos: %d -%s\n", __LINE__, readBytes, readb);
-	readbuff = readb;
-	/* deberiamos haber recibido una respuesta ok */
-	fail_if (readbuff != "<SSAP>ok<SSAP>");
-	
-	writebuff = "<SSAP>av:de:as:tr:01:DFs,sapepe<SSAP>";
-	printf ("Cliente: Enviando un usuario MALFORMADO\n");
-	writeBytes = write (sock, qstrtochar(writebuff), writebuff.length());
-	readBytes = read (sock, readb, 300);
-	printf ("Cliente %d: Leimos: %d\n", __LINE__, readBytes);
-	/* deberiamos no poder leer ni bosta */
-	fail_unless (readBytes <= 0);
-	
-	/* cerramos la conexion */
-	close (sock);
+	printf ("bs: %d\tbr: %d\tline: %d\n", bs, br, __LINE__);
+	fail_if (bs != br);
+	fail_if (bs != (int)strlen(buffSend));
+	buffRecv[strlen(buffSend)] = '\0';
+	printf ("Recibimos: %s \t%d\n",buffRecv, __LINE__);
+	fail_if (strcmp (buffRecv, buffSend) != 0);
 	
 }
 
 int main (void)
 {
-	CUser * user = NULL;
-	QString nick = QString ("MAMAAAAAA");
-	QString MAC = QString("XX:XX:XX:56:32:15");
+	server = new SServer(100);
 	
 	
+	fail_unless (server->startListen (1234));
+	/* nos conectamos al servidor ahora */
+	connect_server (1234,1234);
+	cl1 = server->acceptClient();
+	fail_if (cl1 == NULL);
 	
-	user = new CUser(&nick, &MAC);
-	db = new UDataBase("pruebaextra.txt");	
-	fail_if (db == NULL);
-	fail_if (db->existUser(user));
-	/*fail_if(db->loadFromFile ("pruebaextra.txt") == false);*/
-	
-	server = new UServer (db, 1234, 1238);
-	server->start();
-	server->wait(2000);
-	
-	check_register ();
-	check_send_user();
-	server->stop();
-	server->wait(2000);
-	/* Saliendo */
-	
-	printf ("*****************************************\n");
-	db->print();
-	printf ("*****************************************\n");
-	printf ("Saliendo\n");
-	
-	
-	
-	delete db;
-	delete user;
-	delete server;
+	check_send();
+	check_recv();
 	
 	
 	

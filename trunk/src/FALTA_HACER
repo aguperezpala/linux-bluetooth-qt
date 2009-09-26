@@ -1,25 +1,27 @@
+Referencia:
+	### (modulos que no existen en esta version. Existian antes).
+
+
 Modulos terminados de chequear:
 	* CUser terminado
 	* UDataBase terminado, casi completo.
 	* USParser listo :).
-	* UServer terminado :) (probablemente falten casos).
 	* DispObject listo
 	* MarquesinObj listo.
 	* TextWindow pareceria estar listo.
 	* DispObjFilter
+	* SServer se podria decir (testeado para un solo cliente, deberia andar
+	para mas clientes...).
+	* SClient (80 % testeado.. faltaria intentar volver a enviar 2 veces
+	seguidas y recibir 2 veces seguidas..).
 	
 Modulos en chequeo:
 	* maintxtwindow (reajustar el nombre del diagrama)
 	* dispobjtable NO esta testeado, pero si compilando.
+	* UServer (2 version, implementado con SServer).
 	
 
 Tareas:
-	* Haciendo SServer, esto va a modificar todas las tareas de abajo.
-	(Que estaba haciendo: fijandome como manejar el tema de aceptar
-	conexiones, en que parte, para hacerlo mas versatil. Probablemente
-	lo deberia dividir en 2 instancias (SServer, SClient). De esta forma
-	puedo aceptar miles de clientes y recibir las cosas y enviar los
-	datos mucho mas facilmente. SI VOY HACER ESO!:D.
 	* Cambiar el diagrama modificando UDBServer UServer ya que van a
 	usar SServer SClient (los agregamos como atributos para	evitar 2121312
 	flechas).
@@ -34,6 +36,7 @@ Tareas:
 	modularizar un cacho mas y tratar de trabajar independientemente
 	la marquesina de las demas cosas etc.
 	* Chequear el diagrama si falta algo.
+	* SClient el tema de las llamadas bloqueantes y no bloqueantes.
 	
 UServer:
 	* Hacerlo que soporte multiples clientes?.
