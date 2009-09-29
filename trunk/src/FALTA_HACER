@@ -22,6 +22,8 @@ Modulos en chequeo:
 	
 
 Tareas:
+	* haciendo el udbprotocol.h (falta el .cpp). Es un modulo, no una clase
+	* UDataBase (haciendo la parte del servidor....)
 	* Cambiar el diagrama modificando UDBServer UServer ya que van a
 	usar SServer SClient (los agregamos como atributos para	evitar 2121312
 	flechas).

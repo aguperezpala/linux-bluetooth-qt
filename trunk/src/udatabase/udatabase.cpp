@@ -286,6 +286,41 @@ void UDataBase::clean (void)
 	this->mutex.unlock();
 }
 
+
+/* Funcion que corre el servidor en determinados puertos. Esto
+* lo corre en un nuevo thread, por lo que no es bloqueante.
+* Esta funcion permite la posibilidad de accesos externos
+* a la base de datos respetando el protocolo <SSDBP>.
+* Vamos a escuchar en alguno de los puertos de rango definido
+* arriba.
+* NOTE: Si esta funcion es llamada y el servidor esta corriendo
+* 	no tiene efecto.
+*/
+void UDataBase::runServer (void)
+{
+	/* chequeamos que no este ejecutandose */
+	if (this->isRunning())
+		return;
+	/* si no se esta ejecutando empezamos entonces */
+	this->start();
+}
+
+
+/* Funcion que practicamente carga el server y se ejecuta
+* en el thread (es llamada desde runServer())
+*/
+void UDataBase::run (void)
+{
+	SServer *server = new SServer(UDBSERVER_MAX_BUFF_SIZE);
+	
+	/*! ahoral o que hacemos es practicamente respetar el protocolo
+	 * parecido A SSAP, hacer un archivo parecido, que respete este
+	 * o que sea el mismo protocolo exepto por los datos que se van a
+	 * mandar.
+	 */
+	delete server;
+}
+
 /*!DEBUG*/
 #ifdef __DEBUG
 void UDataBase::print()

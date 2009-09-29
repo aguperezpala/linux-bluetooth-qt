@@ -18,7 +18,10 @@
 #include "../cuser/cuser.h"
 #include "../consts.h"
 #include "../debug.h"
-#include "udbserver/udbserver.h"
+#include "../simple_server/sserver.h"
+#include "../simple_server/sclient.h"
+/*! en este archivo esta definido todo el protocolo SSDBP */
+#include "udbserver/udbprotocol.h"
 
 
 class UDataBase: public QThread{
@@ -67,11 +70,11 @@ class UDataBase: public QThread{
 		/* Funcion que corre el servidor en determinados puertos. Esto
 		 * lo corre en un nuevo thread, por lo que no es bloqueante.
 		 * Esta funcion permite la posibilidad de accesos externos
-		 * a la base de datos respetando el protocolo <SSDBP>
+		 * a la base de datos respetando el protocolo <SSDBP>.
+		 * Vamos a escuchar en alguno de los puertos de rango definido
+		 * arriba.
 		 * NOTE: Si esta funcion es llamada y el servidor esta corriendo
 		 * 	no tiene efecto.
-		 * REQUIRES:
-		 *	startPort <= endPort
 		 */
 		void runServer (void);
 		
