@@ -1,49 +1,63 @@
 #include <stdio.h>
-#include "udatabase.h"
-#include "../cuser/cuser.h"
-#include "../tester.h"
+#include <QString>
+#include "udbprotocol.h"
+#include "../../tester.h"
+
+QString req;
+QString resp;
+
+static void check_validReq(void)
+{
+	/*<SSDBP>*/
+	req = "<SSD";
+	fail_if (udbs_isValidRequest (req) != UDBS_INCOMPLETE);
+	req = "<SSDsad";
+	fail_if (udbs_isValidRequest (req) != UDBS_NO_PROTOCOL);
+	req = "<SSDBP>";
+	fail_if (udbs_isValidRequest (req) != UDBS_INCOMPLETE);
+	req = "<SSDBP>asd<SSDBP>a";
+	fail_if (udbs_isValidRequest (req) != UDBS_NO_PROTOCOL);
+	req = "<SSDBP>asd<SSDB";
+	fail_if (udbs_isValidRequest (req) != UDBS_INCOMPLETE);
+	req = "<SSDBP>asd<SSDBP>";
+	fail_if (udbs_isValidRequest (req) != UDBS_NO_ERROR);
+	req = "<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB"
+	"<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB"
+	"<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB"
+	"<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB"
+	"<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB"
+	"<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB<SSDBP>asd<SSDB";
+	fail_if (udbs_isValidRequest (req) != UDBS_OVERFLOW);
+}
+
+static void check_createResp (void)
+{
+	resp = "asd";
+	
+	udbs_generateResponse(resp);
+	printf ("\n%s\n", qstrtochar(resp));
+	fail_if (resp != "<SSDBP>asd<SSDBP>");
+}
+
+static void check_parseResq (void)
+{
+	QString * result = NULL;
+	
+	req = "<SSDBP>asd<SSDBP>";
+	
+	result = udbs_parseRequest(req);
+	fail_if (*result != "asd");
+}
+	
+	
+	
+	
 
 int main (void)
 {
-	CUser * user = NULL;
-	UDataBase * db = NULL;
-	CUser * user2 = NULL;
-	QString nick = QString ("MAMAAAAAA");
-	QString MAC = QString("XX:XX:XX:56:32:15");
-	QString nick2, MAC2;
-	
-	user = new CUser(&nick, &MAC);
-	user2 = new CUser(&nick, &MAC);
-	
-	
-	db = new UDataBase("prueba.txt");
-	fail_if (db == NULL);
-	fail_if (db->existUser(user));
-	db->addUser(user);
-	fail_unless(db->existUser(user));
-	fail_unless(db->existUser(user2));
-	db->addUser(user2);
-	
-	db->print();
-	db->saveToFile();
-	
-	delete db;
-	
-	
-	db = new UDataBase("pruebaextra.txt");
-	fail_if(db->loadFromFile ("pruebaextra.txt") == false);
-	/*db->clean();*/
-	printf ("\n*********************\n");
-	db->print();
-	printf ("\n*********************\n");
-	user = new CUser(&nick, &MAC);
-	/*fail_unless(db->existUser(user));*/
-	printf ("cargada de archivo\n");
-	db->print();
-	db->addUser(user);
-	/*db->saveToFile();*/
-	
-	delete db;
+	check_validReq();
+	check_createResp();
+	check_parseResq();
 	
 	return 0;
 }

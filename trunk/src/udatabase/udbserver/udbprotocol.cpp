@@ -7,8 +7,7 @@
 *	udbsCode_t
 */
 udbsCode_t udbs_isValidRequest (const QString & req)
-{
-	udbsCode_t result = UDBS_UNK_ERROR;
+{	
 	int pos = 0;
 	QString header = SSDBP_HEADER;
 	
@@ -54,7 +53,7 @@ udbsCode_t udbs_isValidRequest (const QString & req)
 		return UDBS_NO_PROTOCOL;
 	}
 	
-	return respCode;
+	return UDBS_NO_ERROR;
 }
 
 /* Funcion que toma una cadena de caracteres y la amolda al protocolo
@@ -65,11 +64,11 @@ udbsCode_t udbs_isValidRequest (const QString & req)
 */
 void udbs_generateResponse (QString & resp)
 {
-	QString header = USP_HEADER;
+	QString header = SSDBP_HEADER;
 	
 	/* Pre */
 	ASSERT (resp.isNull() == false);
-	if (resp.isNull() == false)
+	if (resp.isNull())
 		return;
 	
 	resp.prepend (header);
@@ -81,9 +80,30 @@ void udbs_generateResponse (QString & resp)
 * "limpiamente" (sacandole los encabezados y demas.
 * REQUIRES:
 *	data.isNull() == false
+*	udbs_isValidRequest(data) == UDBS_NO_ERROR
 * RETURNS:
 *	qstr	!= NULL
 * 	NULL	otherwise
 * NOTE: GENERA MEMORIA => liberarla despues.
 */
-QString * udbs_parseRequest (const QString & data);
+QString * udbs_parseRequest (const QString & data)
+{
+	QString * result = NULL;
+	QString header = SSDBP_HEADER;
+	
+	/* pres */
+	if (data.isNull() || udbs_isValidRequest(data) != UDBS_NO_ERROR) {
+		ASSERT (false); /* debug por ahora :) */
+		return result;	/* devolvemos null de pecho */
+	}
+	
+	/* ahora lo que vamos hacer es buscar los encabezados y eliminarlos */
+	result = new QString (data);
+	ASSERT (result != NULL);
+	/* limpiamos los headers */
+	result->remove(header);
+	
+	
+	return result;
+}
+	

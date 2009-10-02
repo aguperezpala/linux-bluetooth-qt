@@ -4,6 +4,9 @@
 
 #include <QString>
 
+#include "../../debug.h"
+#include "../../consts.h"
+
 /* definimos los rangos en los que va a escuchar el servidor de la base
 * de datos. */
 #define UDBSERVER_START_PORT		2345
@@ -44,6 +47,7 @@ void udbs_generateResponse (QString & resp);
  * "limpiamente" (sacandole los encabezados y demas.
  * REQUIRES:
  *	data.isNull() == false
+ *	udbs_isValidRequest(data) == UDBS_NO_ERROR
  * RETURNS:
  *	qstr	!= NULL
  * 	NULL	otherwise
