@@ -14,6 +14,7 @@ Modulos terminados de chequear:
 	para mas clientes...).
 	* SClient (80 % testeado.. faltaria intentar volver a enviar 2 veces
 	seguidas y recibir 2 veces seguidas..).
+	* udbprotocol (testeado)
 	
 Modulos en chequeo:
 	* maintxtwindow (reajustar el nombre del diagrama)
@@ -21,8 +22,7 @@ Modulos en chequeo:
 	* UServer (2 version, implementado con SServer).
 	
 
-Tareas:
-	* haciendo el udbprotocol.h (falta el .cpp). Es un modulo, no una clase
+Tareas:	
 	* UDataBase (haciendo la parte del servidor....)
 	* Cambiar el diagrama modificando UDBServer UServer ya que van a
 	usar SServer SClient (los agregamos como atributos para	evitar 2121312
