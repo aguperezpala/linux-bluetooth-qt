@@ -1,6 +1,8 @@
 TARGET=ksamp
 CC=gcc
-CFLAGS+= -lbluetooth -ansi -Wall -Wextra -Wdeclaration-after-statement -Wbad-function-cast -Wcast-qual -Wstrict-prototypes -Wmissing-declarations -Wmissing-prototypes -Wno-unused-parameter -Werror -pedantic -g
+CFLAGS+= -lbluetooth -ansi -Wall -Wextra -Wdeclaration-after-statement \
+-Wbad-function-cast -Wcast-qual -Wstrict-prototypes -Wmissing-declarations \
+-Wmissing-prototypes -Wno-unused-parameter -Werror -pedantic -g
 SOURCES=$(shell echo *.c)
 OBJECTS=$(SOURCES:.c=.o)
 
