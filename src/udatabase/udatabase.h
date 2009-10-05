@@ -3,6 +3,8 @@
  * La forma en que se van almacenar los archivos en el disco va a ser:
  * MAC,Nickname\n
  * Uno por fila, dividiendo la MAC del Nickname por el caracter ','
+ * Ademas tiene un servidor, que por el momento va a soportar consultas
+ * via LAN
 */
 #ifndef UDATABASE_H
 #define UDATABASE_H
@@ -66,18 +68,6 @@ class UDataBase: public QThread{
 		 */
 		CUser * getUserFromMac (QString & MAC);
 		
-		
-		/* Funcion que corre el servidor en determinados puertos. Esto
-		 * lo corre en un nuevo thread, por lo que no es bloqueante.
-		 * Esta funcion permite la posibilidad de accesos externos
-		 * a la base de datos respetando el protocolo <SSDBP>.
-		 * Vamos a escuchar en alguno de los puertos de rango definido
-		 * arriba.
-		 * NOTE: Si esta funcion es llamada y el servidor esta corriendo
-		 * 	no tiene efecto.
-		 */
-		void runServer (void);
-		
 		/* Funcion que carga una base de datos desde un archivo
 		 * NOTE: Agrega a la lista ya existente, no BORRA lo que hay
 		 * en la lista actual.
@@ -89,12 +79,27 @@ class UDataBase: public QThread{
 		 */
 		bool loadFromFile (const char * fname);
 		
-		
 		/* Guarda en el archivo abierto al principio de todo, esto para
 		 * evitar inconsistencias de usuarios, tener repetidos y esas
 		 * cosas.
 		 */
 		void saveToFile (void);
+		
+		/* Funcion que corre el servidor en determinados puertos. Esto
+		* lo corre en un nuevo thread, por lo que no es bloqueante.
+		* Esta funcion permite la posibilidad de accesos externos
+		* a la base de datos respetando el protocolo <SSDBP>.
+		* Vamos a escuchar en alguno de los puertos de rango definido
+		* arriba.
+		* NOTE: Si esta funcion es llamada y el servidor esta corriendo
+		* 	no tiene efecto.
+		*/
+		void runServer (void);
+		
+		/* Funcion que cierra el servidor.
+		 * NOTE: en caso de que no este corriendo, no tiene efecto.
+		 */
+		void stopServer (void);
 		
 		
 		/* Funcion que limpia la base de datos */
@@ -129,6 +134,7 @@ class UDataBase: public QThread{
 		FILE * file;
 		QString fname;
 		QMutex mutex;
+		bool serverOn;
 		
 };
 

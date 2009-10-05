@@ -43,7 +43,7 @@ bool UDataBase::udb_add_user (QString * MAC, QString * nick)
 UDataBase::UDataBase (const char * fname)
 {
 	this->file = NULL;
-	
+	this->serverOn = false;
 	/* pre */
 	ASSERT(fname != NULL);
 	
@@ -299,12 +299,24 @@ void UDataBase::clean (void)
 void UDataBase::runServer (void)
 {
 	/* chequeamos que no este ejecutandose */
-	if (this->isRunning())
+	if (this->isRunning() || this->serverOn)
 		return;
 	/* si no se esta ejecutando empezamos entonces */
 	this->start();
 }
 
+
+/* Funcion que cierra el servidor.
+* NOTE: en caso de que no este corriendo, no tiene efecto.
+*/
+void UDataBase::stopServer (void)
+{
+	/* verificamos si estamos corriendo el server o no */
+	if (!this->isRunning() && !this->serverOn)
+		/* no esta corriendo => no frenamos nada */
+		return;
+	this-serverOn = false;
+}
 
 /* Funcion que practicamente carga el server y se ejecuta
 * en el thread (es llamada desde runServer())
@@ -313,11 +325,16 @@ void UDataBase::run (void)
 {
 	SServer *server = new SServer(UDBSERVER_MAX_BUFF_SIZE);
 	
+	/* empezamos el server */
+	this->serverOn = true;
 	/*! ahoral o que hacemos es practicamente respetar el protocolo
 	 * parecido A SSAP, hacer un archivo parecido, que respete este
 	 * o que sea el mismo protocolo exepto por los datos que se van a
 	 * mandar.
 	 */
+	
+	/* termino el server */
+	this->serverOn = false;
 	delete server;
 }
 
