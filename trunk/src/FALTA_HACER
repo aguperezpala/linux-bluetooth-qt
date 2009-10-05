@@ -23,6 +23,8 @@ Modulos en chequeo:
 	
 
 Tareas:	
+	* Implementando udbserver.{cpp,h} (falta el tema del manejo de las RPC
+	 y testearlo. Luego implementar lo de abajo con este modulo :).
 	* UDataBase (haciendo la parte del servidor....)
 	* Cambiar el diagrama modificando UDBServer UServer ya que van a
 	usar SServer SClient (los agregamos como atributos para	evitar 2121312
