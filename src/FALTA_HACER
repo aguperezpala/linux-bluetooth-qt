@@ -23,19 +23,11 @@ Modulos en chequeo:
 	
 
 Tareas:	
-	* Cambiar el diagrama modificando UDBServer UServer ya que van a
-	usar SServer SClient (los agregamos como atributos para	evitar 2121312
-	flechas).
-	* Haciendo UDBServer (verificando la forma de hacerlo: si conviene
-	generalizar el servidor y los protocolos parser, o si conviene hacer
-	las cosas de otra forma). El problema esta en como obtener los datos
-	del servidor, ya sea pasandole una function *, o si el thread
-	crearlo en el modulo "padre" del server (de esta 2º forma lo que se 
-	puede hacer es escuchar, leer (se bloquea) y asi vuelve al padre
-	con los datos una vez leidos).
 	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
 	modularizar un cacho mas y tratar de trabajar independientemente
 	la marquesina de las demas cosas etc.
+	* Hacer el ConfigManipulator, que se encargaria de leer/escribir
+	configuraciones de forma simple y facil :)
 	* Chequear el diagrama si falta algo.
 	* SClient el tema de las llamadas bloqueantes y no bloqueantes.
 	* Testear el verdadero udbserver/UDataBase->server.
