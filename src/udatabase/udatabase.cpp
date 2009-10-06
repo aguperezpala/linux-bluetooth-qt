@@ -315,7 +315,7 @@ void UDataBase::stopServer (void)
 	if (!this->isRunning() && !this->serverOn)
 		/* no esta corriendo => no frenamos nada */
 		return;
-	this-serverOn = false;
+	this->serverOn = false;
 }
 
 /* Funcion que practicamente carga el server y se ejecuta
@@ -323,17 +323,58 @@ void UDataBase::stopServer (void)
 */
 void UDataBase::run (void)
 {
-	SServer *server = new SServer(UDBSERVER_MAX_BUFF_SIZE);
+	SServer *server = new SServer(SSDBP_MAX_BUFF_SIZE);
+	SClient *client = NULL;
+	unsigned short startPort = UDBSERVER_START_PORT;
+	bool listening = false;
+	unsigned int errCount = 0;
+	int errCode = 0;
+	
+	
 	
 	/* empezamos el server */
 	this->serverOn = true;
-	/*! ahoral o que hacemos es practicamente respetar el protocolo
-	 * parecido A SSAP, hacer un archivo parecido, que respete este
-	 * o que sea el mismo protocolo exepto por los datos que se van a
-	 * mandar.
+	/* intentamos escuchar */
+	for (startPort = UDBSERVER_START_PORT; startPort < UDBSERVER_END_PORT &&
+		!listening; startPort++)
+		listening = server->startListen (startPort);
+	
+	/* verificamos que estemos escuchando, si no abortamos todo */
+	if (!listening) {
+		/*! zatanas */
+		debugp ("UDataBase::run: error al intentar hacer el listeng\n");
+		this->serverOn = false;
+		return;
+	}
+	/* tamos aca es porque estamos escuchando correctamente */
+	/*! ahora comenzamos a aceptar y luego trabajar con los clientes hasta
+	 * que nos cierren el server.
 	 */
+	while (this->serverOn || errCount < 15 /* ... try 15 times :) */) {
+		client = server->acceptClient();
+		if (client == NULL) {
+			errCount++;
+			continue; /* volvemos a intentar */
+		}
+		/* verificamos que se registre el usuario */
+		errCode = udbs_registerClient (client);
+		/* ahora vamos a trabajar con el cliente */
+		while (client && this->serverOn && errCode == 0) {
+			/* recibimos una request valida */
+			errCode = udbs_receiveReq (client);
+			if (errCode == 0)
+				errCode = udbs_RPCWork (client, this);
+		}
+		/* si estamos aca es porque se cerro el server o porque el
+		 * cliente dio algun error => en cualquier caso destruimos
+		 * el cliente (cierra el socket, etc) */
+		delete client; client = NULL;
+		/* reseteamos para que no muera el server */
+		errCode = 0;
+	}
 	
 	/* termino el server */
+	server->stopServer();
 	this->serverOn = false;
 	delete server;
 }
