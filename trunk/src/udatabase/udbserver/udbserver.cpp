@@ -1,10 +1,105 @@
 #include "udbserver.h"
 
 
+
+/*! Ahora vamos a definir un arreglo de tuplas para determinar las funciones
+* y los punteros a las funciones correspondientes. El arreglo tiene que
+* si o si terminar en NULL, para saber en donde termina.
+*/
+rpcTuple_t RPC_FUNCS[2] = {
+	{"getUserFromMac", udbs_RPCgetUserFromMac},
+	{NULL, NULL}
+};
+
+
+/*! Funcion que sirve para desglosar un pedido del tipo 
+ *  funcName<;>param1<;>param2...paramN. Devolviendo una QStringList donde el
+ * primer valor es el nombre de la funcion (funcName), y los siguientes valores
+ *  son los diferentes parametros.
+ * REQUIRES;
+ *	req.isNull () == false
+ *	req 	ya fue parseada (se le sacaron los headers)
+ * RETURNS:
+ *	QStringList 	!= NULL (NOTE: Allocamos memoria)
+ *	NULL		si hay error 
+ */
+static QStringList * parseRPCtoList (QString & req)
+{
+	QStringList * list = NULL;
+	
+	/* pre */
+	if (req.isNull() == true) {
+		debugp ("parseRPCtoList: req null\n");
+		ASSERT (false);
+		return NULL;
+	}
+	/* creamos la lista */
+	list = new QStringList(req.split (RPC_PARAM_DIVISOR));
+	
+	return list;
+}
+
+
 /* Definimos la lista de funciones RPC, el nombre indica claramente que lo que
 * deberia hacer la funcion. */
 
-int udbs_RPCgetUserFromMac (void * req, void * resp);
+/* Esta funcion va a preguntar a la base de datos si existe un usuario
+ * determinado segun la mac:
+ * REQUIRES:
+ *	db != NULL
+ *	paramList != NULL
+ *	resp != NULL && resp.isNull() == true
+ * RETURNS:
+ *	< 0	error (de protocolo o lo que sea)
+ *	== 0	si no hubo error & resp.isNull() == false
+ */
+int udbs_RPCgetUserFromMac (UDataBase * db, void * paramList, void * rsp)
+{
+	CUser * user = NULL;
+	QStringList * list = (QStringList *) paramList;
+	QString req = "";
+	QString * resp = (QString *)rsp;
+	
+	/* pres */
+	if (db == NULL || list == NULL) {
+		debugp ("udbs_RPCgetUserFromMac: db NULL\n");
+		ASSERT (false);
+		return -1;
+	}
+	/* obtenemos el primer parametro (NOTE: unico que requiere esto) */
+	if (list->size() != 1) /* no respeta el protocolo */
+		return -1;
+	
+	req = list->front();
+	if (req.isNull() || req.size() != MAC_SIZE) {
+		debugp ("udbs_RPCgetUserFromMac: req problem\n");
+		ASSERT (false);
+		return -1;
+	}
+	/* pres */
+	if (resp == NULL || resp->isNull() == false) {
+		debugp ("udbs_RPCgetUserFromMac: resp problem\n");
+		ASSERT (false);
+		return -1;
+	}
+	
+	/* aca ahora lo que vamos hacer es simplemente llamar a la funcion de
+	 * la base de datos pidiendo por el usuario */
+	user = ((UDataBase*)db)->getUserFromMac (req);
+	if (user == NULL)
+		/* quiere decir que no existe ni chota */
+		*resp = PRO_RESP_FALSE;
+	else {
+		/* es porque tenemos un usuario => obtenemos el nick, ya que
+		 * esto va a ser la respuesta */
+		*resp = user->getNick();
+		/* lo eliminamos */
+		delete user;
+	}
+	
+	return 0;
+	
+}
 
 
 
@@ -142,7 +237,7 @@ int udbs_receiveReq (SClient * client)
 	
 	req = "";
 	resp = "";
-	memset (buff, '\0', USP_SSAP_MAZ_SIZE);
+	memset (buff, '\0', SSDBP_MAX_BUFF_SIZE);
 	client->clearBuffer();
 	
 	while (result == 0 && notRecived) {
@@ -208,9 +303,75 @@ int udbs_receiveReq (SClient * client)
 *	-2	si hubo un error interno...
 *	== 0 	NO hubo error
 */
-int udbs_RPCWork (SClient * client, const UDataBase * udb)
+int udbs_RPCWork (SClient * client, UDataBase * udb)
 {
+	QString resp = "";
+	QString req = "";
+	QString funcName = "";
+	QString * aux = NULL;
+	QStringList * list = NULL;
+	int result = -2;
+	int i = 0;
+	bool notFound = true;
 	
-
+	
+	/* pres */
+	if (client == NULL || udb == NULL) {
+		ASSERT (false);
+		return -2;
+	}
+	req = client->getData();
+	if (udbs_isValidRequest(req) != UDBS_NO_ERROR) {
+		ASSERT (false);
+		return -1;
+	}
+	
+	/* ahora parseamos el request, y obtenemos la lista */
+	aux = udbs_parseRequest (req);
+	if (aux == NULL) {
+		debugp ("udbs_RPCWork: error udbs_parseRequest returns null\n");
+		return -1;
+	}
+	/* reemplazamos el request, por el ya parseado */
+	req = *aux;
+	delete aux; aux = NULL;
+	
+	/* obtenemos la lista */
+	list = parseRPCtoList (req);
+	if (list == NULL || list->size() < 1) {
+		debugp ("udbs_RPCWork: error parseRPCtoList returns null\n");
+		return -1;
+	}
+	/* obtenemos el nombre de la funcion y lo sacamos de la lista */
+	funcName = list->front();
+	list->removeFirst();
+	
+	/* ahora buscamos cual es la RPC que tenemos que llamar */
+	while (RPC_FUNCS[i].funcName != NULL && notFound) {
+		if (funcName == RPC_FUNCS[i].funcName) {
+			/* si es igual entonces llamamos a la funcion con los
+			 * parametros correspondientes */
+			notFound = false;
+			result = RPC_FUNCS[i].func (udb, list, &resp);
+		}
+		i++;
+	}
+	/* verificamos si encontramos alguna funcion coreespondiente */
+	if (notFound) {
+		/*! no encontro una funcion :-o, que verdura nos mando?? */
+		result = -1;
+	}
+	/* liberamos un poco de memoria */
+	delete list;
+	
+	/* verificamos que debemos enviar */
+	if (result >= 0) {
+		/* debemos enviar lo que nos respondieron entonces */
+		/*!### Bloqueante ###*/
+		result = client->sendData (qstrtochar (resp), resp.size());
+	}
+	
+	return result;
+}
 
 

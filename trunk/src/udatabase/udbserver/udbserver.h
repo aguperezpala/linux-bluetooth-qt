@@ -2,19 +2,29 @@
  * tipo de cosas.
  * Tambien en un futuro va a tener las funciones que se van a encargar de
  * ejecutar las RPC ("Remote Procedure Call") :).
+ * NOTE: las RPC van a tener la siguiente forma:
+ *	funcName<;>param1<;>param2<;>.....paramN
 */
 #ifndef UDBSERVER_H
 #define UDBSERVER_H
 
 #include <QString>
+#include <QStringList>
 #include <stdio.h>
 
+#include "../udatabase.h"
 #include "udbprotocol.h"
 #include "../../debug.h"
 #include "../../consts.h"
 #include "../../simple_server/sclient.h"
-#include "../udatabase.h"
+#include "../../cuser/cuser.h"
 #include "../../simple_server/sserver.h"
+
+
+#define RPC_PARAM_DIVISOR		"<;>"
+
+/* definimos el prototypo para poder compilar esta bosta mal hecha */
+class UDataBase;
 
 /*! Vamos a definir el modelo de funcion que van a ser las RPC:
  * int (func*) (void* req, void* resp);
@@ -25,7 +35,7 @@
  *	la respuesta de la funcion (sin parsear en el protocolo).
  * NOTE: Cada funcion chequea si esta bien formada la funcion o no.
  */
-typedef int (func*)(void*,void*) rpcFunc_t;
+typedef int(*rpcFunc_t) (UDataBase *, void *, void *);
 
 /* Definimos un tipo usado solo aca, feo pero util :) */
 typedef struct {
@@ -33,21 +43,24 @@ typedef struct {
 	rpcFunc_t func;
 } rpcTuple_t;
 
-
+/** ### ### ### ### ### ### ### RPC FUNCTIONS ### ### ### ### ### ### ### */
 /* Definimos la lista de funciones RPC, el nombre indica claramente que lo que
  * deberia hacer la funcion. */
 
-int udbs_RPCgetUserFromMac (void * req, void * resp);
+/* Esta funcion va a preguntar a la base de datos si existe un usuario
+* determinado segun la mac:
+* REQUIRES:
+*	db != NULL
+*	paramList != NULL
+*	resp != NULL && resp.isNull() == true
+* RETURNS:
+*	< 0	error (de protocolo o lo que sea)
+*	== 0	si no hubo error & resp.isNull() == false
+*/
+int udbs_RPCgetUserFromMac (UDataBase * db, void *paramList, void *resp);
 
 
-/*! Ahora vamos a definir un arreglo de tuplas para determinar las funciones
- * y los punteros a las funciones correspondientes. El arreglo tiene que
- * si o si terminar en NULL, para saber en donde termina.
- */
-rpcTuple_t RPC_FUNCS[2] = {
-	{"getUserFromMac", udbs_RPCgetUserFromMac},
-	NULL
-};
+/** ### ### ### ### ### ### ### RPC FUNCTIONS ### ### ### ### ### ### ### */
 
 
 /* Funcion que espera que un usuario se registre, chequeando el protocolo
@@ -96,7 +109,7 @@ int udbs_receiveReq (SClient * client);
  *	-2	si hubo un error interno...
  *	== 0 	NO hubo error
  */
-int udbs_RPCWork (SClient * client, const UDataBase * udb);
+int udbs_RPCWork (SClient * client, UDataBase * udb);
 
 
 #endif

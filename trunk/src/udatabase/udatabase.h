@@ -24,6 +24,8 @@
 #include "../simple_server/sclient.h"
 /*! en este archivo esta definido todo el protocolo SSDBP */
 #include "udbserver/udbprotocol.h"
+/* facilita las funciones del server */
+#include "udbserver/udbserver.h"
 
 
 class UDataBase: public QThread{

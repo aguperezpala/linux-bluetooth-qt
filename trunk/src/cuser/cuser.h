@@ -10,7 +10,8 @@
 #include "../debug.h"
 
 
-#define MAC_ADDR_SIZE 17	/* no es el tamaño verdadero, es el size "visual" */
+/* no es el tamaño verdadero, es el size "visual" */
+#define MAC_ADDR_SIZE 			MAC_SIZE
 class CUser{
 	public:
 		/* Constructor que pide de una los datos, en caso de que sean
