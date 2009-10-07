@@ -62,9 +62,23 @@ const QString & DispObject::getData() const
 {
 	return this->data;
 }
-/* Destructor: Libera el user */
+
+void DispObject::deleteFile (void)
+{
+	if (this->file.exists(this->file.fileName()))
+		/* si existe => eliminamos el archivo */
+		if (!this->file.remove())
+			/* error borrando el archivo?... */
+			debugp ("DispObject::~DispObject: error al intentar "
+			"borrar el archivo...:(\n");
+}
+/* Destructor: 
+ * Libera el user 
+ * NOTE: elimina el archivo si tiene asociado alguno
+ */
 DispObject::~DispObject()
 {
 	if (this->user != NULL)
 		delete this->user;
+	deleteFile();
 }

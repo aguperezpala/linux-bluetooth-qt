@@ -15,14 +15,21 @@ Modulos terminados de chequear:
 	* SClient (80 % testeado.. faltaria intentar volver a enviar 2 veces
 	seguidas y recibir 2 veces seguidas..).
 	* udbprotocol (testeado)
+	* ConfigManipulator (testeado y andando)
+	* TxtWinControl (testeado, faltan las configuraciones)
+	
 	
 Modulos en chequeo:
-	* maintxtwindow (reajustar el nombre del diagrama)
 	* dispobjtable NO esta testeado, pero si compilando.
 	* UServer (2 version, implementado con SServer).
 	
 
 Tareas:	
+	* Comenzando con el picturewindow (picturewindow & picwincontrol). 
+	* El tema de la tabla (dispobjtable) vamos a manejar las imagenes, 
+	por el momento, mostrando el nombre de la imagen, y ante un doble
+	click, esta va a ser mostrada por pantalla (falta implementar y 
+	testear esto).
 	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
 	modularizar un cacho mas y tratar de trabajar independientemente
 	la marquesina de las demas cosas etc.
@@ -31,6 +38,17 @@ Tareas:
 	* Chequear el diagrama si falta algo.
 	* SClient el tema de las llamadas bloqueantes y no bloqueantes.
 	* Testear el verdadero udbserver/UDataBase->server.
+
+Tareas obexserver:
+	* Fijarse el tema de los modulos de dbconector que sean "atomicos",
+	osea que soporten concurrencia (se debe hacer un solo pedido a la
+	vez a la base de datos).
+	* Crear N*7 servidores que escuchen en diferentes puertos. Donde N es
+	la cantidad de usb dongles. Para cada dongle usar un Thread. Para cada
+	servidor de un mismo dongle usar select.
+	* Fijarse que cuando se reciba un archivo, si el nombre del archivo
+	ya existe => modificarlo y guardarlo con otro nombre.
+	* IMPLEMENTAR en vez de PIPE con un socket..
 	
 UServer:
 	* Hacerlo que soporte multiples clientes?.
@@ -52,6 +70,12 @@ FINAL:
 	* Sacar el flab -g.
 	* Sacar el define __DEBUG.
 	* Correr el sistema y verificar la memoria que no se vaya con dios
+	* Verificar la memoria general del sistema.
+	* Fijarse que se vayan borrando los archivos a medida que pasa el tiempo
+	y en caso de errores o que sean cancealdos, etc...
+	* Generar un directorio aparte donde se van a recibir los archivos (para
+	facilitar el tema de la "administracion" de los mismos).
+	
 
 
 
