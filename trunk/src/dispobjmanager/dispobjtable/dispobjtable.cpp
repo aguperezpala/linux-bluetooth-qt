@@ -76,7 +76,7 @@ void DispObjTable::deleteItem (int r)
 	ASSERT (r <= this->queue.size());	/*! NOTE: DEBE CUMPLIRSE */
 	aux = this->queue[r];
 	if (aux != NULL) {
-		delete aux;
+		delete aux;	/* se borra el archivo */
 		aux = NULL;
 		/* lo sacamos de la "cola" */
 		this->queue.removeAt(r);

@@ -34,6 +34,11 @@ class DispObject {
 		 */
 		DispObject (QString & fname);
 		
+		/* Funcion que elimina el archivo asociado a file si es posible.
+		 * Es una funcion "facilitadora"
+		 */
+		void deleteFile (void);
+		
 		
 		/* Funcion que se encarga de setear el usuario del dispobj
 		 * Ademas elimina un usuario anterior si es que tiene.
@@ -64,7 +69,10 @@ class DispObject {
 		 */
 		const QString & getData(void) const;
 		
-		/* Destructor: Libera el user */
+		/* Destructor: 
+		 * Libera el user 
+		 * NOTE: ELIMINA EL ARCHIVO! (si tiene asociado alguno)
+		*/
 		~DispObject();
 		
 	private:
