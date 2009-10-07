@@ -58,13 +58,15 @@ public:
 	 */
 	void pause(bool p);
 	
+	/* funcion que devuelve si estamos corriendo o no los msjs */
+	bool isPaused(void);
+	
 	void setVelocity (int v);		/* Refresh time ms */
 	void setStep (int s) {this->step = s;};	/* step size */	
 	void setBetween (QString& b) {this->between = b;};
 	
 	/* setea el color de la fuente */
-	void setFontColor (QColor & c) 
-		{this->color = c; this->painter.setPen(c);}; /*! :( */
+	void setFontColor (QColor & c) { this->color = c; };
 	inline QColor & getFontColor (void){return this->color;};
 	/* setea una nueva fuente para el texto */
 	void setTextFont (QFont & font);
