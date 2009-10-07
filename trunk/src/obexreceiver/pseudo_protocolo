@@ -5,13 +5,13 @@ Como vamos a recibir las cosas:
 
 Los datos:
 	Van a ser tuplas de datos (<Nombre_archivo>, <MAC>). Encerradas por un
-caracter especial '|'.
+caracter especial '{' y '}'.
 	Nombre_archivo: Es el path completo del archivo (no es absoluto).
 	MAC: MAC_SIZE bytes (17).
 
 Vamos a tener algo de la forma:
-|</home/xxxx/arch1><11:22:33:44:55:66>||</home/xxxx/arch2><AB:C2:3D:44:55:66>|
-|</home/xxxx/ah3><11:11:3D:4B:D5:E6>|...|</home/xxxx/arch1><11:22:33:44:55:66>|
+{</home/xxxx/arch1><11:22:33:44:55:66>}{</home/xxxx/arch2><AB:C2:3D:44:55:66>}
+{</home/xxxx/ah3><11:11:3D:4B:D5:E6>}...{</home/xxxx/arch1><11:22:33:44:55:66>}
 
 
 Puertos por donde vamos a escuchar:

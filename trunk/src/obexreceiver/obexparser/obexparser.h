@@ -1,58 +1,34 @@
-/*! Modulo que parsea segun el pseudo protocolo las cosas desde un buffer
- * determinado
+/*! Modulo que va a parsear una cadena de caracteres y a su vez va a  
+ * modificar el QByteArray
+ * 
 */
-#ifndef CUSER_H
-#define CUSER_H
+#ifndef OBEXPARSER_H
+#define OBEXPARSER_H
 
 
+#include <QByteArray>
 #include <QString>
 #include "../consts.h"
 #include "../debug.h"
 
 
-/* no es el tamaño verdadero, es el size "visual" */
-#define MAC_ADDR_SIZE 			MAC_SIZE
-class CUser{
-	public:
-		/* Constructor que pide de una los datos, en caso de que sean
-		 * NULL los string no los copia.
-		 * REQUIRES:
-		 *	mac != NULL && mac->size == MAC_ADDR_SIZE / * cacaso * /
-		 * NOTE: copia memoria, liberar con lo que se llamo 
-		 */
-		CUser (QString * nick, QString * mac);
-		
-		/* GETS
-		 * NOTE: devuelve el puntero NO COPIA MEMORIA => NO liberarla
-		 */
-		const QString& getNick (void) const {return nick;};
-		const QString& getMAC (void) const {return MAC;};
-		
-		/* Funcion que copia un usuario desde un puntero devolviendo
-		 * una nueva instancia.
-		 * NOTE: GENERA memoria
-		 */
-		CUser * copy(void);
-		
-		/*! VAMOS A DETERMINAR QUE 2 USUARIOS SON IGUALES POR EL NUMERO
-		  * DE MAC */
-		/* REQUIRES: CUser other != NULL */
-		bool operator==(const CUser & other);
-		/* REQUIRES: CUser other != NULL */
-		bool operator!=(const CUser & other);
-		
-		/*!DEBUG*/
-		#ifdef __DEBUG
-		void printUser();
-		#endif
-		
-		~CUser();
-		
-	private:
-		/*aca vamos a definir los campos de la clase usuario*/
-		QString nick;
-		QString MAC;
-		
-};
+/* Funcion que parsea segun el pseudo_protocolo los datos del buffer.
+ * Esta funcion se fija simplemente en el protocolo y devuelve una
+ * QStringList, donde cada elemento es uno de los de la tupla.
+ * En caso de encontrar incosistencias elimina automaticamente las cosas
+ * del buffer.
+ * REQUIRES:
+ *	buff.isNull() == false && buff.size() > 0
+ * RETURNS:
+ * 	NULL	sii (No hay paquete completo)
+ *	strList != NULL en caso de encontrar una tupla.
+ * NOTE: En caso de incosistencias => eliminamos los datos hasta encontrar
+ *	datos consistentes.
+ * NOTE 2: En caso de que haya mas de un paquete, devolvemos solo el primero y
+ *	   los otros no son modificados (volver a llamar a esta funcion).
+ */
+ QStringList * obpa_parse (QByteArray & buff);
+
+
 
 #endif

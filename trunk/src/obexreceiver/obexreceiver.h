@@ -14,9 +14,6 @@
 #include "../simple_server/sclient.h"
 #include "../dispobject/dispobject.h"
 
-#define OBREC_START_PORT		4561
-#define OBREC_END_PORT			4566
-#define OBREC_BUFF_SIZE			4096	/* 4 kb alcanzaran? */
 
 class ObexReceiver {
 	public:
