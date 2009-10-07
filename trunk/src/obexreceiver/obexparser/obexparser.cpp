@@ -8,7 +8,8 @@
  * 	buff.isNull () == false
  * 	existPackage (buff)
  * RETURNS:
- * 	NULL 		on error
+ * 	NULL 		on error (NOTE: no se respeta el protocolo => deberiamos
+ *					limpiar el buffer desp de esto.)
  * 	strList		on success
  */
 static QStringList * obpa_getList (QByteArray & buff)
@@ -31,7 +32,17 @@ static QStringList * obpa_getList (QByteArray & buff)
 		return NULL;
 	}
 	
-	/*! tamos joia => buscamos primero el file y luego la MAC */
+	/*! tamos joia => buscamos primero el file y luego la MAC 
+	  * {<file_path><MAC>} */
+	startPos = buff.indexOf (OBREC_DATA_SEPARATOR_B,0);
+	endPos = buff.indexOf (OBREC_DATA_SEPARATOR_E, 0);
+	if ((startPos < 0) || (endPos <= 0)) {
+		/*! ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+		 *  si pasa esto es porque no estamos respetando el protocolo?
+		 * ya que tenemos en teoria un paquete pero mal FORMADO!
+		 * entonces deberiamos eliminar todo a la mierda... :(
+		*/
+		return NULL;
 	
 	
 
@@ -96,5 +107,7 @@ static QStringList * obpa_getList (QByteArray & buff)
 	/* si estamos aca es porque en teoria tenemos un paquete... */
 	result = obpa_getList (buff);
 	
+	/*! si result = NULL es porque esta mal formado el paquete => lo
+	 * liberamos
 	return result;
 }
