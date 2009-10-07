@@ -195,6 +195,7 @@ void TextWindow::paintEvent(QPaintEvent * /* event */)
 	
 	this->painter.begin (this);
 	/* vamos a recorrer la cantidad de MarquesinObj que tengamos */
+	this->painter.setPen(this->color);
 	for (j = 0; j < mlist.size(); j++){
 		mobj = NULL;
 		str = NULL;
@@ -213,7 +214,8 @@ void TextWindow::paintEvent(QPaintEvent * /* event */)
 			if (x <= this->width()) {
 				/* si estamos dentro del tamaño de la pantalla
 				 * dibujamos */
-				painter.drawText(x, y, QString((*str)[i]));
+				this->painter.drawText(x, y,
+							QString((*str)[i]));
 				/* aumentamos la posicion de la proxima letra */
 				x += metrics->width((*str)[i]);
 			} else 
@@ -247,6 +249,11 @@ void TextWindow::pause(bool p)
 	} else
 		if (!this->timer.isActive())
 			this->timer.start(this->vel, this);
+}
+
+bool TextWindow::isPaused(void)
+{
+	return !this->timer.isActive();
 }
 
 void TextWindow::setNewMetricsFont()
