@@ -21,16 +21,19 @@
  * del buffer.
  * REQUIRES:
  *	buff.isNull() == false && buff.size() > 0
+ *	error != NULL
  * RETURNS:
- * 	NULL	sii (No hay paquete completo)
- *	strList != NULL en caso de encontrar una tupla.
+ *	error = true (si hubo error de protocolo, o ta mandando verduras)
+ *	false = si no hubo error => incompleto los datos =>
+ * 	strList = NULL	(No hay paquete completo | error)
+ *	strList != NULL en caso de encontrar una tupla (NOTE alloca memoria).
  * NOTE: En caso de incosistencias => eliminamos los datos hasta encontrar
  *	datos consistentes.
  * NOTE 2: En caso de que haya mas de un paquete, devolvemos solo el primero y
  *	   los otros no son modificados (volver a llamar a esta funcion).
  * NOTE 3: el parser NO sabe si los datos recibidos son correctos.
  */
- QStringList * obpa_parse (QByteArray & buff);
+ QStringList * obpa_parse (QByteArray & buff, bool & error);
 
 
 

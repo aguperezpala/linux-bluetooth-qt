@@ -31,6 +31,8 @@ class DispObject {
 		 * REQUIRES:
 		 *	fname.isNull() == false
 		 *	file.exists() == true (file.setFileName(fname))
+		 *//*! NOTE: automaticamente vamos a determinar el tipo
+		 * del archivo, segun los parametros en el consts.h
 		 */
 		DispObject (QString & fname);
 		

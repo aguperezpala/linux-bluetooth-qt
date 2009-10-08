@@ -24,6 +24,9 @@ bool SServer::startListen (unsigned short port)
 {
 	struct sockaddr_in self;
 	
+	/* cerramos el socket en caso de que este abierto... vaya a saber */
+	if (this->sock)
+		close (this->sock);
 	
 	this->sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->sock < 0) {
@@ -102,8 +105,10 @@ SClient * SServer::acceptClient(void)
 */
 void SServer::stopServer()
 {
-	if (this->sock)
+	if (this->sock) {
 		close (this->sock);
+		this->sock = 0;
+	}
 }
 /* Destructor, cierra todo */
 SServer::~SServer()
