@@ -17,6 +17,7 @@ Modulos terminados de chequear:
 	* udbprotocol (testeado)
 	* ConfigManipulator (testeado y andando)
 	* TxtWinControl (testeado, faltan las configuraciones)
+	* ObexParser (terminadito :) )
 	
 	
 Modulos en chequeo:
