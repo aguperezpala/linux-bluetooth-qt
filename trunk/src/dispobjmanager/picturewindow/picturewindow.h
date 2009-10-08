@@ -1,57 +1,54 @@
-/*! Es la ventana sola con el texto a mostrar. Esta clase va a tomar una
- * funcion especial del tipo QString * (*getNextMsg) (void); que lo que va hacer
- * es obtener el siguiente mensaje a mostrar. (i.e: sacar de la cola el proximo
- * sms a mostrar.
- * El funcionamiento general va a ser: Se van obteniendo QStrings para mostrar,
- * cada vez que se nescesite (osea cuando haya espacio para mostrar otro mensaje
- * se intenta pedir un nuevo QString, si se obtiene se muestra, si no no).
- * Cada objeto a mostrar en pantalla sera un MarquesinObj.
+/*! Es la ventana sola con la imagen a mostrar. Esta clase va a tomar una
+ * funcion especial del tipo QPixmap * (*getNextPic)(void); que lo que va hacer
+ * es obtener el la siguiente imagen a mostrar. Esto nos permite borrar el
+ * archivo (ya que en el PixMap tenemos la foto, osea en memoria)
+ * El funcionamiento va a ser el siguiente, a cada vencimiento del clock vamos
+ * a pedir la siguiente imagen, si hay la mostramos, si no hay => nos dormimos.
+ * En caso de que no haya, entonces nos dormimos hasta que nos llaman de nuevo
+ * que llego una nueva foto.
+ * NOTE: Debemos tener en cuenta de que solo de a 1 foto podamos visualizar, ya
+ * 	 que son almacenadas en RAM.
  * NOTE: Es un QWidget.
 */
 
-#ifndef TEXTWINDOW_H
-#define TEXTWINDOW_H
+#ifndef PICTUREWINDOW_H
+#define PICTUREWINDOW_H
 
 #include <QWidget>
-#include <QThread>
 #include <QBasicTimer>
 #include <QTimerEvent>
-#include <QFontMetrics>
-#include <QColor>
-#include <QPainter>
-#include <QFont>
-#include <QList>
 #include <QCloseEvent>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QPixmap>
+#include <QMutex>
+
 
 #include "../../consts.h"
 #include "../../debug.h"
 #include "marquesinobj.h"
 
-#define MAX_STR_BUFF	800	/*cantidad de caracteres que pueden estar en
-pantalla*/
-
-class TextWindow : public QWidget
+class PictureWindow : public QWidget
 {
 	Q_OBJECT
 			
 public:
 	/* Constructor: Muestra y crea la nueva ventana.
 	 * REQUIRES:
-	 *	getNextMsg != NULL (funcion q obtiene el proximo sms a mostrar)
+	 *	getNextPic != NULL 
 	 * NOTE: tener en cuenta que debe devolver NULL si no hay siguiente
-	 * mensaje. ### Esta funcion se encarga de liberar el QString, NO debe
-	 * ser liberado desde otro lado.
+	 * 	 imagen. 
+	 * ### Esta funcion se encarga de liberar el QPixmap, NO debe ser 
+	 *     liberado desde otro lado.
 	*/
-	TextWindow(QString * (*getNextMsg)(void));
+	PictureWindow(QPixmap * (*getNextPic)(void));
 	
     
-	/* Funcion que agrega un un mensaje a la cola. Ademas saca los '\n' para
-	* serializar los datos en una misma linea y agrega el espacio "betwen"
-	* al final de cada mensaje.
-	* REQUIRES:
-	*		msj.isNull () == false
+	/* Funcion que avisa a la ventana que llego una nueva imagen.
+	 * Lo que hace es despertar el timer en caso de que este apagado,
+	 * si se estan mostrando actualmente imagenes => no hace nada.
 	*/    
-	void setMesg (const QString& msj);
+	void setPicture (void);
     	
 	
 	/* Funcion que pausa (p = true) o continua (p = false) el movimiento
@@ -62,69 +59,52 @@ public:
 	/* funcion que devuelve si estamos corriendo o no los msjs */
 	bool isPaused(void);
 	
-	void setVelocity (int v);		/* Refresh time ms */
-	void setStep (int s) {this->step = s;};	/* step size */	
-	void setBetween (QString& b) {this->between = b;};
+	/* funcion que setea el sleepTime (tiempo a mostrar cada foto)
+	 * REQUIRES:
+	 *	ms >= 10
+	 */
+	void setSleepTime (int ms);
 	
-	/* setea el color de la fuente */
-	void setFontColor (QColor & c) { this->color = c; };
-	inline QColor & getFontColor (void){return this->color;};
-	/* setea una nueva fuente para el texto */
-	void setTextFont (QFont & font);
-	
-	/* setea el color de backgorund */
-	void setBackColor (const QColor& c);
-	
-	~TextWindow();
+	/* Destructor */
+	~PictureWindow();
 	
 public slots:
 	void closeEvent (QCloseEvent *);
 	
-protected:
-	void paintEvent(QPaintEvent *event);
+protected:	
 	void timerEvent(QTimerEvent *event);
 	
 
 private:
-	/* funcion actualiza las metrics cuando se cambio el tipo de fuente*/
-	void setNewMetricsFont(void);
-	
-	/* Funcion que hace practicamente todo, actualiza las posiciones,
-	 * chequea si se debe buscar un nuevo mensaje para mostrar, agregarlo
-	 * etc.
-	 * NOTE: esta es la funcion principal
+	/* Esta funcion hace atomica la escritura de la variable newPicture
+	 * para evitar inconsistencias 
 	 */
-	void updateText(void);
+	void setNewPictureFlag (bool b);
 	
-	/*agrega un mensaje para mostrar en pantalla
-	RETURNS:
-	true == si se pudo agregar
-	false == cc
+	/* Esta funcion hace atomica la lectura de la variable newPicture
+	* para evitar inconsistencias 
 	*/
+	bool getNewPictureFlag (void);
 	
-	/* Funcion que agrega un mensaje a la "cola" mlist para ser mostrado
-	 * en pantalla.
-	 * RETURNS;
-	 *	true 	if success
-	 *	false	otherwise
+	
+	/* Esta es la funcion que va a manejar el tema de mostrar/borrar/pedir
+	 * nuevas imagenes cuando sea necesario.
+	 * Es la funcion llamanda desde el timer.
 	 */
-	bool addMesg(void);
+	void updatePicture(void);
 	
 	
-	bool canWakeUp;		/*para determinar si debemos despertar o no al text*/
-	int vel;		/*refresh time*/
-	int step;		/*step size*/
 	
+	
+	QMutex mutex;		/* para hacer atomico el seteo del flag */
+	bool newPicture;	/* nos avisa si hay una nueva imagen */
+	int sleepTime;		/* Tiempo a mostrar cada foto */
 	QBasicTimer timer;	/* nuestro "thread */
-	QFontMetrics *metrics;	/* para determinar el tamaño de la fuente */
-	QPainter painter;	/* el que dibuja sobre el QWidget */
-	QString between;	/* string entre medio de cada mensaje */
-	QColor color;		/* es el color de la fuente */
-	
-	QList<MarquesinObj *> mlist;	/*marquesin list,*/
-	
+	QPixmap * picture;	/* almacenamos el puntero a la ultima pic */
+	QVBoxLayout layout;	/* para agregar el label */
+	QLabel label;		/* por medio de esto vamos a poder mostrar */
 	/*! funcion que obtiene el proximo elemento */
-	QString * (*getNextMsg)(void);
+	QPixmap * (*getNextPic)(void);
 };
 
 #endif

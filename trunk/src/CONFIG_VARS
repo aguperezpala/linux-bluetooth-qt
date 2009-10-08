@@ -11,3 +11,6 @@ consts.h podriamos meter "#include "config_parser.h"
 * UServer: startPort & endPort (puertos donde va a escuchar)
 * TextWindow: posicion, fuente, color, color fondo, tamaño, tipo de ventana,
 velocidad, step, betwen
+
+* PictureWindow:
+	- Tiempo de espera de cada foto.

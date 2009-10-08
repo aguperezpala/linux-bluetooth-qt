@@ -1,9 +1,9 @@
 /*! Esta clase es la encargada de manejar las configuraciones de la ventana de
- * texto (la que muestra la marquesina).
+ * imagenes (donde se van a mostrar las fotos).
  */
 
-#ifndef TXTWINCONTROL_H
-#define TXTWINCONTROL_H
+#ifndef PICWINCONTROL_H
+#define PICWINCONTROL_H
 
 #include <QWidget>
 #include <QtGui>
@@ -17,8 +17,8 @@
 #include <fstream>
 
 
-#include "ui_txtwincontrol.h"
-#include "textwindow.h"
+#include "ui_picwincontrol.h"
+#include "picturewindow.h"
 
 
 #define MAINTXTW_CONFIG_FILE_NAME	"config.conf"
