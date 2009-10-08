@@ -26,7 +26,7 @@
 
 #include "../../consts.h"
 #include "../../debug.h"
-#include "marquesinobj.h"
+
 
 class PictureWindow : public QWidget
 {
@@ -95,7 +95,7 @@ private:
 	
 	
 	
-	
+	bool paused;		/* determinamos si estamos en pausa */
 	QMutex mutex;		/* para hacer atomico el seteo del flag */
 	bool newPicture;	/* nos avisa si hay una nueva imagen */
 	int sleepTime;		/* Tiempo a mostrar cada foto */

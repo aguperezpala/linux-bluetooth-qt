@@ -18,6 +18,9 @@ Modulos terminados de chequear:
 	* ConfigManipulator (testeado y andando)
 	* TxtWinControl (testeado, faltan las configuraciones)
 	* ObexParser (terminadito :) )
+	* PicWinControl (pareceria andar, probablemente habria que agregarle
+	mas opciones, y hacerlo mas lindo)
+	* PictureWindow (en teoria no hay leaks, faltaria mejorarla).
 	
 	
 Modulos en chequeo:
@@ -93,3 +96,6 @@ TIPS:
 	windows el programa directamente :D.
 	* Hacerlo mas robusto al protocolo del ObexReceiver (para no perder la
 	sincronizacion....)
+	* El tema de las fotos, que se muestren no estiradas por completo, si no
+	que se muestren de acuerdo al tamaño general de la imagen hasta un
+	posible "maximo" tamaño, que va a ser el tamaño de la ventana en si.

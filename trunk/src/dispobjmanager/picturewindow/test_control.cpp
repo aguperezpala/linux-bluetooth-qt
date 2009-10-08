@@ -4,34 +4,24 @@
 #include <QApplication>
 #include <QFontDialog>
 #include <QString>
-#include "textwindow.h"
-#include "txtwincontrol.h"
+#include "picturewindow.h"
+#include "picwincontrol.h"
 #include "../../tester.h"
 
-TextWindow * txtw;
-TxtWinControl * twc;
+PictureWindow * pw;
+PicWinControl * pwc;
 
-QString * getmsg (void)
+QPixmap * picture_sender (void)
 {
-	static int counter = 399;
+	QPixmap * pic = new QPixmap();
+	QString fname = "m4.jpg";
 	
-	counter--;
-	if (counter >= 0) {
-		QString * pepe = new QString("hasta el remil choripan bolo");
-		printf ("llegamos aca\n");
-		return pepe;
-	} else
-		return NULL;
+	pic->load (fname);
+	printf ("Cambiando de foto....\n");
+	return pic;
 }
-static void test_setFont (void)
-{
-	bool ok = false;
-	
-	QFont font = QFontDialog::getFont(&ok,txtw->font(),txtw);
-	if (ok) 
-		txtw->setTextFont (font);
-	
-}
+
+
 int main (int argc, char ** argv)
 {	
 	QApplication app(argc, argv, true);
@@ -43,24 +33,24 @@ int main (int argc, char ** argv)
 	printf ("LLEGAMOS1\n");
 	
 	
-	txtw = new TextWindow (&getmsg);
+	pw = new PictureWindow (&picture_sender);
 	printf ("LLEGAMOS2\n");
-	twc = new TxtWinControl(0, test, txtw);
+	pwc = new PicWinControl(0, test, pw);
 	printf ("LLEGAMOS3\n");
-	txtw->setWindowFlags (flags);
+	pw->setWindowFlags (flags);
 	printf ("LLEGAMOS4\n");
-	twc->show();
-	txtw->pause(false);
-	txtw->setMesg (test);
-	txtw->show();
+	pwc->show();
+	pw->pause(false);
+	pw->setPicture ();
+	pw->show();
 	printf ("esperamos\n");
 	
 	
 	/*test_setFont();*/
 	printf ("esperamos de nuevo\n");
-	txtw->setMesg(test);
+	
 	app.exec();
-	delete txtw;
-	delete twc;
+	delete pw;
+	delete pwc;
 	return 0;
 }

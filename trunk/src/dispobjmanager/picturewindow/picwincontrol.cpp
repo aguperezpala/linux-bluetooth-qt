@@ -1,34 +1,42 @@
-#include "txtwincontrol.h"
+#include "picwincontrol.h"
 
 
 
 
 
 /* Funcion que guarda todas las variables de configuracion */
-void TxtWinControl::saveConfigs(void)
+void PicWinControl::saveConfigs(void)
 {
 	return;
 }
 
 
 /* Funcion que Carga todas las variables de configuracion */
-void TxtWinControl::loadConfigs(void)
+void PicWinControl::loadConfigs(void)
 {
 	return;
 }
 
-TxtWinControl::TxtWinControl(QWidget *parent, QString &fname, 
-	       TextWindow * txtWin) : QWidget(parent)
+/* Constructor: vamos a pasarle un nombre de archivo que vamos
+* a usar para leer las configuraciones y la ventana donde vamos a
+* mostrar las fotos.
+* REQUIRES:
+*	picWin 		!= NULL
+* NOTE: puede ser que el archivo de configuracion sea nulo =>
+*	 no cargamos ni chori :)
+*/
+PicWinControl::PicWinControl(QWidget *parent, QString &fname, 
+			      PictureWindow *picWin) : QWidget(parent)
 {
-	this->tw = NULL;
+	this->pw = NULL;
 	this->configName = fname;
 	/* PRES */
-	if (txtWin == NULL) {
+	if (picWin == NULL) {
 		ASSERT (false);
 		this->close();
 		return;
 	}
-	this->tw = txtWin;
+	this->pw = picWin;
 	/* cargamos el archivo */
 	setupUi(this);
 	//QMetaObject::connectSlotsByName(this); /*conectamos cada componente*/
@@ -36,7 +44,7 @@ TxtWinControl::TxtWinControl(QWidget *parent, QString &fname,
 	loadConfigs();
 }
 
-void TxtWinControl::on_txtbuttonSetSize_clicked()
+void PicWinControl::on_txtbuttonSetSize_clicked()
 {
 	bool ok = false;
 	int xres = 0; int yres = 0;
@@ -45,11 +53,11 @@ void TxtWinControl::on_txtbuttonSetSize_clicked()
 	if (ok) {
 		yres = txtsizeY->text().toInt (&ok, 10);
 		if (ok)
-			this->tw->resize (xres, yres);
+			this->pw->resize (xres, yres);
 	}
 }
 	
-void TxtWinControl::on_txtbuttonSetPos_clicked()
+void PicWinControl::on_txtbuttonSetPos_clicked()
 {
 	bool ok = false;
 	int xres = 0; int yres = 0;
@@ -58,62 +66,56 @@ void TxtWinControl::on_txtbuttonSetPos_clicked()
 	if (ok) {
 		yres = txtposY->text().toInt (&ok, 10);
 		if (ok)
-			this->tw->move (xres, yres);
+			this->pw->move (xres, yres);
 	}
 	
 }
 
-void TxtWinControl::on_txtbuttonSetBetween_clicked()
+
+void PicWinControl::on_txtbuttonShowHideWindow_clicked()
 {
-	QString aux(this->txtlineBetween->text());
-	this->tw->setBetween(aux);
-}
-void TxtWinControl::on_txtbuttonShowHideWindow_clicked()
-{
-	if (this->tw->isVisible()) {
+	if (this->pw->isVisible()) {
 		/* entonces el boton lo vamos a cambiar a "Mostrar", ya que la
 		 * estamos por esconder */
 		txtbuttonShowHideWindow->setText(QString ("Mostrar"));
-		this->tw->setVisible (false);
+		this->pw->setVisible (false);
 	} else {
 		/* al verre */
 		txtbuttonShowHideWindow->setText(QString ("Esconder"));
-		this->tw->setVisible (true);
+		this->pw->setVisible (true);
 	}
 }
-void TxtWinControl::on_txtbuttonShowWindow_clicked()
-{
-	this->tw->setVisible (true);
-}
-void TxtWinControl::on_txtbuttonSetVelocity_clicked()
+
+
+void PicWinControl::on_txtbuttonSetVelocity_clicked()
 {
 	bool ok = false;
-	int velocity = 0;
+	int sleepTime = 0;
 	
-	velocity = txttextVelocity->text().toInt(&ok, 10);
+	sleepTime = txttextVelocity->text().toInt(&ok, 10);
 	if (ok)
-		this->tw->setVelocity (velocity);
+		this->pw->setSleepTime (sleepTime);
 }
 
-void TxtWinControl::on_txtbuttonStartStop_clicked()
+void PicWinControl::on_txtbuttonStartStop_clicked()
 {
-	if (this->tw->isPaused()) {
+	if (this->pw->isPaused()) {
 		/* entonces el boton lo vamos a cambiar a "Parar", ya que la
 		* estamos por comenzar */
 		txtbuttonStartStop->setText(QString ("Parar"));
-		this->tw->pause (false);
+		this->pw->pause (false);
 	} else {
 		/* al verre */
 		txtbuttonStartStop->setText(QString ("Comenzar"));
-		this->tw->pause (true);
+		this->pw->pause (true);
 	}
 
 }
-void TxtWinControl::on_txtbuttonStyle_clicked()
+void PicWinControl::on_txtbuttonStyle_clicked()
 {
-	Qt::WindowFlags flags = this->tw->windowFlags();
-	QPoint pos = this->tw->pos();
-	QRect geometry = this->tw->geometry();
+	Qt::WindowFlags flags = this->pw->windowFlags();
+	QPoint pos = this->pw->pos();
+	QRect geometry = this->pw->geometry();
 	
 	if (flags & Qt::FramelessWindowHint)
 		/* entonces esta sin bordes => */
@@ -121,56 +123,24 @@ void TxtWinControl::on_txtbuttonStyle_clicked()
 	else
 		flags = Qt::FramelessWindowHint;
 		
-	this->tw->setWindowFlags (flags);
-	this->tw->showNormal();
-	this->tw->move(pos);
-	this->tw->setGeometry (geometry);
-}
-void TxtWinControl::on_txtbuttonSetFont_clicked()
-{
-	bool ok = false;
-	QFont font = QFontDialog::getFont(&ok,this->tw->font(), this->tw);
-	if (ok) {
-		this->tw->setTextFont (font);
-	}
+	this->pw->setWindowFlags (flags);
+	this->pw->showNormal();
+	this->pw->move(pos);
+	this->pw->setGeometry (geometry);
 }
 
-void TxtWinControl::on_txtbuttonSetBackColor_clicked()
-{
-	QColor color = QColorDialog::getColor(this->tw->palette().color (
-		QPalette::Background), this);
-	if (color.isValid()) {
-		this->tw->setBackColor (color);
-	}
-}
-void TxtWinControl::on_txtbuttonSetFontColor_clicked()
-{
-	QColor color = QColorDialog::getColor(this->tw->getFontColor(), this);
-	if (color.isValid()) {
-		this->tw->setFontColor (color);
-	}
-}
-
-void TxtWinControl::on_scrollVel1_valueChanged(int v)
-{
-	this->tw->setVelocity(v);
-}
-void TxtWinControl::on_scrollVel2_valueChanged(int s)
-{
-	this->tw->setStep (s);
-}
 
 /* Con esto nos aseguramos de guardar las configuraciones cuando cerramos
  * la ventana.
  */
-void TxtWinControl::closeEvent(QCloseEvent *event)
+void PicWinControl::closeEvent(QCloseEvent *event)
 {
 	
 	saveConfigs();
 	event->accept();	
 }
 
-TxtWinControl::~TxtWinControl()
+PicWinControl::~PicWinControl()
 {
 	/*! Aca escribimos las variables y los valores que queremos escribir
 	 * por medio del modulo ConfigManipulator :D

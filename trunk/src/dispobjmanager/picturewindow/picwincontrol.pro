@@ -2,15 +2,13 @@
 # ------------------------------------------- 
 # Subdirectorio relativo al directorio principal del proyecto: .
 # El destino es una aplicaci??n
-FORMS = txtwincontrol.ui
+FORMS = picwincontrol.ui
 CONFIG += uitools
 DEFINES += __DEBUG
 HEADERS += ../../consts.h \
 	../../debug.h \
-	textwindow.h \
-	marquesinobj.h \
-	txtwincontrol.h
+	picturewindow.h \
+	picwincontrol.h
 	
-SOURCES += marquesinobj.cpp \
-	txtwincontrol.cpp textwindow.cpp \
+SOURCES += picwincontrol.cpp picturewindow.cpp \
 	test_control.cpp 

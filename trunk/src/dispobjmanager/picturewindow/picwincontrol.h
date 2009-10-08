@@ -23,51 +23,44 @@
 
 #define MAINTXTW_CONFIG_FILE_NAME	"config.conf"
 
-class TxtWinControl : public QWidget, private Ui::TxtWinControl 
+class PicWinControl : public QWidget, private Ui::PicWinControl 
 {
 	Q_OBJECT
 
 public:
 	/* Constructor: vamos a pasarle un nombre de archivo que vamos
-	 * a usar para leer las configuraciones y la ventana de la 
-	 * marquesina.
+	 * a usar para leer las configuraciones y la ventana donde vamos a
+	 * mostrar las fotos.
 	 * REQUIRES:
-	 *	txtWin 		!= NULL
+	 *	picWin 		!= NULL
 	 * NOTE: puede ser que el archivo de configuracion sea nulo =>
 	 *	 no cargamos ni chori :)
 	 */
-	TxtWinControl(QWidget *parent, QString &fname,
-		       TextWindow *txtWin);
+	PicWinControl(QWidget *parent, QString &fname,
+		       PictureWindow *picWin);
 	
 	/* Destructor:
 	 * Antes de destruirnos vamos a guardar todas las configuraciones que
 	 * tenemos hasta este momento.
-	 * NOTE: NO libera el txtWin
+	 * NOTE: NO libera el picWin
 	 */
-	~TxtWinControl();
+	~PicWinControl();
 	
 	
 
 public slots:
 	void on_txtbuttonSetSize_clicked();
 	void on_txtbuttonSetPos_clicked();
-	void on_txtbuttonShowHideWindow_clicked();
-	void on_txtbuttonShowWindow_clicked();
+	void on_txtbuttonShowHideWindow_clicked();	
 	void on_txtbuttonSetVelocity_clicked();
 	void on_txtbuttonStartStop_clicked();
 	void on_txtbuttonStyle_clicked();
-	void on_txtbuttonSetFont_clicked();
-	void on_txtbuttonSetBackColor_clicked();
-	void on_txtbuttonSetFontColor_clicked();
-	void on_txtbuttonSetBetween_clicked();
-	void on_scrollVel1_valueChanged(int);
-	void on_scrollVel2_valueChanged(int);
 	void closeEvent (QCloseEvent *);
 
 	
 private:
 	QString configName;		/* archivo de configuracion */
-	TextWindow *tw;		/* ventana donde vamos a mostrar los sms */
+	PictureWindow *pw;		/* ventana dnd mostramos las fotos */
 	
 	
 	/* Funciones auxiliares para cargar las configs */
