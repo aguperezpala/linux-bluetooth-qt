@@ -1,4 +1,4 @@
-#include "textwindow.h"
+#include "picturewindow.h"
 
 
 
@@ -33,6 +33,27 @@ bool PictureWindow::getNewPictureFlag (void)
 */
 void PictureWindow::updatePicture(void)
 {
+	/*! vamos a eliminar la imagen actual si es que hay alguna */
+	this->label.clear();
+	if (this->picture) {
+		/* eliminamos la imagen */
+		delete this->picture; this->picture = NULL;
+	}
+	
+	/* intentamos pedir una imagen */
+	this->picture = this->getNextPic();
+	/* no hay mas imagen que mostrar... aca debemos determinar
+	* una politica determinada, si no mostramos mas fotos,
+	* o mostramos la ultima foto.... o mostramos alguna por
+	* defecto. Por el momento vamos a mostrar ninguna (para
+	* que cualquier cosa se muestre el video).
+	*/
+	if (this->picture) {
+		/* si tenemos una imagen => la mostramos por pantalla */
+		this->label.setPixmap ((*this->picture));
+		/* ajustamos la imagen al tamaño de la ventana */
+		this->label.adjustSize();
+	}
 	
 	
 }
@@ -46,21 +67,31 @@ void PictureWindow::updatePicture(void)
 * ### Esta funcion se encarga de liberar el QPixmap, NO debe ser 
 *     liberado desde otro lado.
 */
-PictureWindow::PictureWindow(QPixmap * (*getNextPic1)(void));
+PictureWindow::PictureWindow(QPixmap * (*getNextPic1)(void))
 {
+	QPalette p;
+	
 	/* pres */
 	if (getNextPic1 == NULL) {
 		ASSERT (false);
 		debugp ("Error getNextPic == NULL");
 		this->close();
 	}
-	
+	this->paused = false;
 	this->getNextPic = getNextPic1;
 	this->newPicture = false;
 	this->sleepTime = 7000;	/* 7 segundos por foto */
 	this->picture = NULL;
 	this->layout.addWidget(&(this->label));
 	this->setLayout (&this->layout);
+	
+	/* configuramos el label para que se ajuste al tamaño */
+	this->label.setScaledContents(true);
+	this->label.setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+	
+	/*! color negro de fondo... */
+	p.setColor (QPalette::Window, QColor::QColor(0,0,0));
+	this->setPalette (p);
 }
 
 
@@ -72,6 +103,9 @@ void PictureWindow::setPicture (void)
 {
 	/* la hacemos atomica */
 	setNewPictureFlag (true);
+	/* activamos el timer si esta frenado... pero no pausado */
+	if (!this->paused)
+		pause(false);
 }
 
 /* Esta funcion es llamada en cada timeout() event del timer. */
@@ -88,11 +122,13 @@ void PictureWindow::timerEvent(QTimerEvent *event)
 
 void PictureWindow::pause(bool p) 
 {
-	if (p) {
+	this->paused = p;
+	if (p) 
 		this->timer.stop();
-	} else
+	else
 		if (!this->timer.isActive())
-			this->timer.start(this->vel, this);
+			this->timer.start(this->sleepTime, this);
+		
 }
 
 bool PictureWindow::isPaused(void)

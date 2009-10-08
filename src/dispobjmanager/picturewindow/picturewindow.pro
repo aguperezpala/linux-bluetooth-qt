@@ -6,6 +6,5 @@ CONFIG += uitools
 DEFINES += __DEBUG
 HEADERS += ../../consts.h \
 	../../debug.h \
-	marquesinobj.h \
-	textwindow.h 
-SOURCES += marquesinobj.cpp textwindow.cpp test.cpp
+	picturewindow.h
+SOURCES += picturewindow.cpp test.cpp

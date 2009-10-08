@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>446</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -45,37 +45,6 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="txtbuttonSetPos">
-           <property name="text">
-            <string>Set pos</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="txtposX">
-           <property name="inputMask">
-            <string/>
-           </property>
-           <property name="text">
-            <string>X</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="txtposY">
-           <property name="text">
-            <string>Y</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
@@ -115,93 +84,20 @@
          <item>
           <widget class="QPushButton" name="txtbuttonSetVelocity">
            <property name="text">
-            <string>Set Velocidad</string>
+            <string>Tiempo foto (ms)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLineEdit" name="txttextVelocity">
            <property name="text">
-            <string>100</string>
+            <string>700</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Velocidad</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QScrollBar" name="scrollVel1">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>50</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>&quot;Salto&quot; (velocidad 2)</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QScrollBar" name="scrollVel2">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>50</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
       </layout>
-     </item>
-     <item>
-      <widget class="QPushButton" name="txtbuttonSetFont">
-       <property name="text">
-        <string>Set Fuente</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="txtbuttonSetBackColor">
-       <property name="text">
-        <string>Set backcolor</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="txtbuttonSetFontColor">
-       <property name="text">
-        <string>Set fontcolor</string>
-       </property>
-      </widget>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -228,35 +124,42 @@
           <number>0</number>
          </property>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="txtbuttonSetPos">
+             <property name="text">
+              <string>Set pos</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="txtposX">
+             <property name="inputMask">
+              <string/>
+             </property>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="txtposY">
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <widget class="QPushButton" name="txtbuttonShowHideWindow">
            <property name="text">
             <string>Esconder</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="txtbuttonShowWindow">
-           <property name="text">
-            <string>Mostrar</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="txtbuttonSetBetween">
-             <property name="text">
-              <string>Separador</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="txtlineBetween"/>
-           </item>
-          </layout>
          </item>
         </layout>
        </item>

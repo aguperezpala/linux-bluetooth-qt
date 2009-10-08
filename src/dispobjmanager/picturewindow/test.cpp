@@ -4,49 +4,30 @@
 #include <QApplication>
 #include <QFontDialog>
 #include <QString>
-#include "textwindow.h"
+#include <QPixmap>
+#include "picturewindow.h"
 #include "../../tester.h"
 
-TextWindow * txtw;
 
-QString * getmsg (void)
+QPixmap * picture_sender (void)
 {
-	static int counter = 3;
+	QPixmap * pic = new QPixmap();
+	QString fname = "m4.jpg";
 	
-	counter--;
-	if (counter >= 0) {
-		QString * pepe = new QString("hasta el remil choripan bolo");
-		printf ("llegamos aca\n");
-		return pepe;
-	} else
-		return NULL;
+	pic->load (fname);
+	printf ("Cambiando de foto....\n");
+	return pic;
 }
-static void test_setFont (void)
-{
-	bool ok = false;
-	
-	QFont font = QFontDialog::getFont(&ok,txtw->font(),txtw);
-	if (ok) 
-		txtw->setTextFont (font);
-	
-}
+
+
 int main (int argc, char ** argv)
 {	
 	QApplication app(argc, argv, true);
-	QString test = "mamamamamamamamamamam :) jajajaja :p";
+	PictureWindow * pw = new PictureWindow(picture_sender);
 	
-	
-	txtw = new TextWindow (&getmsg);
-	txtw->pause(false);
-	txtw->setMesg (test);
-	txtw->show();
-	printf ("esperamos\n");
-	
-	
-	test_setFont();
-	printf ("esperamos de nuevo\n");
-	txtw->setMesg(test);
+	pw->setPicture();
+	pw->show();
 	app.exec();
-	delete txtw;
+	delete pw;
 	return 0;
 }
