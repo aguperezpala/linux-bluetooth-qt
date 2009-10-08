@@ -1,37 +1,48 @@
 #include <stdio.h>
-#include "cuser.h"
+#include "obexreceiver.h"
 #include "../tester.h"
 
 int main (void)
 {
 	CUser * user = NULL;
+	UDataBase * db = NULL;
 	CUser * user2 = NULL;
-	QString nick = QString ("Agu");
-	QString MAC = QString("AB:DC:EF:56:32:15");
+	QString nick = QString ("MAMAAAAAA");
+	QString MAC = QString("XX:XX:XX:56:32:15");
 	QString nick2, MAC2;
 	
 	user = new CUser(&nick, &MAC);
-	fail_if (user == NULL);
-	nick2 = user->getNick();
-	MAC2 = user->getMAC();
+	user2 = new CUser(&nick, &MAC);
 	
-	/* chequeamos que tengan el mismo nick */
-	fail_if (nick != nick2);
 	
-	/* chequeamos que tengan la misma MAC */
-	fail_if (MAC != MAC2);
+	db = new UDataBase("prueba.txt");
+	fail_if (db == NULL);
+	fail_if (db->existUser(user));
+	db->addUser(user);
+	fail_unless(db->existUser(user));
+	fail_unless(db->existUser(user2));
+	db->addUser(user2);
 	
-	/* creamos otro usuario y chequeamos que sean iguales */
-	user2 = new CUser(&nick2, &MAC2);
+	db->print();
+	db->saveToFile();
 	
-	fail_if(*user2 != *user);
-	fail_unless(*user == *user2);
+	delete db;
 	
-	user->printUser();
-	user2->printUser();
 	
-	delete user;
-	delete user2;
+	db = new UDataBase("pruebaextra.txt");
+	fail_if(db->loadFromFile ("pruebaextra.txt") == false);
+	/*db->clean();*/
+	printf ("\n*********************\n");
+	db->print();
+	printf ("\n*********************\n");
+	user = new CUser(&nick, &MAC);
+	/*fail_unless(db->existUser(user));*/
+	printf ("cargada de archivo\n");
+	db->print();
+	db->addUser(user);
+	/*db->saveToFile();*/
+	
+	delete db;
 	
 	return 0;
 }

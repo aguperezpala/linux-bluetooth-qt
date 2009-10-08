@@ -12,6 +12,12 @@ DispObject::DispObject (QString & fname)
 	ASSERT (fname.isNull () == false);
 	this->file.setFileName (fname);
 	ASSERT (this->file.exists());	/*! existe el archivo ? */
+	if (this->file.size() <= FILE_TEXT_MAX_SIZE)
+		/* el archivo entonces es de texto... */
+		this->kind = DISPOBJ_TEXT;
+	else
+		/* el archivo es de imagen.. ### cuidado con esto... ### */
+		this->kind = DISPOBJ_PICTURE;
 	
 	this->user = NULL;
 }

@@ -22,4 +22,17 @@
 #define OBREC_PKT_SEPARATOR_E		"}"
 #define OBREC_DATA_SEPARATOR_B		"<"	/* begin data separator */
 #define OBREC_DATA_SEPARATOR_E		">"	/* end data separator */
+
+
+/*! Tamaño para los distintos tipos de archivos... Esto es muy relativo, 
+  * podriamos tambien verificar la extencion de los archivos, y ese tipo de 
+  * cosas
+  */
+#define FILE_TEXT_MAX_SIZE		512	/* bytes */
+/* Vamos a considerar que si un archivo es mayor que 512 bytes => es una imagen
+#define FILE_PICTURE_MAX_SIZE		4194304	// 4 Mbytes 
+*/
+
+
+
 #endif

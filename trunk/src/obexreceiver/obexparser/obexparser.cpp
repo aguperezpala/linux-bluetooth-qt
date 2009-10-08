@@ -73,13 +73,13 @@ static QStringList * obpa_getList (QByteArray & buff)
  * NOTE 2: En caso de que haya mas de un paquete, devolvemos solo el primero y
  *	   los otros no son modificados (volver a llamar a esta funcion).
  */
- QStringList * obpa_parse (QByteArray & buff)
+ QStringList * obpa_parse (QByteArray & buff, bool & error)
 {
 	QStringList * result = NULL;
 	int startPos = 0, endPos = 0;
 	QByteArray aux;
 	
-	
+	error = true;
 	/* Pres */
 	if ((buff.isNull()) || (buff.size() <= 0)) {
 		ASSERT (false);
@@ -114,18 +114,24 @@ static QStringList * obpa_getList (QByteArray & buff)
 		return result;
 	} else if (startPos < 0 || endPos <= 0) 
 		/* estamos aca entonces quiere decir que no tenemos nada => 
-		 * devolvemos NULL */
+		 * devolvemos NULL pero no hay error */
+		error = false;
 		return result;
 	
 	/* si estamos aca es porque en teoria tenemos un paquete... */
 	aux = buff.mid (startPos, endPos + 1);
 	result = obpa_getList (aux);
 	
+	/* verificamos si tenemos error de protocolo (sii result == NULL) */
+	if (result == NULL)
+		error = true;
+	else
+		error = false;
+	
 	/*! si o si ahora liberamos el paquete, ya que si hubo error o no, 
 	 * no nos sirve mas.
 	 */
 	buff.remove (0, endPos + 1);
-	
 	
 	
 	return result;

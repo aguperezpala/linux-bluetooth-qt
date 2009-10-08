@@ -25,8 +25,9 @@ Modulos en chequeo:
 	* UServer (2 version, implementado con SServer).
 	
 
-Tareas:	
-********* AGREGAR SCLIENT al repositorio**************
+Tareas:
+	* "compilando el obexreceiver", falta hacer el modulo de testeo, nos
+	vamos a basar en el test de carlox :)....
 	* Comenzando con el picturewindow (picturewindow & picwincontrol). 
 	* El tema de la tabla (dispobjtable) vamos a manejar las imagenes, 
 	por el momento, mostrando el nombre de la imagen, y ante un doble
@@ -77,6 +78,11 @@ FINAL:
 	y en caso de errores o que sean cancealdos, etc...
 	* Generar un directorio aparte donde se van a recibir los archivos (para
 	facilitar el tema de la "administracion" de los mismos).
+	* IMPORTANTE DE SINCRONIZACION: que pasaria si nos envian una MAC que
+	en teoria nosotros desde nuestra base de datos existe, y cuando lo
+	recibimos por medio del ObexReceiver, obtenemos que no existe un usuario
+	con esa MAC => Deberiamos responderle algo como "tas desincronizado"
+	o algo por el estilo...
 	
 
 
