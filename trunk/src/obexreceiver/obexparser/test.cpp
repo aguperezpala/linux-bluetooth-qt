@@ -1,37 +1,72 @@
 #include <stdio.h>
-#include "cuser.h"
-#include "../tester.h"
+#include <QString>
+#include <QStringList>
+#include <QByteArray>
+#include "obexparser.h"
+#include "../../consts.h"
+#include "../../tester.h"
+
+QByteArray buff;
+
+
+static void printList (QStringList & list)
+{
+	QStringList::iterator i;
+	
+	printf ("\nLista:\n");
+	for (i = list.begin(); i != list.end(); ++i)
+		printf ("%s\n", qstrtochar((*i)));
+}
+
 
 int main (void)
 {
-	CUser * user = NULL;
-	CUser * user2 = NULL;
-	QString nick = QString ("Agu");
-	QString MAC = QString("AB:DC:EF:56:32:15");
-	QString nick2, MAC2;
+	QStringList * list;
 	
-	user = new CUser(&nick, &MAC);
-	fail_if (user == NULL);
-	nick2 = user->getNick();
-	MAC2 = user->getMAC();
+	buff = "{</home/xxxx/arch1><11:22:33:44:55:66>}";
+	list = obpa_parse (buff);
+	fail_if (list == NULL);
+	printList (*list);
+	delete list;
 	
-	/* chequeamos que tengan el mismo nick */
-	fail_if (nick != nick2);
+	buff = "{</home/xxxx/arch1><11:22:33:44:55:66>";
+	list = obpa_parse (buff);
+	fail_if (list != NULL);
 	
-	/* chequeamos que tengan la misma MAC */
-	fail_if (MAC != MAC2);
+	buff = "{</home/xxxx/arch1><11:22:33:44:55:66>}"
+		"{</home/xxxx/arch1><11:22:33:44:55:66>}" ;
+	list = obpa_parse (buff);
+	fail_if (list == NULL);
+	printList (*list);
+	delete list;
 	
-	/* creamos otro usuario y chequeamos que sean iguales */
-	user2 = new CUser(&nick2, &MAC2);
 	
-	fail_if(*user2 != *user);
-	fail_unless(*user == *user2);
+	buff = "{</home/xxxx/arch1><11:22:33:44:55:66><pepe><cualquiera1>}";	
+	list = obpa_parse (buff);
+	fail_if (list == NULL);
+	printList (*list);
+	delete list;
 	
-	user->printUser();
-	user2->printUser();
+	buff = "{</home/xxxx/arch1><11:22:33:44:55:66><}";	
+	list = obpa_parse (buff);
+	fail_if (list == NULL);
+	printList (*list);
+	delete list;
 	
-	delete user;
-	delete user2;
+	buff = "{{}{</home/xxxx/arch1><11:22:33:44:55:66><}"
+		"{</home/xxxx/arch2><11:22:33:44:55:66><}";	
+	list = obpa_parse (buff);
+	fail_if (list == NULL);
+	printList (*list);
+	delete list;
+	list = obpa_parse (buff);
+	fail_if (list == NULL);
+	printList (*list);
+	delete list;
+	list = obpa_parse (buff);
+	fail_if (list == NULL);
+	printList (*list);
+	delete list;
 	
 	return 0;
 }
