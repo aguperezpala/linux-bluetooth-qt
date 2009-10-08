@@ -1,7 +1,6 @@
 #include "obexparser.h"
 
 
-
 /* Esta funcion lo que hace es devolver un QStringList (deberiamos tener un 
  * paquete).
  * REQUIRES:
@@ -17,9 +16,11 @@ static QStringList * obpa_getList (QByteArray & buff)
 	int startPos = 0, endPos = 0;
 	QStringList * result = NULL;
 	QString data = "";
+	int dataSepLen = strlen (OBREC_DATA_SEPARATOR_B);
+	bool finish = false;
 	
 	/* pres */
-	if (buff.isNull() || buf.size() == 0) {
+	if (buff.isNull() || buff.size() == 0) {
 		ASSERT (false);
 		return NULL;
 	}
@@ -27,24 +28,35 @@ static QStringList * obpa_getList (QByteArray & buff)
 	endPos = buff.indexOf (OBREC_PKT_SEPARATOR_E, startPos + 1);
 	
 	/*! Pre 2 */
-	if ((startPos < 0) || (endPos <= 0) {
+	if ((startPos < 0) || (endPos <= 0)) {
 		ASSERT (false);
 		return NULL;
 	}
 	
 	/*! tamos joia => buscamos primero el file y luego la MAC 
-	  * {<file_path><MAC>} */
-	startPos = buff.indexOf (OBREC_DATA_SEPARATOR_B,0);
-	endPos = buff.indexOf (OBREC_DATA_SEPARATOR_E, 0);
-	if ((startPos < 0) || (endPos <= 0)) {
-		/*! ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
-		 *  si pasa esto es porque no estamos respetando el protocolo?
-		 * ya que tenemos en teoria un paquete pero mal FORMADO!
-		 * entonces deberiamos eliminar todo a la mierda... :(
-		*/
-		return NULL;
+	  * {<file_path><MAC>}, lo vamos hacer generico */
 	
+	result = new QStringList();
+	startPos = 0;
+	endPos = 0;
+	while (!finish) {
+		startPos = buff.indexOf(OBREC_DATA_SEPARATOR_B,startPos);
+		endPos = buff.indexOf(OBREC_DATA_SEPARATOR_E, endPos);
+		if ((startPos < 0) || (endPos <= 0)) {
+			finish = true;
+			continue;
+		}
+		data = buff.mid (startPos + dataSepLen, endPos - (startPos +
+					dataSepLen));
+		/* lo metemos en la lista */
+		(*result) << data;
+		/* actualizamos las posiciones */
+		endPos += strlen (OBREC_DATA_SEPARATOR_E);
+		startPos = endPos;
+	}
 	
+	return result;
+}
 
 /* Funcion que parsea segun el pseudo_protocolo los datos del buffer.
  * Esta funcion se fija simplemente en el protocolo y devuelve una
@@ -65,10 +77,11 @@ static QStringList * obpa_getList (QByteArray & buff)
 {
 	QStringList * result = NULL;
 	int startPos = 0, endPos = 0;
+	QByteArray aux;
 	
 	
 	/* Pres */
-	if (buf.isNull() || buf.size() <= 0) {
+	if ((buff.isNull()) || (buff.size() <= 0)) {
 		ASSERT (false);
 		return result;
 	}
@@ -105,9 +118,15 @@ static QStringList * obpa_getList (QByteArray & buff)
 		return result;
 	
 	/* si estamos aca es porque en teoria tenemos un paquete... */
-	result = obpa_getList (buff);
+	aux = buff.mid (startPos, endPos + 1);
+	result = obpa_getList (aux);
 	
-	/*! si result = NULL es porque esta mal formado el paquete => lo
-	 * liberamos
+	/*! si o si ahora liberamos el paquete, ya que si hubo error o no, 
+	 * no nos sirve mas.
+	 */
+	buff.remove (0, endPos + 1);
+	
+	
+	
 	return result;
 }

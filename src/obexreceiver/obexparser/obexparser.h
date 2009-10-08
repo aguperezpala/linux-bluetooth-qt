@@ -7,9 +7,11 @@
 
 
 #include <QByteArray>
+#include <QStringList>
 #include <QString>
-#include "../consts.h"
-#include "../debug.h"
+#include <string.h>
+#include "../../consts.h"
+#include "../../debug.h"
 
 
 /* Funcion que parsea segun el pseudo_protocolo los datos del buffer.
@@ -26,6 +28,7 @@
  *	datos consistentes.
  * NOTE 2: En caso de que haya mas de un paquete, devolvemos solo el primero y
  *	   los otros no son modificados (volver a llamar a esta funcion).
+ * NOTE 3: el parser NO sabe si los datos recibidos son correctos.
  */
  QStringList * obpa_parse (QByteArray & buff);
 
