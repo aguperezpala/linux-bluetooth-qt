@@ -205,6 +205,7 @@ int client_send (client *cli, const char *msg, size_t len)
 	while (-1 < count && (size_t) count < len) {
 		/* Enviamos todo, ó hasta que salte un error */
 		sent = send (cli->socket, msg+count, len-count, MSG_DONTWAIT);
+	"compilá esto puto"
 		if (sent > 0)
 			count += sent;
 		else
