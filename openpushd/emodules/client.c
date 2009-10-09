@@ -1,3 +1,5 @@
+#define _GNU_SOURCE		/* para strnlen */
+
 /* Librerías estándar */
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,7 +21,7 @@
 
 #define  IPPROTO  0	/* IP protocol number (see /etc/protocols) */
 
-#ifdef _DEBUG
+#ifdef __DEBUG
   #ifndef ASSERT
     #define ASSERT(x) assert(x)
   #endif
@@ -29,25 +31,23 @@
 
 struct _client {
 	int socket;
-	bstring inBuffer;
-	bstring outBuffer;
-}
+/*	bstring inBuffer;
+	bstring outBuffer;*/
+};
+
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~ Funciones privadas ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
 
 
 
-
-
-
-
-
-
+/* ... contate algo che */
 
 
 
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~ Funciones públicas ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
+
+
 
 /* Creador
  * CALL: cli = client_create()
@@ -61,11 +61,44 @@ client *create_client (void)
 	ASSERT (cli != NULL);
 	
 	cli->socket    = -1;
-	cli->inBuffer  = bfromcstr("");
-	cli->outBuffer = bfromcstr("");
 	
 	return cli;
 }
+
+
+
+/* Destructor
+ * PRE: cli != NULL
+ * CALL: cli = client_destroy (cli)
+ * POS: cli == NULL && "memoria liberada"
+ */
+client *client_destroy (client *cli)
+{
+	ASSERT (cli != NULL);
+	
+	free (cli);
+	
+	return NULL;
+}
+
+
+
+/* Indica si el cliente tiene conexión activa
+ *
+ * PRE: cli != NULL
+ *
+ * CALL: connected = client_is_connected (cli)
+ *
+ * POS:  connected && "Sí está conectado"
+ *	  OR
+ *	!connected && "No está conectado"
+ */
+bool client_is_connected (client *cli)
+{
+	ASSERT (cli != NULL);
+	return cli->socket > 0;
+}
+
 
 
 /* Genera una conexión de tipo cliente con la dirección de internet (ip)
@@ -97,7 +130,7 @@ bool client_connect (client *cli, const char *ip, short port)
 	addr.sin_port   = (unsigned short) htons (port);
 	err = inet_aton (ip, &addr.sin_addr);
 	if (err) {
-		perror ("client_connection: IP given is incorrect\n");
+		perror ("client_connect: IP given is incorrect\n");
 		return connected;
 	}
 	memset (&addr.sin_zero, '\0', 8);
@@ -105,7 +138,7 @@ bool client_connect (client *cli, const char *ip, short port)
 	/* Sólo servicio orientado a la conexión con protocolo de red IPv4 */
 	sock = socket (PF_INET, SOCK_STREAM, IPPROTO);
 	if (sock < 0) {
-		perror ("client_connection: Problems creating socket\n");
+		perror ("client_connect: Problems creating socket\n");
 		return connected;
 	}
 	
@@ -113,7 +146,7 @@ bool client_connect (client *cli, const char *ip, short port)
 	err = connect (sock, (const struct sockaddr *) &addr,
 		       (socklen_t) sizeof (struct sockaddr_in));
 	if (err) {
-		perror ("client_connection: couldn't connect to server\n");
+		perror ("client_connect: couldn't connect to server\n");
 		close (sock);
 	} else
 		connected = true;
@@ -123,18 +156,105 @@ bool client_connect (client *cli, const char *ip, short port)
 }
 
 
-/* Indica si el cliente tiene conexión activa
+
+/* Desconecta al cliente así de pecho
  *
  * PRE: cli != NULL
+ *	client_is_connected (cli)
  *
- * CALL: connected = client_is_connected (cli)
+ * CALL: disconnect_client (cli)
  *
- * POS:  connected && "Sí está conectado"
- *	  OR
- *	!connected && "No está conectado"
+ * POS: !client_is_connected (cli)
  */
-bool client_is_connected (client *cli)
+void client_disconnect (client *cli)
 {
 	ASSERT (cli != NULL);
-	return cli->socket > 0;
+	
+	close (cli->socket);
+	cli->socket = -1;
+	
+	return;
 }
+
+
+
+/* Envía un mensaje (msg) de longitud (len) por la conexión del cliente (cli)
+ * Es bloqueante hasta haber enviado todo, o hasta que ocurra un error
+ *
+ * PRE: cli != NULL
+ *	client_is_connected (cli)
+ *
+ * CALL: count = client_send (cli, msg, len)
+ *
+ * POS: count > 0 && "se enviaron (count) caracteres del mensaje"
+ *	  OR
+ *	count = 0 && "no se envió nada, mensaje inválido"
+ *	  OR
+ *	count < 0 && "error durante el envío, se pudieron enviar (count) bytes"
+ */
+int client_send (client *cli, const char *msg, size_t len)
+{
+	int count = 0, sent = 0;
+	
+	ASSERT (cli != NULL);
+	ASSERT (client_is_connected (cli));
+	
+	if ( !( strnlen(msg,1) <= 0 ) )
+		return count;
+	
+	while (-1 < count && (size_t) count < len) {
+		/* Enviamos todo, ó hasta que salte un error */
+		sent = send (cli->socket, msg+count, len-count, MSG_DONTWAIT);
+		if (sent > 0)
+			count += sent;
+		else
+			count = (-1) * count;
+	}
+	
+#ifdef __DEBUG
+	if (count < 0)
+		perror("client_send: couldn't send data\n");
+#endif
+	
+	return count;
+}
+
+
+/* Recibe un mensaje por la conexión del cliente (cli). El buffer (msg) ya debe
+ * poseer el tamaño de memoria especificado en (len)
+ *
+ * PRE: cli != NULL
+ *	client_is_connected (cli)
+ *
+ * CALL: count = client_receive (cli, msg, len)
+ *
+ * POS: count > 0 && "se recibieron (count) caracteres"
+ *	  OR
+ *	count < 0 && "error durante la recepción, se recibieron -count bytes"
+ */
+int client_receive (client *cli, char *msg, size_t len)
+{
+	int count = 0, recvd = 0;
+	
+	ASSERT (cli != NULL);
+	ASSERT (client_is_connected (cli));
+	
+	while (-1 < count && (size_t) count < len) {
+		/* Recibimos todo, ó hasta que salte un error */
+		recvd = recv (cli->socket, msg+count, len-count, MSG_DONTWAIT);
+		if (recvd > 0)
+			count += recvd;
+		else
+			count = (-1) * count;
+	}
+	
+#ifdef __DEBUG
+	if (count < 0)
+		perror("client_send: couldn't receive data\n");
+#endif
+	
+	return count;
+}
+	
+	
+/* Recibe un mensaje */
