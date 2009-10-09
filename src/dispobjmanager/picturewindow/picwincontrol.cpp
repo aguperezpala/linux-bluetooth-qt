@@ -136,8 +136,11 @@ void PicWinControl::on_txtbuttonStyle_clicked()
 void PicWinControl::closeEvent(QCloseEvent *event)
 {
 	
+	/* guardamos la configuracion */
 	saveConfigs();
-	event->accept();	
+	/*! NO cerramos, simplemente, escondemos... */
+	this->setVisible (false);
+	event->ignore();
 }
 
 PicWinControl::~PicWinControl()

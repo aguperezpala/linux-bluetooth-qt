@@ -29,6 +29,8 @@ bool DispObjTable::enqueueItem (QTableWidgetItem * item)
 	
 	
 	if (item != NULL) {
+		this->mutex.lock();	/*! atomic */
+		
 		/* creamos una columna al final */
 		this->insertRow (this->rowCount());
 		this->setItem (this->rowCount()-1,this->columnCount()-1,item);
@@ -36,6 +38,8 @@ bool DispObjTable::enqueueItem (QTableWidgetItem * item)
 		this->resizeColumnToContents (this->columnCount()-1);
 		this->resizeRowToContents (this->rowCount()-1);
 		result = true;
+		
+		this->mutex.unlock(); /*! atomic */
 	}
 	
 	return result;
@@ -62,11 +66,16 @@ void DispObjTable::deleteItem (int r)
 	/* Pre */
 	ASSERT (0 <= r && r <= this->rowCount());
 	
+	this->mutex.lock(); /*! atomic */
 	/* si no esta dentro del rango volvemos */
-	
-	if (r <= this->rowCount() && r >= 0)
+	if (r <= this->rowCount() && r >= 0) {
+		/* soltamos el candado */
+		this->mutex.unlock();
 		return;
+	}
 
+	
+	
 	this->removeRow (r); /* automaticamente borra el item */
 	
 	/*! Veamos que debe existir una correspondencia univoca entre cada fila
@@ -81,6 +90,8 @@ void DispObjTable::deleteItem (int r)
 		/* lo sacamos de la "cola" */
 		this->queue.removeAt(r);
 	}
+	
+	this->mutex.unlock();
 }
 	
 void DispObjTable::deleteSelectedItem ()
@@ -121,16 +132,104 @@ void DispObjTable::insertBack (DispObject* obj)
 		default:
 			/* some fucking big problem :( */
 			ASSERT (false);
+			return; /*! evitamos inconcistencias */
 	}
 	
+	this->mutex.lock();
 	/* lo agregamos a la cola */
 	this->queue.append (obj);
+	
+	this->mutex.unlock();
 }
+
+
+/* Funcion que simplemente muestra el primer elemento de la lista
+* NOTE: NO lo saca de la misma, solo para poder "observarlo"
+* RETURNS:
+*	NULL		si no hay elementos.
+*	const dobj != NULL 
+*/
+const DispObject * DispObjTable::getFirst (void)
+{
+	const DispObject * result = NULL;
+	/*! hacemos esto atomico */
+	this->mutex->lock();
+	
+	if (this->queue.isEmpty()) {
+		this->mutex->unlock(); 
+		return result;
+	}
+	/* si no es vacia devolvemos el primer elemento */
+	result = this->queue.first();
+	
+	this->mutex->unlock(); 
+	
+	return result;
+}
+
+
+/* Funcion que saca un elemento de determinado tipo. Lo que hace es
+* buscar en toda la lista, y el primero que encuentra de ese tipo
+* de DispObject lo devuelve.
+* REQUIRES:
+*	type € dispObjKind_t
+* RETURNS:
+*	NULL	si no encuentra ninguno
+*	dObj != NULL caso contrario
+* ENSURES:
+*	dobj->kind == type
+* NOTE: Lo saca de la lista, quien lo llama es dueño del dObj.
+*/
+DispObject * popFirst (dispObjKind_t type)
+{
+	QList<DispObject *>::iterator i;
+	int pos = 0;
+	DispObject * result = NULL;
+	
+	/*! hacemos atomico */
+	this->mutex.lock();
+	
+	/* hacemos un simple chequeo antes para hacerlo mas eficiente */
+	if (this->queue.isEmpty()) { 
+		/* liberamos el candado */
+		this->mutex.unlock();
+		return result;
+	}
+	/* si no esta vacia => lo buscamos */
+	
+	for (i = this->queue.begin(); i != this->queue.end(); ++i) {
+		/* ahora buscamos el primero de la lista que sea del tipo
+		 * type */
+		if (i != NULL)
+			if (i->kind == type) {
+				/* lo asignamos y salimos del siclo */
+				result = i;
+				break
+			}
+		pos++;
+	}
+	/* Verificamos que result != NULL para realmente eliminarlo de la 
+	 * lista y tambien de la tabla */
+	if (result != NULL) {
+		/*! tenemos que borrarlo de la lista y la tabla */
+		this->queue.removeOne(result);
+		/* sacamos el elemento pos */
+		this->removeRow (r); /* automaticamente borra el item */
+	}
+	
+	/* liberamos el candado */
+	this->mutex.unlock();
+	
+	return result;
+}
+
 
 DispObject* DispObjTable::popFront ()
 {
 	DispObject *result = NULL;
 	
+	/*! hacemos atomico esto */
+	this->mutex.lock();
 	ASSERT (!this->queue.isEmpty());
 	
 	if (!this->queue.isEmpty()) {
@@ -140,6 +239,8 @@ DispObject* DispObjTable::popFront ()
 		/* ahora removemos el primer elemento de la tabla */
 		this->removeRow (0);
 	}
+	
+	this->mutex.unlock();
 	
 	return result;
 }
