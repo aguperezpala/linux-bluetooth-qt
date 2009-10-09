@@ -22,6 +22,17 @@
 
 
 
+
+
+
+
+
+
+
+
+
+/** ~~~~~~~~~~~~~~~~~~~~~~~ Funciones públicas ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
+
 /* Genera una conexión de tipo cliente con la dirección de internet (ip)
  * a través del puerto (port)
  * Devuelve el file descriptor de la conexión activa.
@@ -29,12 +40,12 @@
  *
  * PRE: ip != NULL && port > 0
  *
- *    socket = setup_client_connection (ip, port)
+ *    socket = connect_client (ip, port)
  *
  * POS: socket  >  0 && "Conexión establecida y  activa"  ||
  *	socket == -1 && "No pudo establecerse la conexión"
  */
-static int setup_client_connection (const char *ip, short port)
+int connect_client (const char *ip, short port)
 {
 	struct sockaddr_in addr;
 	int err = 0, sock = -1;
@@ -62,7 +73,7 @@ static int setup_client_connection (const char *ip, short port)
 	
 	
 	err = connect (sock, (const struct sockaddr *) &addr,
-		        (socklen_t) sizeof (struct sockaddr_in));
+		       (socklen_t) sizeof (struct sockaddr_in));
 	if (err) {
 		perror ("client_connection: couldn't connect to server\n");
 		close (sock);
@@ -72,15 +83,3 @@ static int setup_client_connection (const char *ip, short port)
 	return sock;
 }
 
-
-
-
-
-
-
-
-
-/** ~~~~~~~~~~~~~~~~~~~~~~~ Funciones públicas ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
-
-
-Cuac
