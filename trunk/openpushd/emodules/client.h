@@ -2,21 +2,48 @@
 #define CLIENT_CONNECTION_H
 
 
+typedef struct _client client;
+
+
+
+/* Creador
+ * CALL: cli = client_create()
+ * POS: cli != NULL
+ */
+client *create_client (void);
+
 
 /* Genera una conexión de tipo cliente con la dirección de internet (ip)
- * a través del puerto (port)
- * Devuelve el file descriptor de la conexión activa.
- * NOTE: se *genera* una conexión, no solo un socket (se usa connect)
+ * a través del puerto (port) para el cliente (cli)
  *
- * PRE: ip != NULL && port > 0
+ * PRE: cl != NULL
+ *	ip != NULL
+ *	port > 0
  *
- *    socket = connect_client (ip, port)
+ * CALL: connected = client_connect (cli, ip, port)
  *
- * POS: socket  >  0 && "Conexión establecida y  activa"  ||
- *	socket == -1 && "No pudo establecerse la conexión"
+ * POS:  connected && "Conexión establecida y  activa"
+ *	  OR
+ *	!connected && "No pudo establecerse la conexión"
  */
-int connect_client (const char *ip, short port)
+bool client_connect (client *cli, const char *ip, short port);
 
+
+/* Indica si el cliente tiene conexión activa
+ *
+ * PRE: cli != NULL
+ *
+ * CALL: connected = client_is_connected (cli)
+ *
+ * POS:  connected && "Sí está conectado"
+ *	  OR
+ *	!connected && "No está conectado"
+ */
+bool client_is_connected (client *cli);
+
+
+
+int disconnect_client (void);
 
 
 #endif
