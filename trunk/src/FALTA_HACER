@@ -29,20 +29,16 @@ Modulos en chequeo:
 	
 
 Tareas:
-	* "compilando el obexreceiver", falta hacer el modulo de testeo, nos
-	vamos a basar en el test de carlox :)....
-	* Comenzando con el picturewindow (picturewindow & picwincontrol). 
+	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
+	modularizar un cacho mas y tratar de trabajar independientemente
+	la marquesina de las demas cosas etc.
+	* "compilando el obexreceiver", falta hacer el modulo de testeo,
+	nos vamos a basar en el test de carlox :)....
 	* El tema de la tabla (dispobjtable) vamos a manejar las imagenes, 
 	por el momento, mostrando el nombre de la imagen, y ante un doble
 	click, esta va a ser mostrada por pantalla (falta implementar y 
 	testear esto).
-	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
-	modularizar un cacho mas y tratar de trabajar independientemente
-	la marquesina de las demas cosas etc.
-	* Hacer el ConfigManipulator, que se encargaria de leer/escribir
-	configuraciones de forma simple y facil :)
 	* Chequear el diagrama si falta algo.
-	* SClient el tema de las llamadas bloqueantes y no bloqueantes.
 	* Testear el verdadero udbserver/UDataBase->server.
 
 Tareas obexserver:
@@ -99,3 +95,4 @@ TIPS:
 	* El tema de las fotos, que se muestren no estiradas por completo, si no
 	que se muestren de acuerdo al tamaño general de la imagen hasta un
 	posible "maximo" tamaño, que va a ser el tamaño de la ventana en si.
+	* SClient el tema de las llamadas bloqueantes y no bloqueantes.
