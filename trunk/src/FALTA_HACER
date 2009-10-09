@@ -29,9 +29,14 @@ Modulos en chequeo:
 	
 
 Tareas:
+	* PORQUE MIERDA se clava cuando intentamos borrar un elemento de la
+	DispObjTable (delSelectedItem)... Se clava en el puto mutex
+	* Agregar el tema de las variables configurables
 	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
 	modularizar un cacho mas y tratar de trabajar independientemente
 	la marquesina de las demas cosas etc.
+	* El tema de guardar las configuraciones, en el txtwincontrol y el
+	picwincontrol.
 	* "compilando el obexreceiver", falta hacer el modulo de testeo,
 	nos vamos a basar en el test de carlox :)....
 	* El tema de la tabla (dispobjtable) vamos a manejar las imagenes, 
@@ -96,3 +101,7 @@ TIPS:
 	que se muestren de acuerdo al tamaño general de la imagen hasta un
 	posible "maximo" tamaño, que va a ser el tamaño de la ventana en si.
 	* SClient el tema de las llamadas bloqueantes y no bloqueantes.
+	* Modificar que el tamaño de la tabla sea modificable
+	
+	
+	

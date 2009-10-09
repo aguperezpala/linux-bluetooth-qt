@@ -31,12 +31,12 @@ bool DispObjTable::enqueueItem (QTableWidgetItem * item)
 	if (item != NULL) {
 		this->mutex.lock();	/*! atomic */
 		
+		/* seteamos algunas propiedades */
+		/*item->setFlags (Qt::ItemIsSelectable | Qt::ItemIsEnabled);*/
 		/* creamos una columna al final */
 		this->insertRow (this->rowCount());
 		this->setItem (this->rowCount()-1,this->columnCount()-1,item);
 		/* establecemos el tamaño contenido de los datos */
-		this->resizeColumnToContents (this->columnCount()-1);
-		this->resizeRowToContents (this->rowCount()-1);
 		result = true;
 		
 		this->mutex.unlock(); /*! atomic */
@@ -52,6 +52,10 @@ DispObjTable::DispObjTable(QWidget *parent)
 {
 	/* Agregamos una simple columna */
 	this->insertColumn(0);
+	this->setColumnWidth(0, this->width());
+	/* deshabilitamos la posibilidad de modificar los elementos */
+	
+	
 	/* Conectamos la señal que cuando clickeen una celda nos llamen a
 	 * nuestra funcion smsTable_clicked */
 	connect (this, SIGNAL (cellClicked (int,int)),this, 
@@ -66,6 +70,7 @@ void DispObjTable::deleteItem (int r)
 	/* Pre */
 	ASSERT (0 <= r && r <= this->rowCount());
 	
+	
 	this->mutex.lock(); /*! atomic */
 	/* si no esta dentro del rango volvemos */
 	if (r <= this->rowCount() && r >= 0) {
@@ -74,8 +79,6 @@ void DispObjTable::deleteItem (int r)
 		return;
 	}
 
-	
-	
 	this->removeRow (r); /* automaticamente borra el item */
 	
 	/*! Veamos que debe existir una correspondencia univoca entre cada fila
@@ -108,6 +111,7 @@ void DispObjTable::insertBack (DispObject* obj)
 	QTableWidgetItem *item = NULL;
 	bool enqueued = false;
 	
+	
 	/* Pre */
 	ASSERT (obj != NULL);
 	
@@ -118,17 +122,39 @@ void DispObjTable::insertBack (DispObject* obj)
 	
 	switch (obj->kind) {
 		case DISPOBJ_TEXT:
-			/* del tipo texto */
-			item = new QTableWidgetItem (obj->getData());
-			ASSERT (item != NULL);
-			/* lo metemos en la tabla */
-			enqueued = enqueueItem (item);
+		{
+			QByteArray data = "";
+			QString realData = "";
+			
+			/* abrimos el archivo y lo lemos */
+			if (obj->file.open (QIODevice::ReadOnly)) {
+				data = obj->file.readAll();
+				/* lo limpiamos de basuras como \n */
+				data.replace ('\n', ' ');
+				/* del tipo texto */
+				realData = data;
+				item = new QTableWidgetItem (realData);
+				ASSERT (item != NULL);
+				/* lo metemos en la tabla */
+				enqueued = enqueueItem (item);
+				obj->file.close();
+			} else
+				/* cualquiera esto, lo borramos al choripan */
+				delete obj; obj = NULL;
+			
+			
+		}
 			break;
 		case DISPOBJ_PICTURE:
-			/* deberiamos generar un item de forma especial */
-			
+		{
+			QString picItem = "Foto: ";
+			/* vamos a crear el item con el nombre de la foto */
+			picItem.append (obj->file.fileName());
+			item = new QTableWidgetItem (picItem);
+			ASSERT (item != NULL);
+			enqueued = enqueueItem (item);
+		}
 			break;
-			
 		default:
 			/* some fucking big problem :( */
 			ASSERT (false);
@@ -137,7 +163,8 @@ void DispObjTable::insertBack (DispObject* obj)
 	
 	this->mutex.lock();
 	/* lo agregamos a la cola */
-	this->queue.append (obj);
+	if (enqueued)
+		this->queue.append (obj);
 	
 	this->mutex.unlock();
 }
@@ -242,6 +269,12 @@ DispObject* DispObjTable::popFront ()
 	this->mutex.unlock();
 	
 	return result;
+}
+
+
+void DispObjTable::resizeEvent ( QResizeEvent * event )
+{
+	this->setColumnWidth(0, this->width());
 }
 
 

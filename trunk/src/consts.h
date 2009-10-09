@@ -35,4 +35,14 @@
 
 
 
+/*! 		tamaño de la tabla (DispObjTable)  minimo		 */
+#define MW_TABLE_MIN_SIZE_X		600
+#define MW_TABLE_MIN_SIZE_Y		400
+
+
+/*!		Tamaño maximo del DispObjFilter				*/
+#define DOF_MAX_SIZE_X			600
+#define DOF_MAX_SIZE_Y			600
+
+
 #endif

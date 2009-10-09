@@ -9,6 +9,8 @@
 #include <QTableWidget>
 #include <QList>
 #include <QMutex>
+#include <QByteArray>
+#include <QResizeEvent>
 
 #include "../../dispobject/dispobject.h"
 #include "../../debug.h"
@@ -92,7 +94,7 @@ public:
 	
 public slots:
 	virtual void on_smsTable_cellClicked (int,int);
-	
+	virtual void resizeEvent ( QResizeEvent * event );
 	
 	
 signals: 
