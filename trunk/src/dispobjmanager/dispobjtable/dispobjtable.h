@@ -1,11 +1,14 @@
 /*! Esta tabla lo que va hacer es mostrar todos los DispObjects que se estan
  * por mostrar en las relativas "ventanas" (txtwindow o picturewindow -futuro-).
+ * NOTE: es una tabla con soporte a multiples concurrencias => acciones son
+ * 	 atomicas.
 */
 #ifndef DispObjTable_H
 #define DispObjTable_H
 
 #include <QTableWidget>
 #include <QList>
+#include <QMutex>
 
 #include "../../dispobject/dispobject.h"
 #include "../../debug.h"
@@ -40,6 +43,29 @@ public:
 	/* idem: lo que hace es deleteItem(selectedItem); */
 	void deleteSelectedItem ();
 	
+	
+	/* Funcion que simplemente muestra el primer elemento de la lista
+	 * NOTE: NO lo saca de la misma, solo para poder "observarlo"
+	 * RETURNS:
+	 *	NULL		si no hay elementos.
+	 *	const dobj != NULL 
+	 * NOTE: no manipilarlo ni borrarlo!!!
+	 */
+	const DispObject * getFirst (void);
+	
+	/* Funcion que saca un elemento de determinado tipo. Lo que hace es
+	 * buscar en toda la lista, y el primero que encuentra de ese tipo
+	 * de DispObject lo devuelve.
+	 * REQUIRES:
+	 *	type € dispObjKind_t
+	 * RETURNS:
+	 *	NULL	si no encuentra ninguno
+	 *	dObj != NULL caso contrario
+	 * ENSURES:
+	 *	dobj->kind == type
+	 * NOTE: Lo saca de la lista, quien lo llama es dueño del dObj.
+	 */
+	DispObject * popFirst (dispObjKind_t type);
 	
 	/* Funcion que extrae el primer elemento de la tabla (lo saca de la
 	 * misma) y devuelve el puntero al mismo,
@@ -92,8 +118,8 @@ private:
 	
 				/* Atributos */
 	/* cola donde vamos a almacenar los sms */
-	QList<DispObject *> queue;	
-	
+	QList<DispObject *> queue;
+	QMutex mutex;	/* para hacer atomicas las operaciones */
 	
 };
 
