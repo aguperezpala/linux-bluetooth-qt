@@ -153,16 +153,16 @@ const DispObject * DispObjTable::getFirst (void)
 {
 	const DispObject * result = NULL;
 	/*! hacemos esto atomico */
-	this->mutex->lock();
+	this->mutex.lock();
 	
 	if (this->queue.isEmpty()) {
-		this->mutex->unlock(); 
+		this->mutex.unlock(); 
 		return result;
 	}
 	/* si no es vacia devolvemos el primer elemento */
 	result = this->queue.first();
 	
-	this->mutex->unlock(); 
+	this->mutex.unlock(); 
 	
 	return result;
 }
@@ -180,7 +180,7 @@ const DispObject * DispObjTable::getFirst (void)
 *	dobj->kind == type
 * NOTE: Lo saca de la lista, quien lo llama es dueño del dObj.
 */
-DispObject * popFirst (dispObjKind_t type)
+DispObject * DispObjTable::popFirst (dispObjKind_t type)
 {
 	QList<DispObject *>::iterator i;
 	int pos = 0;
@@ -200,12 +200,11 @@ DispObject * popFirst (dispObjKind_t type)
 	for (i = this->queue.begin(); i != this->queue.end(); ++i) {
 		/* ahora buscamos el primero de la lista que sea del tipo
 		 * type */
-		if (i != NULL)
-			if (i->kind == type) {
+		if ((*i)->kind == type) {
 				/* lo asignamos y salimos del siclo */
-				result = i;
-				break
-			}
+				result = *i;
+				break;
+		}
 		pos++;
 	}
 	/* Verificamos que result != NULL para realmente eliminarlo de la 
@@ -214,7 +213,7 @@ DispObject * popFirst (dispObjKind_t type)
 		/*! tenemos que borrarlo de la lista y la tabla */
 		this->queue.removeOne(result);
 		/* sacamos el elemento pos */
-		this->removeRow (r); /* automaticamente borra el item */
+		this->removeRow (pos); /* automaticamente borra el item */
 	}
 	
 	/* liberamos el candado */

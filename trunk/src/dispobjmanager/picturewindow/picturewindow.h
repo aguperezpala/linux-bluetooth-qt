@@ -1,7 +1,5 @@
-/*! Es la ventana sola con la imagen a mostrar. Esta clase va a tomar una
- * funcion especial del tipo QPixmap * (*getNextPic)(void); que lo que va hacer
- * es obtener el la siguiente imagen a mostrar. Esto nos permite borrar el
- * archivo (ya que en el PixMap tenemos la foto, osea en memoria)
+/*! Es la clase que muestra las fotos, requiere de un repositorio (DispObjTable
+ * en este caso) que nos suministraria los datos necesarios.
  * El funcionamiento va a ser el siguiente, a cada vencimiento del clock vamos
  * a pedir la siguiente imagen, si hay la mostramos, si no hay => nos dormimos.
  * En caso de que no haya, entonces nos dormimos hasta que nos llaman de nuevo
@@ -26,6 +24,7 @@
 
 #include "../../consts.h"
 #include "../../debug.h"
+#include "../dispobjtable/dispobjtable.h"
 
 
 class PictureWindow : public QWidget
@@ -35,13 +34,13 @@ class PictureWindow : public QWidget
 public:
 	/* Constructor: Muestra y crea la nueva ventana.
 	 * REQUIRES:
-	 *	getNextPic != NULL 
+	 *	doTable != NULL 
 	 * NOTE: tener en cuenta que debe devolver NULL si no hay siguiente
 	 * 	 imagen. 
 	 * ### Esta funcion se encarga de liberar el QPixmap, NO debe ser 
 	 *     liberado desde otro lado.
 	*/
-	PictureWindow(QPixmap * (*getNextPic)(void));
+	PictureWindow(DispObjTable * doTable);
 	
     
 	/* Funcion que avisa a la ventana que llego una nueva imagen.
@@ -76,6 +75,19 @@ protected:
 	
 
 private:
+	
+	/* Funcion que entrega una imagen para mostrar por pantalla. Esta
+	* es para la ventana de pictures.
+	* RETURNS:
+	*	pic	!= NULL	si es que existe alguna imagen
+	*	NULL	caso contrario.
+	* ENSURES:
+	*	una vez mandado una picture, no se encuentra mas en la tabla
+	* NOTE: pic ya no nos pertenece y debemos borrar ademas el archivo.
+	*/
+	QPixmap * getNextPic (void);
+	
+	
 	/* Esta funcion hace atomica la escritura de la variable newPicture
 	 * para evitar inconsistencias 
 	 */
@@ -104,7 +116,7 @@ private:
 	QVBoxLayout layout;	/* para agregar el label */
 	QLabel label;		/* por medio de esto vamos a poder mostrar */
 	/*! funcion que obtiene el proximo elemento */
-	QPixmap * (*getNextPic)(void);
+	DispObjTable * table;
 };
 
 #endif
