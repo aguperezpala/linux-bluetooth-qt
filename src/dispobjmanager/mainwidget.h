@@ -29,9 +29,7 @@
 #include "../cuser/cuser.h"
 
 
-/*! tamaño de la tabla minimo */
-#define MW_TABLE_MIN_SIZE_X		600
-#define MW_TABLE_MIN_SIZE_Y		400
+
 
 
 class MainWidget : public QWidget, private Ui::MainWidget

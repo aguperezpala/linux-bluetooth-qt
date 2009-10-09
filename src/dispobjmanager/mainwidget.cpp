@@ -106,7 +106,10 @@ void MainWidget::addDispObject (DispObject * dobj)
 
 void MainWidget::on_btnDelSelected_clicked (void)
 {
-	this->table->deleteSelectedItem();
+	int r = this->table->currentRow();
+	
+	if (0 <= r && r <= this->table->rowCount())
+		this->table->deleteSelectedItem();
 }
 
 void MainWidget::on_btnShowPic_clicked (void)

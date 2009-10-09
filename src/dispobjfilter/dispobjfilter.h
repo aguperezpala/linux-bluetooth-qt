@@ -15,10 +15,15 @@
 #include <QAbstractButton>
 #include <QMessageBox>
 #include <QFile>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QLabel>
 
 #include "../udatabase/udatabase.h"
 #include "../dispobject/dispobject.h"
 #include "../debug.h"
+
+
 
 class DispObjFilter
 {
