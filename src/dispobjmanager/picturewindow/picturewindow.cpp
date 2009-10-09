@@ -2,6 +2,52 @@
 
 
 
+
+/* Funcion que entrega una imagen para mostrar por pantalla. Esta
+* es para la ventana de pictures.
+* RETURNS:
+*	pic	!= NULL	si es que existe alguna imagen
+*	NULL	caso contrario.
+* ENSURES:
+*	una vez mandado una picture, no se encuentra mas en la tabla
+* NOTE: pic ya no nos pertenece y debemos borrar ademas el archivo.
+*/
+QPixmap * PictureWindow::getNextPic (void)
+{
+	DispObject * obj = NULL;
+	QPixmap * result = NULL;
+	
+	/* sacamos de pecho el primer elemento que corresponda al tipo
+	* DISPOBJ_PICTURE */
+	obj = this->table->popFirst (DISPOBJ_PICTURE);
+	
+	/* si es null => devolvemos NULL */
+	if (obj == NULL)
+		return NULL;
+	
+	/* ahora en teoria tenemos un objeto, lo vamos a cargar en la imagen */
+	result = new QPixmap ();
+	/* lo cargamos */
+	if (result->load (obj->file.fileName()) == false) {
+		/*! no pudimos cargarlo ni bosta */
+		debugp ("MainWidget::sendPicSignal: no se pudo cargar la foto "
+		"algun error interno :S... o que lo que\n");
+		/* limpiamos la basura */
+		if (result)
+			delete result;
+		delete obj; /* no nos sirve mas */
+		return NULL; /* no vamos a poderla mostrar :( */
+	}
+	/* lo pudimos cargar correctamente :) => eliminamos el archivo ya que
+	* no nos hace mas falta, y ademas devolvemos la imagen */
+	delete obj;
+	
+	return result;
+}
+
+
+
+
 /* Esta funcion hace atomica la escritura de la variable newPicture
 * para evitar inconsistencias 
 */
@@ -41,7 +87,7 @@ void PictureWindow::updatePicture(void)
 	}
 	
 	/* intentamos pedir una imagen */
-	this->picture = this->getNextPic();
+	this->picture = getNextPic();
 	/* no hay mas imagen que mostrar... aca debemos determinar
 	* una politica determinada, si no mostramos mas fotos,
 	* o mostramos la ultima foto.... o mostramos alguna por
@@ -61,24 +107,24 @@ void PictureWindow::updatePicture(void)
 
 /* Constructor: Muestra y crea la nueva ventana.
 * REQUIRES:
-*	getNextPic != NULL 
+*	doTable != NULL 
 * NOTE: tener en cuenta que debe devolver NULL si no hay siguiente
 * 	 imagen. 
 * ### Esta funcion se encarga de liberar el QPixmap, NO debe ser 
 *     liberado desde otro lado.
 */
-PictureWindow::PictureWindow(QPixmap * (*getNextPic1)(void))
+PictureWindow::PictureWindow(DispObjTable * doTable)
 {
 	QPalette p;
 	
 	/* pres */
-	if (getNextPic1 == NULL) {
+	if (doTable == NULL) {
 		ASSERT (false);
-		debugp ("Error getNextPic == NULL");
+		debugp ("PictureWindow::PictureWindow: Error doTable == NULL");
 		this->close();
 	}
 	this->paused = false;
-	this->getNextPic = getNextPic1;
+	this->table = doTable;
 	this->newPicture = false;
 	this->sleepTime = 7000;	/* 7 segundos por foto */
 	this->picture = NULL;
