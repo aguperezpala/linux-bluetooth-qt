@@ -1,6 +1,90 @@
 #include "textwindow.h"
 
 
+
+/* Funcion que entrega un mensaje para mostrar por pantalla. Esta
+* es para la ventana de textos.
+* RETURNS:
+*	str	!= NULL	si es que existe algun mensaje
+*	NULL	caso contrario.
+* ENSURES:
+*	en caso de enviar un mensaje este deja de existir en la tabla.
+* NOTE: str ya no nos pertenece y debemos borrar ademas el archivo.
+*/
+QString * TextWindow::getNextMsg (void)
+{
+	DispObject * obj = NULL;
+	QString * result = NULL;
+	const CUser * user = NULL;
+	QByteArray data = "";
+	
+	
+	
+	/* sacamos de pecho el primer elemento que corresponda al tipo
+	* DISPOBJ_TEXT */
+	obj = this->table->popFirst (DISPOBJ_TEXT);
+	
+	/* si es null => devolvemos NULL */
+	if (obj == NULL)
+		return NULL;
+	
+	/* Si no es null => sacamos la informacion y debemos eliminar el
+	* archivo y el DispObject */
+	result = new QString("");
+	/* un poco de seguridad... */
+	if (result == NULL) {
+		/*! estamos hasta el choripanaso mal */
+		debugp ("MainWidget::sendMsgSignal: estamos hasta el choripan "
+		" no hay memoria para crear un simple QString\n");
+		/* borramos basura */
+		delete obj;
+		return result;
+	}
+	
+	/* obtenemos el usuario para sacar el nickname */
+	user = obj->getUser();
+	if (user == NULL) {
+		/*! implementamos alguna politica: nombre de usuario por
+		* default, por ejemplo.... sin nombre: :)
+		*/
+		(*result) = "sin nombre";
+	} else
+		/* si tenemos un usuario => obtenemos el nickname */
+		(*result) = user->getNick();
+	
+	/* le agregamos unos 2 puntos y un espacio... */
+	result->append (": ");
+	/* ahora obtenemos los datos verdaderos, intentamos abrir el archivo
+	* y leer el contenido */
+	if (obj->file.open (QIODevice::ReadOnly) == false) {
+		/*! error abriendo el archivo, mierda carajo... muy raro */
+		debugp ("MainWidget::sendMsgSignal: error abriendo archivo "
+		"de texto, :(\n");
+		/*! ACA debemos implementar otra politica: mostramos por
+		* pantalla algo? no mostramos nada? elegimos 2º */
+		/* vamos a eliminar todo a la bosta, no nos sirve de nada */
+		delete result; result = NULL;
+		delete obj;
+		return result;
+	}
+	/* si estamos aca es porque pudimos abrirlo => leemos los datos */
+	data = obj->file.readAll();
+	/* cerramos el archivo */
+	obj->file.close();
+	/* lo limpiamos de basuras como \n */
+	data.replace ('\n', ' ');
+	
+	/* agregamos el mensaje finalmente al string */
+	result->append (data);
+	
+	/* eliminamos la basura restante */
+	delete obj;
+	
+	return result;
+}
+
+
+
 /* Funcion que agrega un mensaje a la "cola" mlist para ser mostrado
 * en pantalla.
 * RETURNS;
@@ -15,7 +99,7 @@ bool TextWindow::addMesg()
 	/*! ASSERT (this->getNextMsg != NULL); siempre */
 	
 	/* pedimos un msj para agregar */
-	msj = this->getNextMsg();
+	msj = getNextMsg();
 	
 	/* si tenemos un nuevo msj => creamos un MarquesinObj y lo metemos
 	 * en la lista.
@@ -111,21 +195,22 @@ void TextWindow::updateText ()
 
 /* Constructor: Muestra y crea la nueva ventana.
 * REQUIRES:
-*	getNextMsg != NULL (funcion q obtiene el proximo sms a mostrar)
+*	doTable != NULL ("repositorio de datos")
+* Necesitamos que el parent tenga una funcion del tipo que requerimos
 * NOTE: tener en cuenta que debe devolver NULL si no hay siguiente
 * mensaje. ### Esta funcion se encarga de liberar el QString, NO debe
 * ser liberado desde otro lado.
 */
-TextWindow::TextWindow(QString * (*getNextMsg1)(void))
+TextWindow::TextWindow(DispObjTable * doTable)
 {
 	/* pres */
-	ASSERT (getNextMsg1 != NULL);
+	ASSERT (doTable != NULL);
 	
-	if (getNextMsg1 == NULL) {
-		debugp ("Error getNextMsg == NULL");
+	if (doTable == NULL) {
+		debugp ("TextWindow: Error doTable == NULL");
 		this->close();
 	}
-	this->getNextMsg = getNextMsg1;
+	this->table = doTable;
 	
 	this->metrics = new QFontMetrics(this->font());
 	ASSERT (this->metrics != NULL);
@@ -289,6 +374,16 @@ void TextWindow::setVelocity (int v)
 		this->timer.stop ();
 	/* lo prendemos con el nuevo interval */
 	this->timer.start (v, this);
+}
+
+void TextWindow::closeEvent (QCloseEvent *event)
+{
+	
+	if (false)
+		event->accept();
+	else
+		event->ignore();
+	
 }
 
 TextWindow::~TextWindow()

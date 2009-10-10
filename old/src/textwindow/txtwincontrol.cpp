@@ -165,9 +165,12 @@ void TxtWinControl::on_scrollVel2_valueChanged(int s)
  */
 void TxtWinControl::closeEvent(QCloseEvent *event)
 {
-	
+	/* guardamos la configuracion */
 	saveConfigs();
-	event->accept();	
+	/*! NO cerramos, simplemente, escondemos... */
+	this->setVisible (false);
+	event->ignore();
+	
 }
 
 TxtWinControl::~TxtWinControl()
