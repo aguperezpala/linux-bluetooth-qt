@@ -12,10 +12,27 @@ DispObject::DispObject (QString & fname)
 	ASSERT (fname.isNull () == false);
 	this->file.setFileName (fname);
 	ASSERT (this->file.exists());	/*! existe el archivo ? */
-	if (this->file.size() <= FILE_TEXT_MAX_SIZE)
+	if (this->file.size() <= FILE_TEXT_MAX_SIZE) {
+		QByteArray data = "";
+		QString realData = "";
+		
 		/* el archivo entonces es de texto... */
 		this->kind = DISPOBJ_TEXT;
-	else
+		/* seteamos en el data el contenido */
+		
+		/* abrimos el archivo y lo lemos */
+		if (this->file.open (QIODevice::ReadOnly)) {
+			data = this->file.readAll();
+			/* lo limpiamos de basuras como \n */
+			data.replace ('\n', ' ');
+			/* del tipo texto */
+			realData = data;
+			setData(realData);
+			
+			this->file.close();
+		}
+		
+	} else
 		/* el archivo es de imagen.. ### cuidado con esto... ### */
 		this->kind = DISPOBJ_PICTURE;
 	

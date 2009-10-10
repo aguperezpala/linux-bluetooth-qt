@@ -114,12 +114,12 @@ void MainWidget::on_btnDelSelected_clicked (void)
 
 void MainWidget::on_btnShowPic_clicked (void)
 {
-	this->pwc->show();
+	this->pwc->setVisible(!this->pwc->isVisible());
 }
 
 void MainWidget::on_btnShowTxt_clicked (void)
 {
-	this->twc->show();
+	this->twc->setVisible(!this->twc->isVisible());
 }
 
 

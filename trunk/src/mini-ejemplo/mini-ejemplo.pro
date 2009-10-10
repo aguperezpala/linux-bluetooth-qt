@@ -2,6 +2,7 @@
 # ------------------------------------------- 
 # Subdirectorio relativo al directorio principal del proyecto: .
 # El destino es una aplicaci??n
+QMAKE_CXXFLAGS+= -g
 FORMS = ../dispobjmanager/mainwidget.ui
 CONFIG += uitools
 DEFINES += __DEBUG 
