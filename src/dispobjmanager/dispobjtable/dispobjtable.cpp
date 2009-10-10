@@ -138,9 +138,10 @@ void DispObjTable::insertBack (DispObject* obj)
 				/* lo metemos en la tabla */
 				enqueued = enqueueItem (item);
 				obj->file.close();
-			} else
+			} else {
 				/* cualquiera esto, lo borramos al choripan */
 				delete obj; obj = NULL;
+			}
 			
 			
 		}
@@ -161,8 +162,10 @@ void DispObjTable::insertBack (DispObject* obj)
 			return; /*! evitamos inconcistencias */
 	}
 	
+	
 	this->mutex.lock();
 	/* lo agregamos a la cola */
+	
 	if (enqueued)
 		this->queue.append (obj);
 	
@@ -227,7 +230,7 @@ DispObject * DispObjTable::popFirst (dispObjKind_t type)
 	for (i = this->queue.begin(); i != this->queue.end(); ++i) {
 		/* ahora buscamos el primero de la lista que sea del tipo
 		 * type */
-		if (/*(*i) != NULL && */(*i)->kind == type) {
+		if ((*i) != NULL && (*i)->kind == type) {
 				/* lo asignamos y salimos del siclo */
 				result = *i;
 				break;
