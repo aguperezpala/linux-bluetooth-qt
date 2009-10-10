@@ -1,7 +1,5 @@
-/*! Es la ventana sola con el texto a mostrar. Esta clase va a tomar una
- * funcion especial del tipo QString * (*getNextMsg) (void); que lo que va hacer
- * es obtener el siguiente mensaje a mostrar. (i.e: sacar de la cola el proximo
- * sms a mostrar.
+/*! Esta clase vamos a pedir una DispObjTable para ir sacando los elementos de
+ * ahi, vendria a ser una especie de "repositorio" de datos.
  * El funcionamiento general va a ser: Se van obteniendo QStrings para mostrar,
  * cada vez que se nescesite (osea cuando haya espacio para mostrar otro mensaje
  * se intenta pedir un nuevo QString, si se obtiene se muestra, si no no).
@@ -21,13 +19,17 @@
 #include <QPainter>
 #include <QFont>
 #include <QList>
+#include <QCloseEvent>
 
 #include "../../consts.h"
 #include "../../debug.h"
 #include "marquesinobj.h"
+#include "../dispobjtable/dispobjtable.h"
 
 #define MAX_STR_BUFF	800	/*cantidad de caracteres que pueden estar en
 pantalla*/
+
+
 
 class TextWindow : public QWidget
 {
@@ -36,12 +38,13 @@ class TextWindow : public QWidget
 public:
 	/* Constructor: Muestra y crea la nueva ventana.
 	 * REQUIRES:
-	 *	getNextMsg != NULL (funcion q obtiene el proximo sms a mostrar)
+	 *	doTable != NULL ("repositorio de datos")
+	 * Necesitamos que el parent tenga una funcion del tipo que requerimos
 	 * NOTE: tener en cuenta que debe devolver NULL si no hay siguiente
 	 * mensaje. ### Esta funcion se encarga de liberar el QString, NO debe
 	 * ser liberado desde otro lado.
 	*/
-	TextWindow(QString * (*getNextMsg)(void));
+	TextWindow(DispObjTable * doTable);
 	
     
 	/* Funcion que agrega un un mensaje a la cola. Ademas saca los '\n' para
@@ -73,14 +76,33 @@ public:
 	
 	/* setea el color de backgorund */
 	void setBackColor (const QColor& c);
-
+	
 	~TextWindow();
+	
+public slots:
+	void closeEvent (QCloseEvent *);
 	
 protected:
 	void paintEvent(QPaintEvent *event);
 	void timerEvent(QTimerEvent *event);
+	
 
 private:
+	
+	/* Funcion que entrega un mensaje para mostrar por pantalla.
+	Esta
+	* es para la ventana de textos.
+	* RETURNS:
+	*	str	!= NULL	si es que existe algun mensaje
+	*	NULL	caso contrario.
+	* ENSURES:
+	*	en caso de enviar un mensaje este deja de existir en la tabla.
+	* NOTE: str ya no nos pertenece y debemos borrar ademas el archivo.
+	* NOTE 2: Aca agregamos tambien el nombre del usuario (nickname)
+	*	   antes de mandar los datos.
+	*/
+	QString * getNextMsg (void);
+	
 	/* funcion actualiza las metrics cuando se cambio el tipo de fuente*/
 	void setNewMetricsFont(void);
 	
@@ -119,7 +141,7 @@ private:
 	QList<MarquesinObj *> mlist;	/*marquesin list,*/
 	
 	/*! funcion que obtiene el proximo elemento */
-	QString * (*getNextMsg)(void);
+	DispObjTable * table;
 };
 
 #endif
