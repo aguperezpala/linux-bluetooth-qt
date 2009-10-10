@@ -29,6 +29,9 @@ Modulos en chequeo:
 	
 
 Tareas:
+	* Armar un mini ejemplo de funcionamiento con un DispObjFilter,
+	con un solo usuario (para la bd, ni importa). Y el MainWidget y todo
+	lo demas. (carpeta mini-ejemplo)
 	* PORQUE MIERDA se clava cuando intentamos borrar un elemento de la
 	DispObjTable (delSelectedItem)... Se clava en el puto mutex
 	* Agregar el tema de las variables configurables

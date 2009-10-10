@@ -9,6 +9,7 @@
 
 #include <QString>
 #include <QFile>
+#include <QByteArray>
 
 #include "../cuser/cuser.h"
 #include "../consts.h"

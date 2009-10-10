@@ -39,7 +39,7 @@ static void createDispObjs (void)
 	for (i = 1; i < 11; i++ ) {
 		fname = "";
 		fname.setNum(i);
-		fname.prepend("mensaje");
+		fname.prepend("mesaje");
 		fname.append (".txt");
 		cout << "Agregando archivo: " << qstrtochar (fname) << endl;
 		user = new CUser(&nick, &MAC);
@@ -97,10 +97,6 @@ int main (int argc, char ** argv)
 	fail_if (dof == NULL);
 	
 	createDispObjs();
-	
-	/* creamos ahora los disp objects y los metemos */
-	createDispObjs();
-	
 	
 	app.exec();
 	delete mw;
