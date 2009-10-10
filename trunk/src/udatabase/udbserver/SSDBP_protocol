@@ -1,0 +1,44 @@
+Especificacion del protocolo SSDBP:
+* Es orientado a la coneccion y trabaja bajo el protocolo TCP/IP
+
+Modo de trabajo:
+* Toda solicitud es confirmada mediante un ack <SSDBP>ok<SSDBP>.
+* Todo tipo de dato se envia entre <SSDBP>datos<SSDBP>.
+* Cada solicitud/respuesta no puede ocupar mas de 256 bytes incluyendo
+los 14 caracteres "<SSDBP><SSDBP>".
+
+* NO soporta multiples pedidos, por lo se debe esperar la respuesta para
+cada uno antes de poder solicitar otro pedido. Caso contrario sera 
+considerado un fayo de protocolo.
+
+
+/*************		Datos adicionales	******************/
+Modo de trabajo del servidor:
+* Primero que todo debera registrarse cada conexion en el sistema de la
+siguiente manera:
+1) El cliente envia un paquete: "<SSDBP>registrar<SSDBP>".
+2) El servidor envia un paquete "<SSDBP>ok<SSDBP>" si no hubo
+error. En caso de error se desconectara automaticamente la
+conexion.
+* Para el envio de paquetes:
+1) El cliente envia paquetes de la forma
+"<SSDBP>func:param1,param2,..<SSDBP>", donde func representa el nombre de la
+funcion (por ejemplo preguntar si existe un usuario) y los parametros que
+requiere la funcion (para el mismo ejemplo, la MAC).
+2) El servidor responde con el resultado de la forma "<SSAP>result<SSAP>" 
+si se recibio en forma correcta y se ejecuto correctamente.
+
+
+
+
+/*******************		RPC		************************/
+* Tener en cuenta que todos los valores devueltos van a ser una cadena de
+  caracteres, ya que van a ser enviados por algun medio (LAN|PIPE|etc).
+* Forma general de las RPC es: funcName<;>param1<;>param2<;>.....paramN
+  
+RPCgetUserFromMac:
+	Parametros:
+		MAC
+	Returns:
+		<false>		Si el usuario no existe
+		nickname	Si el usuario existe (nickname = el nick)
