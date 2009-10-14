@@ -21,6 +21,7 @@ Modulos terminados de chequear:
 	* PicWinControl (pareceria andar, probablemente habria que agregarle
 	mas opciones, y hacerlo mas lindo)
 	* PictureWindow (en teoria no hay leaks, faltaria mejorarla).
+	* MainWidget
 	
 	
 Modulos en chequeo:

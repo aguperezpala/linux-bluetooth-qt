@@ -17,6 +17,7 @@
 #include <fstream>
 
 
+#include "../../configmanipulator/configmanipulator.h"
 #include "ui_txtwincontrol.h"
 #include "textwindow.h"
 
@@ -38,6 +39,13 @@ public:
 	 */
 	TxtWinControl(QWidget *parent, QString &fname,
 		       TextWindow *txtWin);
+	
+	/* Funcion que sirve para guardar las configuraciones actuales.
+	 * REQUIRES:
+	 *	txtWin no haya sido destruida
+	 */
+	void saveConfigs (void);
+	
 	
 	/* Destructor:
 	 * Antes de destruirnos vamos a guardar todas las configuraciones que
@@ -70,7 +78,6 @@ private:
 	
 	
 	/* Funciones auxiliares para cargar las configs */
-	void saveConfigs (void);
 	void loadConfigs (void);
 	
 };
