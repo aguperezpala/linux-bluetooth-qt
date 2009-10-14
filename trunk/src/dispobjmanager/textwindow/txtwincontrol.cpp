@@ -7,7 +7,18 @@
 /* Funcion que guarda todas las variables de configuracion */
 void TxtWinControl::saveConfigs(void)
 {
-	return;
+	ConfigManipulator * cm = NULL;
+	
+	/* verificamos que tw != NULL */
+	if (this->tw == NULL) {
+		debugp ("TxtWinControl::saveConfigs: tw NULL\n");
+		return;
+	}
+	/* creamos el config manipulator */
+	cm = new ConfigManipulator (this->configName);
+	/* ahora vamos a configurar todo */
+	cm->
+	
 }
 
 
