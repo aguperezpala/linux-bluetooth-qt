@@ -53,7 +53,6 @@ public slots:
 	void on_txtbuttonSetPos_clicked();
 	void on_txtbuttonShowHideWindow_clicked();
 	void on_txtbuttonShowWindow_clicked();
-	void on_txtbuttonSetVelocity_clicked();
 	void on_txtbuttonStartStop_clicked();
 	void on_txtbuttonStyle_clicked();
 	void on_txtbuttonSetFont_clicked();
