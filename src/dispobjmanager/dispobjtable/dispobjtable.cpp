@@ -73,7 +73,7 @@ void DispObjTable::deleteItem (int r)
 	
 	this->mutex.lock(); /*! atomic */
 	/* si no esta dentro del rango volvemos */
-	if (r <= this->rowCount() && r >= 0) {
+	if (!(r <= this->rowCount() && r >= 0)) {
 		/* soltamos el candado */
 		this->mutex.unlock();
 		return;

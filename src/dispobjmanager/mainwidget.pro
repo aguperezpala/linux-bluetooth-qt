@@ -3,7 +3,8 @@
 # Subdirectorio relativo al directorio principal del proyecto: .
 # El destino es una aplicaci??n
 QMAKE_CXXFLAGS+= -g
-FORMS = mainwidget.ui
+FORMS =  textwindow/txtwincontrol.ui picturewindow/picwincontrol.ui \
+	mainwidget.ui
 CONFIG += uitools
 DEFINES += __DEBUG 
 HEADERS += ../consts.h \
