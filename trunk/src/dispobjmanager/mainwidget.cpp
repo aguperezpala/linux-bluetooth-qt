@@ -72,6 +72,10 @@ MainWidget::MainWidget(QWidget *parent, QString & fname) : QWidget (parent)
 	/* reajustamos el widget */
 	this->adjustSize();
 	
+	/* agregamos las ventanas de control al layout */
+	this->textLayoutControl->addWidget (this->twc);
+	this->picLayoutControl->addWidget (this->pwc);
+	
 	/* Mostramos todas las ventanas */
 	this->tw->show();
 	this->pw->show();
@@ -110,16 +114,6 @@ void MainWidget::on_btnDelSelected_clicked (void)
 	
 	if (0 <= r && r <= this->table->rowCount())
 		this->table->deleteSelectedItem();
-}
-
-void MainWidget::on_btnShowPic_clicked (void)
-{
-	this->pwc->setVisible(!this->pwc->isVisible());
-}
-
-void MainWidget::on_btnShowTxt_clicked (void)
-{
-	this->twc->setVisible(!this->twc->isVisible());
 }
 
 

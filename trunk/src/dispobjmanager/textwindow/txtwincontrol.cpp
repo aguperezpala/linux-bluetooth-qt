@@ -85,15 +85,7 @@ void TxtWinControl::on_txtbuttonShowWindow_clicked()
 {
 	this->tw->setVisible (true);
 }
-void TxtWinControl::on_txtbuttonSetVelocity_clicked()
-{
-	bool ok = false;
-	int velocity = 0;
-	
-	velocity = txttextVelocity->text().toInt(&ok, 10);
-	if (ok)
-		this->tw->setVelocity (velocity);
-}
+
 
 void TxtWinControl::on_txtbuttonStartStop_clicked()
 {

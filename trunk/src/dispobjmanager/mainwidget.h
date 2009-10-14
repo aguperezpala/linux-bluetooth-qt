@@ -61,8 +61,6 @@ public:
 	
 public slots:
 	void on_btnDelSelected_clicked ();
-	void on_btnShowPic_clicked ();
-	void on_btnShowTxt_clicked ();
 	void on_btnExit_clicked();
 	void closeEvent (QCloseEvent *);
 

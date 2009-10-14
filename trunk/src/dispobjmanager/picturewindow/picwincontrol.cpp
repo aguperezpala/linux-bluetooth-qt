@@ -94,7 +94,7 @@ void PicWinControl::on_txtbuttonSetVelocity_clicked()
 	
 	sleepTime = txttextVelocity->text().toInt(&ok, 10);
 	if (ok)
-		this->pw->setSleepTime (sleepTime);
+		this->pw->setSleepTime (sleepTime*1000);/* en segundos */
 }
 
 void PicWinControl::on_txtbuttonStartStop_clicked()

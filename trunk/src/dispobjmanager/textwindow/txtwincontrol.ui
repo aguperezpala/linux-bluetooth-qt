@@ -26,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Text Config</string>
+   <string>Configuracion de texto</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>
@@ -53,7 +53,7 @@
          <item>
           <widget class="QPushButton" name="txtbuttonSetPos">
            <property name="text">
-            <string>Set pos</string>
+            <string>Posicion</string>
            </property>
           </widget>
          </item>
@@ -84,7 +84,7 @@
          <item>
           <widget class="QPushButton" name="txtbuttonSetSize">
            <property name="text">
-            <string>Set tamaño</string>
+            <string>Tamaño</string>
            </property>
           </widget>
          </item>
@@ -102,27 +102,6 @@
           <widget class="QLineEdit" name="txtsizeY">
            <property name="text">
             <string>Y</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="txtbuttonSetVelocity">
-           <property name="text">
-            <string>Set Velocidad</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="txttextVelocity">
-           <property name="text">
-            <string>100</string>
            </property>
           </widget>
          </item>
@@ -185,21 +164,21 @@
      <item>
       <widget class="QPushButton" name="txtbuttonSetFont">
        <property name="text">
-        <string>Set Fuente</string>
+        <string>Establecer Fuente</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="txtbuttonSetBackColor">
        <property name="text">
-        <string>Set backcolor</string>
+        <string>Color de fondo</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="txtbuttonSetFontColor">
        <property name="text">
-        <string>Set fontcolor</string>
+        <string>Color de fuente</string>
        </property>
       </widget>
      </item>
