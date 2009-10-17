@@ -9,8 +9,21 @@ consts.h podriamos meter "#include "config_parser.h"
 * UDataBase file (de donde vamos a leer/escribir los datos, puertos de escucha
   para el servidor de la base de datos)
 * UServer: startPort & endPort (puertos donde va a escuchar)
-* TextWindow: posicion, fuente, color, color fondo, tamaño, tipo de ventana,
-velocidad, step, betwen
+* TextWindow: 
+	TXT_WIN_POSITION_X
+	TXT_WIN_POSITION_Y
+	TXT_FONT
+	TXT_FONT_PIXEL_SIZE
+	TXT_FONT_POINT_SIZE
+	TXT_FONT_COLOR
+	TXT_BACK_COLOR
+	TXT_WIN_SIZE_X
+	TXT_WIN_SIZE_Y
+	TXT_WIN_STYLE
+	TXT_VELOCITY1
+	TXT_VELOCITY2
+	TXT_BETWEN
+	
 
 * PictureWindow:
 	- Tiempo de espera de cada foto.

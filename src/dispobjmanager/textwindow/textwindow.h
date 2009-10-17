@@ -67,6 +67,10 @@ public:
 	void setVelocity (int v);		/* Refresh time ms */
 	void setStep (int s) {this->step = s;};	/* step size */	
 	void setBetween (QString& b) {this->between = b;};
+	/* gets */
+	int getVelocity (void) {return this->vel;};
+	int getStep (void) {return this->step;};
+	QString & getBetween (void) {return this->between;};
 	
 	/* setea el color de la fuente */
 	void setFontColor (QColor & c) { this->color = c; };
@@ -76,6 +80,8 @@ public:
 	
 	/* setea el color de backgorund */
 	void setBackColor (const QColor& c);
+	/* obtenemos el color de fondo */
+	QColor & getBackColor (void);
 	
 	~TextWindow();
 	

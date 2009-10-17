@@ -78,6 +78,8 @@ private:
 	/* Funciones auxiliares para cargar las configs */
 	void saveConfigs (void);
 	void loadConfigs (void);
+	/* Funcion que destruye todo el contenido de esta clase */
+	void destroyAll (void);
 	
 };
 

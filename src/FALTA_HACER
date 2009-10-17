@@ -30,13 +30,14 @@ Modulos en chequeo:
 	
 
 Tareas:
+	* Al crear un dispObj que sea del tipo permitido (segun extencion).
+	* Si el DispObj a crear es del tipo vnote => parsearlo antes, y luego
+	sobreescribir el contenido del archivo, ya que despues lo vamos a
+	leer de pecho.
 	* Armar un mini ejemplo de funcionamiento con un DispObjFilter,
 	con un solo usuario (para la bd, ni importa). Y el MainWidget y todo
 	lo demas. (carpeta mini-ejemplo)
-	* Agregar el tema de las variables configurables
-	* HACIENDO el dispmanager y ver el tema de las interfaces graficas, 
-	modularizar un cacho mas y tratar de trabajar independientemente
-	la marquesina de las demas cosas etc.
+	* Agregar el tema de las variables configurables	
 	* El tema de guardar las configuraciones, en el txtwincontrol y el
 	picwincontrol.
 	* "compilando el obexreceiver", falta hacer el modulo de testeo,
@@ -49,6 +50,10 @@ Tareas:
 	* Testear el verdadero udbserver/UDataBase->server.
 
 Tareas obexserver:
+	* Determinar el tema de los tipos de archivos, evitar recibir
+	archivos mayores a cierto tamaño, y que no sean formatos € .{bmp,
+	png, jpg, jpeg, txt, vnt?..} y si no tiene extencion => es de texto =>
+	tiene que tener un tamaño pequeño.
 	* Fijarse el tema de los modulos de dbconector que sean "atomicos",
 	osea que soporten concurrencia (se debe hacer un solo pedido a la
 	vez a la base de datos).
