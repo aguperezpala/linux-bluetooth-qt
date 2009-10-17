@@ -1,0 +1,74 @@
+0.9 (2009-06-11)
+    - fix CMake modules in case of pkg-config not being present
+    - allow extended mime-types in the type header (fixes SF.net bug #1940844)
+    - add bluetooth transport layer security support
+    - add TCP wrapper support
+    - rewrite documentation build framework to get rid of xmlto and use
+      xsltproc, saxon-6.5.x or xalan-2.x directly
+
+0.8 (2008-04-13)
+    - SECURITY FIX: don't create files that previously failed the check for
+      invalid characters. It was possible to create files outside of the current
+      directory.
+    - add usage of POSIX function spawn() for externally called programs/scripts
+      and select it by default
+    - add usage of POSIX threads for concurrency and select it by default
+    - add inobex get_peer (forward compatible)
+    - make GET work
+    - add local CmakeModules/ and move FindXmlTo.cmake to it
+    - create cmake find modules for Bluetooth and OpenObex
+
+0.7 (2007-12-23) "Merry Xmas and a happy new year"
+    - add support for binding to a specific bluetooth adapter
+    - add support for binding to a specific ethernet address
+    - catch SIGINT and SIGTERM to properly shut down
+    - add support for properly deregistering SDP records
+    - remove configure and Makefile and document native use of cmake in INSTALL
+
+0.6 (2007-08-28)
+    - change build system to cmake
+    - tell storage scripts the client address
+    - require storage script to allow the transfer
+    - provide example script
+    - change TCP support to TcpOBEX to allow for non-official ports
+      if openobex > 1.3 is installed
+    - rename: src/helper -> src/x-obex (must be compiled seperately)
+
+0.5 (2007-03-04)
+    - fix SECURITY issue with script output call
+    - fix compilation issue with 64bit machines
+    - fix many bugs found with splint
+    - show file count in debug output
+    - add x-obex helpers to ease future work (not compiled by default)
+    - change script options
+    - add get support (_requires_ a script)
+    - add script header support and base script headers
+    - add TCP support
+    - update manpage
+
+0.4 (2006-10-25) (REVOKED)
+    - fix manpage install directory
+    - use streaming mode
+    - add option to write daemon PID to a file
+    - add obex authentication via credential files
+    - add script output alternative
+    - use DocBook DTD v4.2 for documenation
+    - change documenation compilation to xmlto
+    - fix daemon directory change
+    - fix segfaults on second invocation
+    - correctly exit forked childs
+    - clean up license
+    - create files with mode 0666 (usually limited by umask to 0644)
+
+0.3 (2006-09-26)
+    - add manpage in DocBook/XML format
+    - Makefile: add install target
+    - clean up help output
+
+0.2 (2006-09-23)
+    - Reformat the code
+    - use select/fork combination instead of only fork
+    - fix type decoding
+
+0.1 (2006-08-05)
+    - Initial release
