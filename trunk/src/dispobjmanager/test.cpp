@@ -45,7 +45,7 @@ static void createDispObjs (void)
 int main (int argc, char ** argv)
 {	
 	QApplication app(argc, argv, true);
-	QString fname = " ";
+	QString fname = "configfile.conf";
 	mw = new MainWidget (NULL ,fname);
 	
 	/* creamos ahora los disp objects y los metemos */

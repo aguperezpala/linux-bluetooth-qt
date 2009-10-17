@@ -129,26 +129,14 @@ void MainWidget::closeEvent(QCloseEvent *event)
 	if (this->realExit) {
 		/* guardamos la configuracion */
 		saveConfigs();
+		destroyAll();
 		event->accept();
 	} else
 		event->ignore();
 	
 }
-
-
-
-
-/* Destructor, esto destruye ### TODAS ### las ventanas, tener
-* cuidado con esto.
-*/
-MainWidget::~MainWidget()
+void MainWidget::destroyAll (void)
 {
-	
-	/* guardamos las configuraciones */
-	saveConfigs();
-	/* limpiamos toda la memoria correspondiente =>
-	 * Las ControlWindow y sus respectivos ventanas
-	 */
 	if (this->twc) {
 		delete this->twc; this->twc = NULL;
 	}
@@ -164,6 +152,23 @@ MainWidget::~MainWidget()
 	if (this->table) {
 		delete this->table; this->table = NULL;
 	}
+}
+
+
+
+/* Destructor, esto destruye ### TODAS ### las ventanas, tener
+* cuidado con esto.
+*/
+MainWidget::~MainWidget()
+{
+	
+	/* guardamos las configuraciones */
+	saveConfigs();
+	/* limpiamos toda la memoria correspondiente =>
+	 * Las ControlWindow y sus respectivos ventanas
+	 */
+	destroyAll();
+	
 }
 
 

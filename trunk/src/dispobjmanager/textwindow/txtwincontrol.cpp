@@ -8,6 +8,9 @@
 void TxtWinControl::saveConfigs(void)
 {
 	ConfigManipulator * cm = NULL;
+	QString var = "";
+	QString value = "";
+	
 	
 	/* verificamos que tw != NULL */
 	if (this->tw == NULL) {
@@ -16,8 +19,63 @@ void TxtWinControl::saveConfigs(void)
 	}
 	/* creamos el config manipulator */
 	cm = new ConfigManipulator (this->configName);
+	
 	/* ahora vamos a configurar todo */
-	cm->
+	var = "TXT_FONT";
+	value = (this->tw->font()).family();
+	cm->setValue (var, value);
+	
+	var = "TXT_FONT_PIXEL_SIZE";
+	value.setNum((this->tw->font()).pixelSize());
+	cm->setValue (var, value);
+	
+	var = "TXT_FONT_POINT_SIZE";
+	value.setNum((this->tw->font()).pointSize());
+	cm->setValue (var, value);
+	
+	var = "TXT_FONT_COLOR";
+	value.setNum (this->tw->getFontColor().rgb());
+	cm->setValue (var, value);
+	
+	var = "TXT_BACK_COLOR";
+	value.setNum (this->tw->palette().color (QPalette::Background).rgb());
+	cm->setValue (var, value);
+	
+	var = "TXT_WIN_POSITION_X";
+	value.setNum((this->tw->pos()).x());
+	cm->setValue (var, value);
+	
+	var = "TXT_WIN_POSITION_Y";
+	value.setNum((this->tw->pos()).y());
+	cm->setValue (var, value);
+	
+	var = "TXT_WIN_SIZE_X";
+	value.setNum((this->tw->size()).width());
+	cm->setValue (var, value);
+	
+	var = "TXT_WIN_SIZE_Y";
+	value.setNum((this->tw->size()).height());
+	cm->setValue (var, value);
+	
+	var = "TXT_WIN_STYLE";
+	value.setNum(this->tw->windowFlags());
+	cm->setValue (var, value);
+	
+	var = "TXT_VELOCITY1";
+	value.setNum(this->tw->getVelocity());
+	cm->setValue (var, value);
+	
+	var = "TXT_VELOCITY2";
+	value.setNum(this->tw->getStep());
+	cm->setValue (var, value);
+	
+	var = "TXT_BETWEN";
+	value = this->tw->getBetween();
+	cm->setValue (var, value);
+	
+	/* guardamos y salimos */
+	cm->saveChanges();
+	delete cm;
 	
 }
 
@@ -25,7 +83,140 @@ void TxtWinControl::saveConfigs(void)
 /* Funcion que Carga todas las variables de configuracion */
 void TxtWinControl::loadConfigs(void)
 {
-	return;
+	ConfigManipulator * cm = NULL;
+	QString var = "";
+	QString * value = NULL;
+	QColor color;
+	bool noError = true;
+	int aux = 0;
+	uint uaux = 0;
+	
+	
+	/* verificamos que tw != NULL */
+	if (this->tw == NULL) {
+		debugp ("TxtWinControl::loadConfigs: tw NULL\n");
+		return;
+	}
+	/* creamos el config manipulator */
+	cm = new ConfigManipulator (this->configName);
+	
+	/* cargamos la fuente y todo lo nescesario */
+	{
+		QString * font = NULL, * pixSize = NULL, * pointSize = NULL;
+		int poSize = -1, piSize = -1;
+		QFont auxFont;
+		
+		var = "TXT_FONT";
+		font = cm->getValue (var);
+		if (font == NULL)
+			font = new QString ("");
+		var = "TXT_FONT_POINT_SIZE";
+		pointSize = cm->getValue (var);
+		if (pointSize != NULL) {
+			poSize = pointSize->toInt (&noError);
+			if (!noError)
+				poSize = -1;
+			delete pointSize;
+		}
+		var = "TXT_FONT_PIXEL_SIZE";
+		pixSize = cm->getValue (var);
+		if (pixSize != NULL) {
+			piSize = pixSize->toInt (&noError);
+			if (!noError)
+				piSize = -1;
+			delete pixSize;
+		}
+		/* ahora cargamos la fuente */
+		auxFont = QFont::QFont(*font, poSize, piSize);
+		this->tw->setTextFont (auxFont);
+		delete font;
+	}
+	
+	var = "TXT_FONT_COLOR";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		uaux = value->toUInt (&noError);
+		color = QColor::QColor (uaux);
+		this->tw->setFontColor (color);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_BACK_COLOR";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		uaux = value->toUInt (&noError);
+		color = QColor::QColor (uaux);
+		this->tw->setBackColor (color);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_WIN_POSITION_X";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		aux = value->toInt (&noError);
+		this->tw->move (aux, 0);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_WIN_POSITION_Y";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		aux = value->toInt (&noError);
+		this->tw->move (this->tw->pos().x(), aux);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_WIN_SIZE_X";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		aux = value->toInt (&noError);
+		this->tw->resize (aux, 0);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_WIN_SIZE_Y";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		aux = value->toInt (&noError);
+		this->tw->resize (this->tw->size().width(), aux);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_WIN_STYLE";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		Qt::WindowFlags flags = 0;
+		flags = (Qt::WindowFlags) value->toUInt (&noError);		
+		this->tw->setWindowFlags (flags);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_VELOCITY1";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		aux = value->toInt (&noError);
+		this->tw->setVelocity (aux);
+		this->scrollVel1->setValue(aux);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_VELOCITY2";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		aux = value->toInt (&noError);
+		this->tw->setStep (aux);
+		this->scrollVel2->setValue(aux);
+		delete value; value = NULL;
+	}
+	
+	var = "TXT_BETWEN";
+	value = cm->getValue (var);
+	if (value != NULL) {
+		this->tw->setBetween (*value);
+		delete value; value = NULL;
+	}
+	
+	delete cm;
 }
 
 TxtWinControl::TxtWinControl(QWidget *parent, QString &fname, 
