@@ -1,5 +1,0 @@
-#ifndef VERSION_H
-#define VERSION_H
-
-#define OBEXPUSHD_VERSION "@OBEXPUSHD_VERSION@"
-#endif
