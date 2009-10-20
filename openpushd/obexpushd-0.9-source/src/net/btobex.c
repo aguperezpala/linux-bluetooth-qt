@@ -120,8 +120,6 @@ int bluetooth_get_peer(
 	struct sockaddr_rc addr;
 	socklen_t addrlen = sizeof(addr);
 	char addrstr[128];
-	char tmp[256];
-
 	int status;
 	int sock = OBEX_GetFD(handle);
 
@@ -135,10 +133,10 @@ int bluetooth_get_peer(
 
 	memset(addrstr, 0, sizeof(addrstr));
 	ba2str(&addr.rc_bdaddr, addrstr);
-	status = snprintf(tmp, sizeof(tmp), "bluetooth/[%s]:%u", addrstr, addr.rc_channel);
+	/*!### solo nos interesa la MAC, no el dispositivo (addr.rc_channel), */
 
 	if (buffer)
-		strncpy(buffer, tmp, bufsiz);
+		strncpy(buffer, addrstr, bufsiz);
 
 	return status;
 }

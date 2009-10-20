@@ -66,6 +66,7 @@ int put_open (obex_t* handle, const char* script) {
 		return put_wait_for_ok(data->in);
 
 	} else
+		/*! siempre vamos a llamar a esta */
 		return io_file_open(data, IO_FLAG_WRITE);
 }
 
@@ -101,6 +102,7 @@ int put_revert (obex_t* handle) {
 
 void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 	file_data_t* data = OBEX_GetUserData(handle);
+	uint8_t* fName = NULL;
 
 	if (data->error &&
 	    (event == OBEX_EV_REQ ||
@@ -133,8 +135,10 @@ void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 		break;
 
 	case OBEX_EV_REQCHECK:
+		
 		if (data->out == NULL
-		    && put_open(handle, get_io_script()) < 0)
+			/*! aca modificamos lo del script, no nos interesa */
+		    && put_open(handle, NULL) < 0)
 			obex_send_response(handle, obj, OBEX_RSP_FORBIDDEN);
 		else
 			obex_send_response(handle, obj, OBEX_RSP_CONTINUE);

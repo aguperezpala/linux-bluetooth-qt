@@ -73,177 +73,6 @@ void dbg_printf (file_data_t *data, const char *format, ...)
 	}
 }
 
-/* return len(> 0), 0 if not found, or err codes(< 0) */
-static
-ssize_t get_pass_for_user (char* file,
-			   const uint8_t* user, size_t ulen,
-			   /*@out@*/ uint8_t* pass, size_t size)
-{
-	ssize_t ret = 0;
-	size_t lsize = ulen+1+size+3;
-	char* line = malloc(lsize);
-	int status = 0;
-	FILE* f;
-	
-	if (!line)
-		return -ENOMEM;
-	if (file[0] == '|') {
-		const char* args[2] = { file+1, (const char*)user };
-		int fds[2];
-		int err = pipe_open(args[0], (char**)args, fds, NULL);
-		if (err)
-			return err;
-		close(fds[1]);
-		status = fds[0];
-	} else {
-		status = open(file, O_RDONLY);
-		if (status == -1)
-			status = -errno;
-	}
-	if (status < 0) {
-		free(line);
-		return status;
-	}
-	f = fdopen(status,"r");
-	if (!f) {
-		ret = (ssize_t)-errno;
-		free(line);
-		return ret;
-	}
-	while (1) {
-		size_t len = 0;
-		if (fgets(line,(int)lsize,f) == NULL)
-			break;
-		len = strlen(line);
-
-		/* test that we read a whole line */
-		if (!EOL(line[len-1])) {
-			ret = -EINVAL; /* password in file too large */
-			break;
-		}
-
-		if (line[len-1] == '\n')
-			--len;
-		if (line[len-1] == '\r')
-			--len;
-
-		if (ulen > len ||
-		    memcmp(line,user,ulen) != 0 ||
-		    line[ulen] != ':')
-			continue;
-		/* since the above matches the user id and the delimiter
-		 * the rest of the line must be the password
-		 */
-		ret = (ssize_t)(len-ulen-1);
-		if ((size_t)ret > size) {
-			ret = -EINVAL; /* password in file too large */
-			break;
-		}
-		memcpy(pass,line+ulen+1,(size_t)ret);
-	}
-
-	(void)fclose(f);
-	free(line);
-	return ret;
-}
-
-static
-int obex_auth_verify_response (obex_t __unused *handle,
-			       obex_headerdata_t h,
-			       uint32_t size)
-{
-	struct obex_auth_response resp;
-	uint8_t pass[1024];
-	int len;
-
-	if (!auth_file)
-		return 0;
-
-	memset(&resp,0,sizeof(resp));
-	memset(pass,0,sizeof(pass));
-
-	if (obex_auth_unpack_response(h,size,&resp) < 0)
-		return 0;
-	len = (int)get_pass_for_user(auth_file,resp.user,resp.ulen,pass,sizeof(pass));
-	if (len < 0)
-		return 0;
-	return obex_auth_check_response(&resp,pass,(size_t)len);
-}
-
-/* return len(> 0), 0 if not found, or err codes(< 0) */
-static
-ssize_t get_credentials_for_realm (char* file,
-				   const uint8_t* realm,
-				   /*@out@*/ uint8_t* user, size_t* usize,
-				   /*@out@*/ uint8_t* pass, size_t* psize)
-{
-	ssize_t ret = 0;
-	size_t size = *usize+1+*psize+1;
-	uint8_t* buffer = malloc(size);
-	uint8_t* r = NULL;
-	
-	if (!buffer)
-		return -ENOMEM;
-	/* the format for both files is basicly the same */
-	ret = get_pass_for_user(file,realm,utf8len(r),buffer,size);
-
-	if (ret > 0) {
-		r = (uint8_t*)strchr((char*)buffer,(int)':');
-		if (r == NULL ||
-		    (usize != 0 && (size_t)(r-buffer) > *usize) ||
-		    (size_t)((buffer+ret)-(r+1)) > *psize) {
-			free(buffer);
-			return -EINVAL;
-		}
-		if (usize) {
-			*usize = (size_t)(r-buffer);
-			if (user)
-				memcpy(user,buffer,*usize);
-		}
-
-		*psize = (size_t)((buffer+ret)-(r+1));
-		memcpy(pass,r+1,*psize);
-	}
-	free(buffer);
-	return ret;
-}
-
-static
-void get_creds (obex_t __unused *handle,
-		const uint16_t* realm, /* UTF-16 */
-		/*out*/ char* user,
-		size_t* ulen,
-		/*out*/ char* pass,
-		size_t* plen)
-{
-	uint8_t* realm8 = utf16to8(realm);
-	get_credentials_for_realm(realm_file,
-				  (const uint8_t*)realm8,
-				  (uint8_t*)user,ulen,
-				  (uint8_t*)pass,plen);
-	free(realm8);
-}
-
-static
-int obex_auth_send_response (obex_t* handle,
-			     obex_object_t* obj,
-			     obex_headerdata_t h,
-			     uint32_t size)
-{
-	struct obex_auth_challenge chal;
-	struct obex_auth_response resp;
-	ssize_t len;
-	
-	if (!realm_file)
-		return -EINVAL;
-	memset(&chal,0,sizeof(chal));
-	len = (ssize_t)obex_auth_unpack_challenge(h,size,&chal,1);
-	if (len < 0)
-		return -EINVAL;
-	obex_auth_challenge2response(handle,&chal,&resp,get_creds);
-	free(chal.realm);
-	return obex_auth_add_response(handle,obj,&resp);
-}
 
 static const char* obex_event_string(uint8_t event)
 {
@@ -280,6 +109,12 @@ static const char* obex_command_string(uint8_t cmd)
 	}
 }
 
+/*! en esta funcion es donde debemos implementar todo el tipo de filtros
+ * al tipo de archivo, tambien deberiamos verificar si el nombre del archivo
+ * ya existe => cambiarlo de nombre para evitar problemas de inconsistencia
+ * o que no pueda generar el archivo
+ */
+
 int obex_object_headers (obex_t* handle, obex_object_t* obj) {
 	uint8_t id = 0;
 	obex_headerdata_t value;
@@ -302,6 +137,11 @@ int obex_object_headers (obex_t* handle, obex_object_t* obj) {
 				memset(data->name,0,vsize+2);
 				memcpy(data->name,value.bs,vsize);
 				ucs2_ntoh(data->name,vsize/2);
+				/*! *************FIXME *****************/
+				
+				free(data->name);
+				
+				data->name = utf8to16 ("aguFile.txt");
 				if (debug) {
 					uint8_t* n = utf16to8(data->name);
 					dbg_printf(data, "name: \"%s\"\n", (char*)n);
@@ -370,12 +210,8 @@ int obex_object_headers (obex_t* handle, obex_object_t* obj) {
 			break;
 
 		case OBEX_HDR_AUTHCHAL:
-			if (realm_file && data->net_data->auth_success)
-				(void)obex_auth_send_response(handle,obj,value,vsize);
 			break;
-
 		case OBEX_HDR_AUTHRESP:
-			data->net_data->auth_success = obex_auth_verify_response(handle,value,vsize);
 			break;
 
 		default:
@@ -383,6 +219,7 @@ int obex_object_headers (obex_t* handle, obex_object_t* obj) {
 			break;
 		}
 	}
+	
 	return 1;
 }
 
@@ -426,8 +263,26 @@ void client_eventcb (obex_t* handle, obex_object_t* obj,
 
 	switch (obex_cmd) {
 	case OBEX_CMD_CONNECT:
+	{
+		/*! ### ACA es donde debemos chequear el ip, esto es porque para
+		 * obtener la verdadera MAC addres, debemos primero conectarnos
+		 * con el dispositivo (si no nos salen 00:00:00...). Aca vamos
+		 * a determinar si aceptamos o no, osea vamos a verificar la
+		 * black list.
+		 * FIXME: verificar que se producen 3 conexiones si lo
+		 * 	  desconectamos de pecho, probablemente sea el celular
+		 * 	  el que intenta re-conectarse 3 veces.
+		 */
+		/*! obtenemos la MAC y la almacenamos en la estructura */
+		memset(data->MACAddr, 0, sizeof(data->MACAddr));
+		net_get_peer(data->net_data, data->MACAddr, sizeof(data->MACAddr));
+		fprintf(stdout,"****IP:\"%s\"\n", data->MACAddr);
 		obex_action_connect(handle,obj,event);
+		/*obex_send_response(handle, obj, OBEX_EV_ABORT);
+		obex_action_disconnect(handle,obj,event);
+		*/
 		break;
+	}
 
 	case OBEX_CMD_PUT:
 		if (net_security_check(data->net_data))
@@ -459,10 +314,13 @@ void client_eventcb (obex_t* handle, obex_object_t* obj,
 	}
 }
 
-static void* handle_client (void* arg) {
-	file_data_t* data = malloc(sizeof(*data));
-	char buffer[256];
 
+static void* handle_client (void* arg) {
+	file_data_t* data = NULL;
+	
+
+	
+	data = malloc(sizeof(*data));
 	if (!data)
 		goto out1;
 	memset(data,0,sizeof(*data));
@@ -473,14 +331,15 @@ static void* handle_client (void* arg) {
 	if (!data->net_data)
 		goto out2;
 	memcpy(data->net_data, OBEX_GetUserData(arg), sizeof(*data->net_data));
+	
 	data->net_data->obex = arg;
 	if (!data->net_data->obex)
 		goto out2;
 	OBEX_SetUserData(data->net_data->obex, data);
 
-	memset(buffer, 0, sizeof(buffer));
+	/*memset(buffer, 0, sizeof(buffer));
 	net_get_peer(data->net_data, buffer, sizeof(buffer));
-	fprintf(stderr,"Connection from \"%s\"\n", buffer);
+	fprintf(stdout,"Connection from \"%s\"\n", buffer);*/
 
 	do {
 		if (OBEX_HandleInput(data->net_data->obex, 10) < 0)
@@ -735,7 +594,7 @@ int main (int argc, char** argv) {
 		case 'B':
 		{
 			char* device = NULL;
-			uint8_t btchan = 9;
+			uint8_t btchan = 11;
 			if (BT_HANDLE)
 				net_cleanup(BT_HANDLE);
 			BT_HANDLE = net_data_new();
@@ -841,7 +700,7 @@ int main (int argc, char** argv) {
 	}
 	if (i == sizeof(handle)/sizeof(*handle)) {
 		BT_HANDLE = net_data_new();
-		if (bluetooth_setup(BT_HANDLE, NULL, 9)) {
+		if (bluetooth_setup(BT_HANDLE, NULL, 11)) {
 			net_cleanup(BT_HANDLE);
 			exit(EXIT_FAILURE);
 		}

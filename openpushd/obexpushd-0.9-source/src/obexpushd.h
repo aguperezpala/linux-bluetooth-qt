@@ -21,6 +21,7 @@ typedef struct {
 
 	FILE *in, *out;
 	pid_t child;
+	uint8_t MACAddr[17];	/*! almacenamos la MACaddr */
 	uint8_t buffer[1000];
 
 	struct net_data* net_data;
