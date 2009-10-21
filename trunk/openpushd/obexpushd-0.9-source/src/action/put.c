@@ -103,7 +103,8 @@ int put_revert (obex_t* handle) {
 void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 	file_data_t* data = OBEX_GetUserData(handle);
 	uint8_t* fName = NULL;
-
+	
+	
 	if (data->error &&
 	    (event == OBEX_EV_REQ ||
 	     event == OBEX_EV_REQCHECK ||
@@ -148,6 +149,17 @@ void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 	{
 		const uint8_t* buf = NULL;
 		int len = OBEX_ObjectReadStream(handle,obj,&buf);
+		
+		if (data->out == NULL) {
+			uint8_t* n = utf16to8(data->name);
+			printf ("\nEstamos recibiendo un archivo nuevo: %s\n"
+			"Nombre: %s\n", (char*) n);
+			free (n);
+			/*! queremos cancelar:
+			obex_send_response(handle, obj, OBEX_RSP_ABORT);
+			(void)put_close(handle);
+			*/
+		} 
 
 		dbg_printf(data, "got %d bytes of streamed data\n", len);
 		if (len) {
@@ -161,6 +173,17 @@ void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 
 	case OBEX_EV_REQDONE:
 		(void)put_close(handle);
+		/*!### Aca una vez que cerramos el archivo, deberiamos hacer lo
+		 * siguiente:
+		 * 1) Verificar si es un vnote => lo parseamos a un archivo
+		 *    normal (texto plano).
+		 * 2) Verificamos si es una clave => verificamos si ya esta
+		 *    registrada, si esta descartamos el archivo, si no agregamos
+		 *    el usuario a la DB.
+		 * 3) En cualquier error lo borramos a la mierda.
+		 * 4) Si no hubo error, y no era una clave, y era de un usuario
+		 *    registrado => lo mandamos al sistema nuestro.
+		 *###*/
 		if (data->name) {
 			free(data->name);
 			data->name = NULL;
