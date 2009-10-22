@@ -150,17 +150,6 @@ void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 		const uint8_t* buf = NULL;
 		int len = OBEX_ObjectReadStream(handle,obj,&buf);
 		
-		if (data->out == NULL) {
-			uint8_t* n = utf16to8(data->name);
-			printf ("\nEstamos recibiendo un archivo nuevo: %s\n"
-			"Nombre: %s\n", (char*) n);
-			free (n);
-			/*! queremos cancelar:
-			obex_send_response(handle, obj, OBEX_RSP_ABORT);
-			(void)put_close(handle);
-			*/
-		} 
-
 		dbg_printf(data, "got %d bytes of streamed data\n", len);
 		if (len) {
 			if ((data->out == NULL
@@ -184,6 +173,7 @@ void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 		 * 4) Si no hubo error, y no era una clave, y era de un usuario
 		 *    registrado => lo mandamos al sistema nuestro.
 		 *###*/
+		printf ("\n\nTerminamos de recibir el archivo\n\n");
 		if (data->name) {
 			free(data->name);
 			data->name = NULL;
@@ -194,6 +184,7 @@ void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 		}
 		data->length = 0;
 		data->time = 0;
+		/*! nos desconectamos a la mierda ...*/
 		break;
 
 	case OBEX_EV_ABORT:

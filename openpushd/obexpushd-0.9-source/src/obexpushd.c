@@ -24,6 +24,7 @@
 #include "utf.h"
 #include "net.h"
 #include "action.h"
+#include "file_manipulator/file_manipulator.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -40,6 +41,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
+
 #if defined(USE_THREADS)
 #include <pthread.h>
 #endif
@@ -52,10 +54,63 @@
 static int debug = 0;
 static int nofork = 0;
 static int id = 0;
+static unsigned int fileCount = 0;
+static pthread_mutex_t countMutex;
 static /*@null@*/ char* auth_file = NULL;
 static /*@null@*/ char* realm_file = NULL;
 
 #define EOL(n) ((n) == '\n' || (n) == '\r')
+
+/*!### Funcion que devuelve un nombre valido para un archivo,
+ * REQUIRES:
+ *	fname != NULL
+ * RETURNS:
+ *	newFname 	!= NULL	if success
+ *	NULL 		on error
+ * NOTE: esta funcion incrementa en uno el contador global (si no hay error)
+ * NOTE: debe ser liberada la memoria despues.
+ */
+char * get_available_name (const char * fname)
+{
+	char * result = NULL;
+	char numb[10] = {0};
+	bool haveNewName = false;
+	int status = 0;
+	
+	if (!fname)
+		return NULL;
+	
+	while (!haveNewName) {
+		if (result != NULL) {
+			free (result);
+			result = NULL;
+		}
+		memset (numb, '\0', 10);
+		/* esta operacion debe ser atomica */
+		pthread_mutex_lock(&countMutex);
+		/* simplifica las cosas */
+		fileCount++;
+		status = sprintf(numb, "%u", fileCount);
+		pthread_mutex_unlock(&countMutex);
+
+		/* verificamos si hubo error */
+		if (status == 0)
+			/* no pudimos escribir nada... :( */
+			continue;
+		result = (char *) calloc(strlen(fname) + strlen(numb) + 3,
+					  sizeof(char));
+		if (!result)
+			/*! zatanas */
+			return NULL;
+		/* ahora formamos el nombre del archivo: numb++fname */
+		strcpy(result, numb);
+		strcat(result, fname);
+		/* ahora verificamos si existe el archivo */
+		haveNewName = !fm_file_exists(result);
+	}
+	
+	return result;
+}
 
 void dbg_printf (file_data_t *data, const char *format, ...)
 {
@@ -129,6 +184,9 @@ int obex_object_headers (obex_t* handle, obex_object_t* obj) {
 		switch (id) {
 		case OBEX_HDR_NAME:
 			if (data) {
+				char * availableName = NULL;
+				uint8_t* aux = NULL;
+				
 				if (data->name)
 					free(data->name);
 				data->name = malloc(vsize+2);
@@ -137,11 +195,18 @@ int obex_object_headers (obex_t* handle, obex_object_t* obj) {
 				memset(data->name,0,vsize+2);
 				memcpy(data->name,value.bs,vsize);
 				ucs2_ntoh(data->name,vsize/2);
-				/*! *************FIXME *****************/
+				/*! ahora vamos a obtener un nombre valido
+				 * para poder guardarlo correctamente
+				 */
+				aux = utf16to8(data->name);
+				availableName = get_available_name (aux);
+				free (aux);
 				
-				free(data->name);
-				
-				data->name = utf8to16 ("aguFile.txt");
+				if (availableName) {
+					free (data->name);
+					data->name = utf8to16 (availableName);
+					free (availableName);
+				}
 				if (debug) {
 					uint8_t* n = utf16to8(data->name);
 					dbg_printf(data, "name: \"%s\"\n", (char*)n);
@@ -290,8 +355,11 @@ void client_eventcb (obex_t* handle, obex_object_t* obj,
 		break;
 
 	case OBEX_CMD_GET:
-		if (net_security_check(data->net_data))
+		/*! No lo vamos a permitir. no queremos esto */
+		/*if (net_security_check(data->net_data))
 			obex_action_get(handle,obj,event);
+		*/
+		obex_send_response(handle, obj, OBEX_RSP_NOT_IMPLEMENTED);
 		break;
 
 	case OBEX_CMD_DISCONNECT:
@@ -555,6 +623,8 @@ static void obexpushd_shutdown (int sig) {
 	size_t i;
 	(void)signal(SIGINT, SIG_DFL);
 	(void)signal(SIGTERM, SIG_DFL);
+	/*! liberamos el mutex */
+	pthread_mutex_destroy (&countMutex);
 	for (i = 0; i < sizeof(handle)/sizeof(*handle); ++i) {
 		if (handle[i]) {
 			struct net_data* h = handle[i];
@@ -586,15 +656,19 @@ int main (int argc, char** argv) {
 #if defined(USE_THREADS)
 	pthread_t thread[sizeof(handle)/sizeof(*handle)];
 #endif
-	uint8_t auth_level = 0;
-
+	uint8_t auth_level = 0;	
 	int c;
+	
+	
+	/*! inicializamos el mutex */
+	pthread_mutex_init (&countMutex, NULL);
+	
 	while ((c = getopt(argc,argv,"B::I::N::Aa:dhnp:r:s:v")) != -1) {
 		switch (c) {
 		case 'B':
 		{
 			char* device = NULL;
-			uint8_t btchan = 11;
+			uint8_t btchan = 9;
 			if (BT_HANDLE)
 				net_cleanup(BT_HANDLE);
 			BT_HANDLE = net_data_new();
@@ -700,7 +774,7 @@ int main (int argc, char** argv) {
 	}
 	if (i == sizeof(handle)/sizeof(*handle)) {
 		BT_HANDLE = net_data_new();
-		if (bluetooth_setup(BT_HANDLE, NULL, 11)) {
+		if (bluetooth_setup(BT_HANDLE, NULL, 9)) {
 			net_cleanup(BT_HANDLE);
 			exit(EXIT_FAILURE);
 		}

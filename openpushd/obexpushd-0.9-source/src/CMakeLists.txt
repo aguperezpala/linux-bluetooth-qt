@@ -19,6 +19,8 @@ list ( APPEND SOURCES
   net/btobex.c
   net/publish/sdp.c
   net/irobex.c
+  file_manipulator/file_manipulator.c  
+  obex_filter/obex_filter.c
 )
 
 set ( OBEXPUSHD_VERSION ${VERSION} )
@@ -35,7 +37,8 @@ endforeach ( i )
 include_directories (
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/filemanipulator
+  )
 
 if ( OpenObex_HAVE_TcpObex )
   list ( APPEND obexpushd_DEFINITIONS OPENOBEX_TCPOBEX=1 )

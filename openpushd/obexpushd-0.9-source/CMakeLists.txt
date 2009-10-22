@@ -25,6 +25,7 @@ add_subdirectory ( src )
 add_subdirectory ( src/x-obex )
 add_subdirectory ( doc )
 
+
 install (
   FILES       README LICENSE GPLv2.txt
   DESTINATION "${DOCUMENTATION_INSTALL_DIR}"
