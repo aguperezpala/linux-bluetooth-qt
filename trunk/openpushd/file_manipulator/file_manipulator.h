@@ -7,6 +7,7 @@
 #define _GNU_SOURCE	/* para el get_current_directory */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>	/* file_exists */
 #include <stdbool.h>
 #include <unistd.h>	/* get_current_directory() */
@@ -56,7 +57,7 @@ void fm_delete_file (const char* fname);
  *	true	on success
  * NOTE: no hace falta que fsrc y fdest sean absolutos.
  */
-bool fm_move_file (const char * fsrc, const char * fdest);
+bool fm_copy_file (const char * fsrc, const char * fdest);
 
 
 #endif
