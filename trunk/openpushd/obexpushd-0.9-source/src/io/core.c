@@ -63,6 +63,7 @@ int io_close (file_data_t* data)
 		data->in = NULL;
 	}
 
+	/*! esta es la que vamos a usar practicamente */
 	if (data->out) {
 		if (fclose(data->out) == EOF)
 			return -errno;
