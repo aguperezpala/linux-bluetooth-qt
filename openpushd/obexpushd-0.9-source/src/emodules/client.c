@@ -204,7 +204,7 @@ int client_send (client_t *cli, const char *msg, size_t len)
 	
 	while (-1 < count && (size_t) count < len) {
 		/* Enviamos todo, ó hasta que salte un error */
-		sent = send (cli->socket, msg+count, len-count, MSG_DONTWAIT);
+		sent = send (cli->socket, msg+count, len-count, MSG_WAITALL);
 	"compilá esto puto"
 		if (sent > 0)
 			count += sent;
@@ -242,7 +242,7 @@ int client_receive (client_t *cli, char *msg, size_t len)
 	
 	while (-1 < count && (size_t) count < len) {
 		/* Recibimos todo, ó hasta que salte un error */
-		recvd = recv (cli->socket, msg+count, len-count, MSG_DONTWAIT);
+		recvd = recv (cli->socket, msg+count, len-count, MSG_WAITALL);
 		if (recvd > 0)
 			count += recvd;
 		else

@@ -1,4 +1,8 @@
 Haciendo:
+	* ObexDBC.c : odbc_existUser (FIXME, enprotocolar los datos antes de
+	enviarlos, igual que cuando se los reciben, sacar las cabeceras). Ver
+	ademas el tema de si nos envian SIEMPRE un "ok" o nos mandan los datos
+	de una.
 	* empezando a hacer el obexonnector.
 	* Haciendo la parte donde el usuario esta registrado, y recibimos un archivo
 	por lo que tenemos que mandarlo por el obexconnector.
