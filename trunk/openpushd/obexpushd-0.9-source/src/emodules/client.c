@@ -53,9 +53,9 @@ struct _client {
  * CALL: cli = client_create()
  * POS: cli != NULL
  */
-client *create_client (void)
+client_t *create_client (void)
 {
-	client *cli = NULL;
+	client_t *cli = NULL;
 	
 	cli = (client *) calloc (1, sizeof (struct _client));
 	ASSERT (cli != NULL);
@@ -72,7 +72,7 @@ client *create_client (void)
  * CALL: cli = client_destroy (cli)
  * POS: cli == NULL && "memoria liberada"
  */
-client *client_destroy (client *cli)
+client_t *client_destroy (client_t *cli)
 {
 	ASSERT (cli != NULL);
 	
@@ -93,7 +93,7 @@ client *client_destroy (client *cli)
  *	  OR
  *	!connected && "No está conectado"
  */
-bool client_is_connected (client *cli)
+bool client_is_connected (client_t *cli)
 {
 	ASSERT (cli != NULL);
 	return cli->socket > 0;
@@ -114,7 +114,7 @@ bool client_is_connected (client *cli)
  *	  OR
  *	!connected && "No pudo establecerse la conexión"
  */
-bool client_connect (client *cli, const char *ip, short port)
+bool client_connect (client_t *cli, const char *ip, short port)
 {
 	bool connected = false;
 	struct sockaddr_in addr;
@@ -166,7 +166,7 @@ bool client_connect (client *cli, const char *ip, short port)
  *
  * POS: !client_is_connected (cli)
  */
-void client_disconnect (client *cli)
+void client_disconnect (client_t *cli)
 {
 	ASSERT (cli != NULL);
 	
@@ -192,7 +192,7 @@ void client_disconnect (client *cli)
  *	  OR
  *	count < 0 && "error durante el envío, se pudieron enviar (count) bytes"
  */
-int client_send (client *cli, const char *msg, size_t len)
+int client_send (client_t *cli, const char *msg, size_t len)
 {
 	int count = 0, sent = 0;
 	
@@ -233,7 +233,7 @@ int client_send (client *cli, const char *msg, size_t len)
  *	  OR
  *	count < 0 && "error durante la recepción, se recibieron -count bytes"
  */
-int client_receive (client *cli, char *msg, size_t len)
+int client_receive (client_t *cli, char *msg, size_t len)
 {
 	int count = 0, recvd = 0;
 	

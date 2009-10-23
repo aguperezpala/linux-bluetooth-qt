@@ -1,4 +1,11 @@
 Haciendo:
+	* empezando a hacer el obexonnector.
+	* Haciendo la parte donde el usuario esta registrado, y recibimos un archivo
+	por lo que tenemos que mandarlo por el obexconnector.
+	* Setear el tema de las claves (de donde va a cargar el archivo) que sea
+	leido desde un config.file.
+	* terminar el obexdbconnector.
+	* Arreglar toda la cochinada fea esta por dios!
 	* Parsear correctamente las vnote FIXME (el tema de los \n).
 	* Verificar si el archivo ya existe => modificarle el nombre al que
 	estamos por recibir para evitar problemas de que ya existe el archivo.

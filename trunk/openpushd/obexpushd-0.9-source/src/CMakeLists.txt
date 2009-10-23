@@ -40,6 +40,8 @@ include_directories (
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/filemanipulator
   ${CMAKE_CURRENT_SOURCE_DIR}/vfromat-converter
+  ${CMAKE_CURRENT_SOURCE_DIR}/emodules
+  ${CMAKE_CURRENT_SOURCE_DIR}/hash_keys
   /usr/include/glib-2.0
   /usr/lib/glib-2.0/include/
   )

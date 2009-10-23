@@ -508,6 +508,7 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 				param = vformat_attribute_param_new (str->str);
 				g_string_assign (str, "");
 				lp = g_utf8_next_char (lp);
+				
 			}
 			else {
 				_skip_until (&lp, ":;");
@@ -541,7 +542,6 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 					 * the parameter then skip past the character.
 					 */
 					if (!param->values) {
-						vformat_attribute_param_free (param);
 						param = NULL;
 						if (!colon)
 							lp = g_utf8_next_char (lp);
@@ -578,6 +578,7 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 					}
 
 					if (param_name) {
+						param = NULL;
 						param = vformat_attribute_param_new (param_name);
 						vformat_attribute_param_add_value (param, str->str);
 					}
@@ -606,6 +607,7 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 				if(g_ascii_strcasecmp (param->name, "encoding"))  // value are already decoded in _read_attribute_value. Setting encoding
 	  				vformat_attribute_add_param (attr, param);// would lead to double decoding of the value.
 				param = NULL;
+				
 			}
 			if (colon)
 				break;
@@ -613,7 +615,7 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 		else {
 			osync_trace(TRACE_INTERNAL, "invalid character found in parameter spec: \"%i\" String so far: %s", lp[0], str->str);
 			g_string_assign (str, "");
-			_skip_until (&lp, ":;");
+			_skip_until (&lp, ":;");			
 			if (*lp == '\r') {
 				osync_trace(TRACE_INTERNAL, "string ended unexpectedly with \\r, skipping it");
 				break;
@@ -621,6 +623,10 @@ static void _read_attribute_params(VFormatAttribute *attr, char **p, int *format
 		}
 	}
 
+	if (param) {
+		vformat_attribute_param_free(param);
+		param = NULL;
+	}
 	if (str)
 		g_string_free (str, TRUE);
 
