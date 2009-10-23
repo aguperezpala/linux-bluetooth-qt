@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
+/*! definimos los tamaños maximos de nickname y de keys */
+#define MAX_KEYS_LENGTH		10
+#define MAX_NICK_LENGTH		15
+
 /* private data for a client connection */
 typedef struct {
 	unsigned int id;
@@ -21,6 +25,7 @@ typedef struct {
 
 	FILE *in, *out;
 	pid_t child;
+	bool isRegistered;	/*! true <==> esta en la BD del sistema */
 	uint8_t MACAddr[17];	/*! almacenamos la MACaddr */
 	uint8_t buffer[1000];
 

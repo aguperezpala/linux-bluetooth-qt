@@ -24,7 +24,12 @@
 #include "utf.h"
 #include "net.h"
 #include "action.h"
+/*! ### ### ### ### ### ### ### ### ### ### ### ### ### ### */
 #include "file_manipulator/file_manipulator.h"
+#include "emodules/ObexDBC.h"
+#include "emodules/ObexDBC.h"
+#include "hash_keys/hash_keys.h"
+
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -50,6 +55,14 @@
 #include "version.h"
 #include "compiler.h"
 
+/*! ### Aca vamos a definir el archivo de donde tiene que cargar las claves.
+ * Esto lo deberiamos meter en un archivo de configuracion que deberia leer
+ * despues el programa
+ */
+#define KEYS_FILE	"claves.key"
+
+
+
 /* global settings */
 static int debug = 0;
 static int nofork = 0;
@@ -58,6 +71,7 @@ static unsigned int fileCount = 0;
 static pthread_mutex_t countMutex;
 static /*@null@*/ char* auth_file = NULL;
 static /*@null@*/ char* realm_file = NULL;
+static hashKeys_t *hashKeys = NULL;
 
 #define EOL(n) ((n) == '\n' || (n) == '\r')
 
@@ -329,19 +343,27 @@ void client_eventcb (obex_t* handle, obex_object_t* obj,
 	switch (obex_cmd) {
 	case OBEX_CMD_CONNECT:
 	{
+		char * nickName = NULL;
 		/*! ### ACA es donde debemos chequear el ip, esto es porque para
 		 * obtener la verdadera MAC addres, debemos primero conectarnos
 		 * con el dispositivo (si no nos salen 00:00:00...). Aca vamos
 		 * a determinar si aceptamos o no, osea vamos a verificar la
 		 * black list.
-		 * FIXME: verificar que se producen 3 conexiones si lo
-		 * 	  desconectamos de pecho, probablemente sea el celular
-		 * 	  el que intenta re-conectarse 3 veces.
 		 */
 		/*! obtenemos la MAC y la almacenamos en la estructura */
 		memset(data->MACAddr, 0, sizeof(data->MACAddr));
 		net_get_peer(data->net_data, data->MACAddr, sizeof(data->MACAddr));
 		fprintf(stdout,"****IP:\"%s\"\n", data->MACAddr);
+		
+		/*! verificamos si esta registrado en la base de datos */
+		nickName = odbc_existUser (data->MACAddr);
+		if (nickName != NULL) {
+			/*! existe el usuario */
+			data->isRegistered = true;
+			/*! por ahora no vamos a usar el nickname :( */
+			free (nickName);
+		}
+		
 		obex_action_connect(handle,obj,event);
 		/*obex_send_response(handle, obj, OBEX_EV_ABORT);
 		obex_action_disconnect(handle,obj,event);
@@ -351,7 +373,7 @@ void client_eventcb (obex_t* handle, obex_object_t* obj,
 
 	case OBEX_CMD_PUT:
 		if (net_security_check(data->net_data))
-			obex_action_put(handle,obj,event);
+			obex_action_put(handle,obj,event, hashKeys);
 		break;
 
 	case OBEX_CMD_GET:
@@ -368,7 +390,7 @@ void client_eventcb (obex_t* handle, obex_object_t* obj,
 
 	case OBEX_CMD_ABORT:
 		if (last_obex_cmd == OBEX_CMD_PUT) {
-			obex_action_put(handle,NULL,OBEX_EV_ABORT);
+			obex_action_put(handle,NULL,OBEX_EV_ABORT, hashKeys);
 		}
 		break;
 
@@ -413,7 +435,7 @@ static void* handle_client (void* arg) {
 		if (OBEX_HandleInput(data->net_data->obex, 10) < 0)
 			break;
 	} while (1);
-
+	
 out2:
 	if (data) {
 		if (data->net_data) {
@@ -427,6 +449,7 @@ out2:
 		free(data);
 	}
 out1:
+	printf ("\nSe desconecto un cliente\n\n");
 	return NULL;
 }
 
@@ -662,6 +685,13 @@ int main (int argc, char** argv) {
 	
 	/*! inicializamos el mutex */
 	pthread_mutex_init (&countMutex, NULL);
+	/*! inicializamos la hashKeys */
+	hashKeys = hash_k_create();
+	if (!hashKeys) {
+		printf ("problemas al crear la hashkeys\n");
+		return 1;
+	}
+	hash_k_load_from_file(hashKeys,KEYS_FILE);
 	
 	while ((c = getopt(argc,argv,"B::I::N::Aa:dhnp:r:s:v")) != -1) {
 		switch (c) {
