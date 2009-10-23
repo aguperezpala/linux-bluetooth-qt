@@ -20,7 +20,8 @@ list ( APPEND SOURCES
   net/publish/sdp.c
   net/irobex.c
   file_manipulator/file_manipulator.c  
-  obex_filter/obex_filter.c
+  obex_filter/obex_filter.c  
+  hash_keys/hash_keys.c
 )
 
 set ( OBEXPUSHD_VERSION ${VERSION} )
@@ -38,6 +39,9 @@ include_directories (
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/filemanipulator
+  ${CMAKE_CURRENT_SOURCE_DIR}/vfromat-converter
+  /usr/include/glib-2.0
+  /usr/lib/glib-2.0/include/
   )
 
 if ( OpenObex_HAVE_TcpObex )
@@ -80,12 +84,22 @@ if ( TcpWrap_FOUND )
   include_directories ( ${TcpWrap_INCLUDE_DIRS} )
   list ( APPEND obexpushd_DEFINITIONS ENABLE_TCPWRAP )
 endif ( TcpWrap_FOUND )
-
+# 
+# SET_TARGET_PROPERTIES ( -I/usr/include/glib-2.0 
+# 	-I/usr/lib/glib-2.0/include/
+# 	-lglib-2.0
+# 	-lcitadel 
+# 	)
+	
+add_definitions ( ${GLIB2_CFLAGS} )
 add_executable ( obexpushd ${SOURCES} )
+
 target_link_libraries ( obexpushd
+  glib-2.0
   ${OpenObex_LIBRARIES}
   ${Bluetooth_LIBRARIES}
   ${THREAD_LIBRARY}
+  ${CMAKE_CURRENT_SOURCE_DIR}/vfromat-converter/vformat.o
 )
 #if ( AvahiClient_FOUND )
 #  target_link_libraries ( obexpushd

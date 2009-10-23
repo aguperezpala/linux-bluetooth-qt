@@ -150,6 +150,9 @@ void obex_action_put (obex_t* handle, obex_object_t* obj, int event) {
 		const uint8_t* buf = NULL;
 		int len = OBEX_ObjectReadStream(handle,obj,&buf);
 		
+		if (data->length && data->name && (data->out == NULL))
+			printf ("\n\n\nTenemos un archivo nuevo.\n\n\n");
+		
 		dbg_printf(data, "got %d bytes of streamed data\n", len);
 		if (len) {
 			if ((data->out == NULL
