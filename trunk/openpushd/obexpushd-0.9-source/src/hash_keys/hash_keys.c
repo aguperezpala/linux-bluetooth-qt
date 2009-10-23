@@ -69,7 +69,7 @@ void hash_k_load_from_file (hashKeys_t * hk, const char * fname)
 	while (getline(&line, &size, file) > 0) {
 		/* vamos a sacar el '\n' */
 		if (line && size){
-			line[size] = '\0';
+			line[strlen(line)-1] = '\0';
 			/* agregamos a la hash table */
 			g_hash_table_insert(hk->hashTable, line, line);
 		}
@@ -107,7 +107,7 @@ void hash_k_save_to_file (hashKeys_t * hk, const char * fname)
 	while (g_hash_table_iter_next (&iter, &key, &value)) 
 	{
 		if (key)
-			fprintf(file, "%s\n", key);
+			fprintf(file, "%s\n", (char*) key);
 	}
 	
 	/* cerramo el archivo */
@@ -144,7 +144,7 @@ bool hash_k_exist (hashKeys_t * hk, const char * key)
 void hash_k_remove (hashKeys_t * hk, const char * key)
 {
 	if (!key || !hk)
-		return result;
+		return;
 	
 	g_hash_table_remove(hk->hashTable, key);
 }
