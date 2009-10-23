@@ -1,7 +1,7 @@
 /*! Este tad nos va a proporcionar la base de datos de claves disponibles
  * que van a poder registrar el sistema.
  * Va a soportar concurrencia.
- * NOTE: El archivo de claves debe tener una clave por linea.
+ * NOTE: El archivo de claves debe tener una clave por linea y terminar en un \n
  */
 #ifndef HASH_KEYS_H
 #define HASH_KEYS_H

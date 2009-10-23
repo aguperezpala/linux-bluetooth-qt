@@ -18,6 +18,9 @@ int main (void)
 	assert(hash_k_exist(hk, "queseio"));
 	assert(hash_k_exist(hk, "ultimac"));
 	assert(hash_k_exist(hk, "1234567"));
+	assert(hash_k_exist(hk, "muchos4"));
+	
+	
 	/* no existen */
 	assert(!hash_k_exist(hk, "muchos5"));
 	assert(!hash_k_exist(hk, "agustia"));
