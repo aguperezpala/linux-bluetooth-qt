@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <pthread.h>
 
 #include "client.h"
@@ -63,7 +64,7 @@ bool odbc_is_connected (oDBCon_t * obdc);
  *	usr == NULL &&  ("No hay conexión con la BD"
  *			   OR
  *			 "El cliente no está registrado en la BD")
- */
+ *//*! NOTE: ATOMIC */
 char *odbc_existUser (oDBCon_t * odbc, const char *MAC);
 
 /* Funcion que va a agregar un usuario a la base de datos.
@@ -75,7 +76,7 @@ char *odbc_existUser (oDBCon_t * odbc, const char *MAC);
  * RETURNS:
  *	true	on success
  *	false	otherwise
- */
+ *//*! NOTE: ATOMIC */
 bool odbc_addUser (oDBCon_t * odbc, const char * MAC, const char * nick);
  
 
