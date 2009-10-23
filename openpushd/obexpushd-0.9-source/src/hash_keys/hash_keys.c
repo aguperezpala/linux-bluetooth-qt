@@ -43,6 +43,7 @@ void hash_k_destroy (hashKeys_t * hk)
 		/*! en teoria se libera todo aca... si no es dinamico */
 		g_hash_table_destroy(hk->hashTable);
 	pthread_mutex_destroy(&hk->mutex);
+	free(hk);
 }
 
 /* Funcion que va a cargar la hashKey desde un archivo.
@@ -74,9 +75,10 @@ void hash_k_load_from_file (hashKeys_t * hk, const char * fname)
 			g_hash_table_insert(hk->hashTable, line, line);
 		}
 		/* ahora que agregamos reinicializamos */
+		/*free(line);*/
 		line = NULL; size = 0;
 	}
-	
+	free(line);
 	fclose (file);
 }
 
@@ -130,8 +132,10 @@ bool hash_k_exist (hashKeys_t * hk, const char * key)
 	if (!key || !hk)
 		return result;
 	
+	/* usamos el mutex */
+	pthread_mutex_lock(&hk->mutex);
 	result = g_hash_table_lookup(hk->hashTable, key) != NULL;
-	
+	pthread_mutex_unlock(&hk->mutex);
 	return result;
 }
 
@@ -145,7 +149,8 @@ void hash_k_remove (hashKeys_t * hk, const char * key)
 {
 	if (!key || !hk)
 		return;
-	
+	pthread_mutex_lock(&hk->mutex);
 	g_hash_table_remove(hk->hashTable, key);
+	pthread_mutex_unlock(&hk->mutex);
 }
 
