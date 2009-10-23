@@ -1,5 +1,5 @@
 Haciendo:
-	* Parsear correctamente las vnote.
+	* Parsear correctamente las vnote FIXME (el tema de los \n).
 	* Verificar si el archivo ya existe => modificarle el nombre al que
 	estamos por recibir para evitar problemas de que ya existe el archivo.
 	* Verificar si el tipo de archivo que estamos por recibir lo debemos
