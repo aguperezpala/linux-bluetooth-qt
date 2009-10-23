@@ -94,6 +94,17 @@ VFormat *vformat_new_from_string(const char *str);
 void vformat_free(VFormat *format);
 void vformat_dump_structure(VFormat *format);
 char *vformat_to_string(VFormat *evc, VFormatType type);
+
+/* Funcion que reparsea la vnote para simplemente sacar el string del contenido
+* todo lo demas lo eliminamos
+* REQUIRES:
+*	vnote != NULL
+* RETURNS:
+*	clean_vnote	!= NULL on success
+*	NULL		on error
+*/
+char * clean_vnote (const char * vnote);
+
 time_t vformat_time_to_unix(const char *inptime);
 
 /* attributes */
