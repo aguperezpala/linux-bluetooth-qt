@@ -1,6 +1,24 @@
 #ifndef CLIENT_CONNECTION_H
 #define CLIENT_CONNECTION_H
 
+#define _GNU_SOURCE		/* para strnlen */
+
+/* Librerías estándar */
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <unistd.h>
+/* Librerías de errores */
+#include <assert.h>
+#include <errno.h>
+/* Librerías de redes */
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+/* Librerías propias */
 
 typedef struct _client client_t;
 
