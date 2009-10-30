@@ -1,21 +1,4 @@
-#define _GNU_SOURCE		/* para strnlen */
 
-/* Librerías estándar */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-#include <unistd.h>
-/* Librerías de errores */
-#include <assert.h>
-#include <errno.h>
-/* Librerías de redes */
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-/* Librerías propias */
 #include "client.h"
 
 
@@ -57,7 +40,7 @@ client_t *create_client (void)
 {
 	client_t *cli = NULL;
 	
-	cli = (client *) calloc (1, sizeof (struct _client));
+	cli = (client_t *) calloc (1, sizeof (*cli));
 	ASSERT (cli != NULL);
 	
 	cli->socket    = -1;
@@ -205,7 +188,7 @@ int client_send (client_t *cli, const char *msg, size_t len)
 	while (-1 < count && (size_t) count < len) {
 		/* Enviamos todo, ó hasta que salte un error */
 		sent = send (cli->socket, msg+count, len-count, MSG_WAITALL);
-	"compilá esto puto"
+
 		if (sent > 0)
 			count += sent;
 		else
