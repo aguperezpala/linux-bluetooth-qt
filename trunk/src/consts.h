@@ -10,6 +10,7 @@
 /*! Algunas respuestas para los protocolos */
 #define PRO_RESP_FALSE		"<false>"
 #define PRO_RESP_TRUE		"<true>"
+#define PRO_RESP_OK		"ok"
 
 
 

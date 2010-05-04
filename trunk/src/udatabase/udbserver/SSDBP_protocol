@@ -22,9 +22,9 @@ error. En caso de error se desconectara automaticamente la
 conexion.
 * Para el envio de paquetes:
 1) El cliente envia paquetes de la forma
-"<SSDBP>func:param1,param2,..<SSDBP>", donde func representa el nombre de la
-funcion (por ejemplo preguntar si existe un usuario) y los parametros que
-requiere la funcion (para el mismo ejemplo, la MAC).
+"<SSDBP>func<;>param1<;>param2<;>...paramN<SSDBP>", donde func representa el 
+nombre de la funcion (por ejemplo preguntar si existe un usuario) y los 
+parametros que requiere la funcion (para el mismo ejemplo, la MAC).
 2) El servidor responde con el resultado de la forma "<SSAP>result<SSAP>" 
 si se recibio en forma correcta y se ejecuto correctamente.
 
@@ -42,3 +42,11 @@ RPCgetUserFromMac:
 	Returns:
 		<false>		Si el usuario no existe
 		nickname	Si el usuario existe (nickname = el nick)
+
+RPCaddUser:
+	Parametros:
+		MAC
+		nickname
+	Returns:
+		<ok>		Si no hubo error.
+		<false>		Si hubo error.

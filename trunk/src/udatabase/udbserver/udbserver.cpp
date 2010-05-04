@@ -8,6 +8,7 @@
 */
 rpcTuple_t RPC_FUNCS[2] = {
 	{"getUserFromMac", udbs_RPCgetUserFromMac},
+	{"RPCaddUser", udbs_RPCaddUser},
 	{NULL, NULL}
 };
 
@@ -101,6 +102,67 @@ int udbs_RPCgetUserFromMac (UDataBase * db, void * paramList, void * rsp)
 	
 }
 
+
+/* Funcion que agrega a la base de datos un determinado usuario.
+* REQUIRES:
+*	db != NULL
+*	paramList != NULL
+*	resp != NULL && resp.isNull() == true
+* RETURNS:
+*	< 0	error (de protocolo o lo que sea)
+*	== 0	si no hubo error & resp.isNull() == false
+*/
+int udbs_RPCaddUser (UDataBase * db, void * paramList, void * rsp)
+{
+	CUser * user = NULL;
+	QStringList * list = (QStringList *) paramList;
+	QString mac = "", nick = "";
+	QString * resp = (QString *)rsp;
+	
+	/* pres */
+	if (db == NULL || list == NULL) {
+		debugp ("udbs_RPCaddUser: db NULL\n");
+		ASSERT (false);
+		return -1;
+	}
+	/* obtenemos los 2 parametros (MAC & Nickname) */
+	if (list->size() != 2) /* no respeta el protocolo */
+		return -1;
+	
+	mac = list->front();
+	if (mac.isNull() || mac.size() != MAC_SIZE) {
+		debugp ("udbs_RPCaddUser: mac problem\n");
+		ASSERT (false);
+		return -1;
+	}
+	/* obtenemos el nick */
+	nick = list[1];
+	if (nick.isNull()) {
+		debugp ("udbs_RPCaddUser: nick problem\n");
+		ASSERT (false);
+		return -1;
+	}
+	/* pres */
+	if (resp == NULL || resp->isNull() == false) {
+		debugp ("udbs_RPCaddUser: resp problem\n");
+		ASSERT (false);
+		return -1;
+	}
+	*resp = PRO_RESP_FALSE;
+	/* ahora creamos el usuario que vamos a agregar a la base de datos */
+	user = new CUser(&nick, &mac);
+	
+	if (user == NULL) {
+		/* algun error :S */
+		return -1;
+	}
+	/* lo agregamos a la base de datos */
+	if (((UDataBase*)db)->addUser (user))
+		*resp = PRO_RESP_OK;
+
+	return 0;
+	
+}
 
 
 /* Funcion que se encarga de chequear si esta todo correctamente cuando
