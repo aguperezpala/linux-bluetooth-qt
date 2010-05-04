@@ -1,4 +1,5 @@
 Haciendo:
+	* Haciendo el test del ObexDBC (y el client_t), ya compila por lo menos.
 	* ObexDBC.c : odbc_existUser (FIXME, enprotocolar los datos antes de
 	enviarlos, igual que cuando se los reciben, sacar las cabeceras). Ver
 	ademas el tema de si nos envian SIEMPRE un "ok" o nos mandan los datos
