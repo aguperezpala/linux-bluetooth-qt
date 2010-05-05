@@ -1,0 +1,22 @@
+El protocolo para recibir datos desde los celulares sera:
+
+<cmd>:<len>:[data]
+
+Donde: 
+ * cmd = es el comando que referencia la accion (4 caracteres)
+ * len = tamaño de los datos (en caracteres -numeros-, no en bits).
+ * data = datos brutos a enviar de tamaño len.
+
+Para todo comando enviado de un cliente o un servidor, existe una respuesta con
+la siguiente forma:
+
+resp:<len>:"tipo de respuesta"
+
+
+Los comandos aceptados son:
+
+resp - indica que se esta enviando una respuesta
+regi - indica que se esta mandando un codigo de registracion (en data)
+text - indica que se esta enviando texto plano
+file - indica que se esta por mandar un archivo
+erro - se ha producido un error interno al server.
