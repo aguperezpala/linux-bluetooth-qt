@@ -30,12 +30,13 @@ public class CityBluetooth extends MIDlet implements CommandListener {
 
     
     /* Definimos la clase DeviceFinder */
-    private DeviceFinder devFinder = null;
+    private ServerManager serverM = null;
     private CityClient cClient = null;
     private TextBox txtBox = null;
     private Form statusFrom = null;
     private String[] menuLabels = { "Registrarse", "Enviar mensaje", "Ayuda", "Log" };
     private final List menu = new List("Menu", List.IMPLICIT, menuLabels, null);
+
 
   
     private Command exitCommand;    
@@ -54,10 +55,10 @@ public class CityBluetooth extends MIDlet implements CommandListener {
         this.okCommand = new Command("Elegir", Command.OK, 2);
 
         /* creamos las estructuras propias */
-        this.devFinder = new DeviceFinder(this.statusFrom,RFCOMM_UUID, ATTRIBUTES,
-                ACCEPTED_PORT);
-        this.devFinder.startFindDevices();
-        this.cClient = new CityClient(this.statusFrom,this.devFinder);
+        this.serverM = new ServerManager(this.statusFrom);
+        this.cClient = new CityClient(this.statusFrom, this.serverM);
+        /* empezamos a buscar servers */
+        this.serverM.startSearchingServers();
 
 
         this.txtBox = new TextBox("CityEntert", "", 256,0);
@@ -161,6 +162,7 @@ public class CityBluetooth extends MIDlet implements CommandListener {
         } else if (displayable == this.txtBox) {
             /* vamos a verificar si apretaron ok */
             if(command == this.okCommand) {
+                int status = 0;
                 
                 switch(this.menu.getSelectedIndex()) {
                     case 0:
@@ -168,16 +170,26 @@ public class CityBluetooth extends MIDlet implements CommandListener {
 
                         /* ahora mostramos el log */
                         Display.getDisplay(this).setCurrent(this.statusFrom);
-                         try {
-                     Thread.sleep(500);
-                 } catch (Exception e) {
-                 }
 
                         /* intentamos mandar los datos */
-                        if (this.cClient.sendData("regi",
-                                this.txtBox.getString()) < 0)
-                            this.statusFrom.append("Error al enviar el codigo de" +
-                                    " registracion\n");
+                        status = this.cClient.sendData("regi",
+                                this.txtBox.getString());
+
+                        /* verificamos que nos devolvio */
+                        if (status >= 0) {
+                            this.statusFrom.append("Codigo de registracion " +
+                                    "enviado correctamente\n");
+                        } else if (status == -1 || status == -2) {
+                            this.statusFrom.append("No hay servers disponibles. " +
+                                    "Porfavor vuelva a intentarlo mas tarde: "+
+                                    "errCode: "+ status +"\n");
+                            /* volvemos a activar el servicio de busqueda */
+                            this.serverM.startSearchingServers();
+                        } else {
+                            /* error interno => no pudimos mandar nada */
+                            this.statusFrom.append("No se pudo enviar el codigo "+
+                                    "de registracion\n");
+                        }
                         break;
 
                     case 1:
@@ -187,9 +199,21 @@ public class CityBluetooth extends MIDlet implements CommandListener {
                         Display.getDisplay(this).setCurrent(this.statusFrom);
                         
                         /* intentamos mandar el mensaje */
-                        if (this.cClient.sendData("text",
-                                this.txtBox.getString()) < 0)
-                            this.statusFrom.append("Error al enviar el mensaje");
+                        status = this.cClient.sendData("text",
+                                this.txtBox.getString());
+                        if (status >= 0) {
+                            this.statusFrom.append("Mensaje enviado correctamente\n");
+                        } else if (status == -1 || status == -2) {
+                            this.statusFrom.append("No hay servers disponibles. " +
+                                    "Porfavor vuelva a intentarlo mas tarde: "+
+                                    "errCode: "+ status +"\n");
+                            /* volvemos a activar el servicio de busqueda */
+                            this.serverM.startSearchingServers();
+                        } else {
+                            /* error interno => no pudimos mandar nada */
+                            this.statusFrom.append("No se pudo enviar el codigo "+
+                                    "de registracion\n");
+                        }
 
                         break;
                     case 2:

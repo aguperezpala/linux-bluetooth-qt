@@ -99,8 +99,6 @@ public class BtConnection implements Runnable {
                   * viable para leer */
                  while(input.available() == 0 && retry > 0 &&
                          this.waitMs > 0){
-                     this.statusForm.append("retry: "+retry+"\navailable: "+
-                             input.available()+"\nwaitMs: " + this.waitMs + "\n");
                      /* vamos a esperar hasta que haya datos listos si y solo
                       * si no nos pasamos con el timeOut */
                      this.addNewTimeOut(500);                             
@@ -115,12 +113,11 @@ public class BtConnection implements Runnable {
                      retry--;
                  }
                  /* verificamos si salimos por timed out */
-                 if (this.waitMs <= 0)
+                 if (this.waitMs <= 0 || input.available() == 0)
                      break;
 
                  /* si estamos aca es porque no salimos por timed out */
-                 bytesToRead = input.available();
-                 this.statusForm.append("bytesToRead: " + bytesToRead + "\n");
+                 bytesToRead = input.available();                 
                  /* leemos bytesToRead bytes */
                  for (i = 0; i < bytesToRead; i++)
                      result += (char) input.read();
@@ -163,8 +160,10 @@ public class BtConnection implements Runnable {
              }
              this.waitMs = this.waitMs - wMs;
          }
-         this.statusForm.append("Conexion time out\n");
-         this.closeConnection();
+         if (this.status >= 0) {
+            this.statusForm.append("Conexion time out\n");
+            this.closeConnection();
+         }
 
     }
 

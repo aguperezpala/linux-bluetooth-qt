@@ -16,147 +16,102 @@ import javax.microedition.lcdui.Form;
  */
 public class CityClient {
     private Form status = null;
-    private DeviceFinder df = null;
+    private ServerManager sm = null;
 
 
-    public CityClient(Form st, DeviceFinder devF) {
+    public CityClient(Form st, ServerManager serverM) {
 
         this.status = st;
-        this.df = devF;
+        this.sm = serverM;
         
     }
 
     
-    /* Funcion que va a intentar mandar un dato, en caso de error devuelve
-     * < 0. Va a buscar algun dispositivo e intentar mandar datos y espera
-     * una respuesta (del server).
+    /** Funcion que envia a cualquiera de los servidores disponibles
+     * los datos pedidos.
+     * @param  cmd  != null
+     * @param  data != null
+     * @return:
+     *      -1  si no se encontro server
+     *      -2  no se pudo conectar a ningun server
+     *      -3  error interno
+     *      >=0 if success
      */
-     public int sendData(String cmd, String data) {
-         int result = 0;
+     public int sendData(String cmd, String data) {         
          String dataToSend = cmd + ":" + data.length() + ":" + data;
-         Vector workDevs = null;
+         Vector servers = null;
+         BtConnection btCon = null;
          String url = null;
-         boolean flag = false;
+         int result = -3;
          int i = 0;
          
 
          if (this.status != null)
              /* limpiamos la barra de estado (el log) */
              this.status.deleteAll();
-         
-         /* ahora lo que vamos hacer es primero verificar si tenemos 
-          * algun device confiable al cual enviar
-          */
-         workDevs = this.df.getWorkingDevices();
-         if (workDevs == null || workDevs.size() == 0) {
-             /* debemos empezar a buscar dispositivos */
-             if (!this.df.isSearching())
-                this.df.startFindDevices();
 
-             // TODO: probablemente debamos esperar a que se terminen de buscar
-             while (this.df.isSearching() && !flag)
-             {
-                 try {
-                     Thread.sleep(500);
-                 } catch (Exception e) {
-                     flag = true;
-                     this.status.append(e.toString() + "\n");
-                 }
-             }
-             workDevs = this.df.getWorkingDevices();
+         if (cmd == null || cmd.length() < 4 || data == null) {
+             this.status.append("CC:sendData: cmd | data null\n");
+             return -3;
          }
-         /* si no tenemos devs aca devolvemos error */
-         if (workDevs == null || workDevs.size() == 0) {
-             this.status.append("No encontramos ningun dev\n");
+
+         /* obtenemos la lista de servers diponibles */
+         servers = this.sm.getServerVector();
+         if (servers == null || servers.size() == 0) {
+             /* no tenemos naranja => devolvemos no se encontro server */
              return -1;
          }
-         /* si tenemos dipositivos para mandar => intentamos mandarle
-          * a cualquiera de las conexiones
-          */
-         this.status.append("Buscando servidor...\n");
-         flag = false;
-         for (i = 0; i < workDevs.size() && !flag; i++) {
-             RemoteDevice rD = (RemoteDevice) workDevs.elementAt(i);
-             if (rD == null){
-                 workDevs.removeElementAt(i);
-                 continue;
-             }             
-             //btspp://6A54017D1A00:11;authenticate=false;encrypt=false;master=false
-             url = CityBluetooth.PROTOCOL_ACCEPTED;
-             url += "://";
-             url += rD.getBluetoothAddress();
+
+         /* si tenemos server => entonces vamos a intentar conectarnos
+          * a alguno y vamos a intentar mandar los datos */
+         for (i = 0; i < servers.size(); i++) {
+             btCon = null;
+             url = "";
+             /* creamos primero que todo la url */
+             url = CityBluetooth.PROTOCOL_ACCEPTED + "://" +
+                     (String) servers.elementAt(i);
              url += ":" + Integer.toString(CityBluetooth.ACCEPTED_PORT) + ";";
              url += CityBluetooth.PARAMS;
-             
-             // creamos la conexion
-             BtConnection btConn = new BtConnection(url, this.status,
+
+             /* creamos la conexion */
+             btCon = new BtConnection(url, this.status,
                      CityBluetooth.CONN_MAX_TIME_OUT);
-             if (btConn.getStatus() < 0) {
-                 // no se pudo conectar => tiramos al chori la conexion
-                 workDevs.removeElementAt(i);
-                 i--;
+             if (btCon == null || btCon.getStatus() < 0) {
+                 /* no nos pudimos conectar al server => lo vamos a dejar por
+                  * si estamos fuera del alcance. lo que deberiamos hacer
+                  * es insertarlo al final... (reordenar el arreglo).
+                  * */
+                 /* por el momento simplemente vamos a pasar al siguiente
+                  * server */
                  continue;
              }
-            
-             /* ahora si nos conectamos entonces intentamos mandar datos */
-             if (btConn.sendData(dataToSend) >= 0) {
-                 int respCode = 0;
-                 // pudimos mandar :D => esperamos respuesta del server..
-                 String sResp = btConn.reciveData();
-                 if (sResp == null || sResp.length() == 0) {
-                     /* tenemos un error al recibir los datos... */
-                     btConn.closeConnection();
-                     btConn = null;
-                     // probamos la siguiente conexion
-                     continue;
-                 }
-                 // recibimos datos? debemos ver si son correctos
-                 respCode = BtParser.parseRecvData(sResp);
-                 /* de cualquier forma vamos a cerrar la conexion */
-                 btConn.closeConnection();
-                 btConn = null;
-                 if (respCode == 0) {
-                     // obtuvimos una buena respuesta
-                     this.status.append("Se envio correctamente\n");
-                     flag = true;
-                 } else if (respCode == -1) {
 
-                     this.status.append("Error recibido del servidor: " +
-                             BtParser.getMsg(sResp) + "\n");
-                     flag = true;
-                 } else {
-                     /* Fixme: deberiamos sacar a este device y colocarlo
-                      * como si fuese inusable... */
-                     this.status.append("Error al intentar conectarse al server\n");
-                     continue;
-                 }
-
-             } else {
-                 /* no pudimos mandar nada de datos... entonces anda mal el
-                  * server, vamos a seguir buscando, pero avisamos de paso que
-                  * anda mal el server...
-                  */
-                 this.status.append("Error al intentar conectarse al servidor,"+
-                         " reintentando...\n");
-                 btConn.closeConnection();
-                 btConn = null;
+             /* si estamos aca es porque si nos pudimos conectar, entonces
+              * vamos a intentar mandar los datos */
+             result = btCon.sendData(dataToSend);
+             if (result < 0) {
+                 this.status.append("CC:sendData: btCon.sendData() < 0\n");
+                 /* hubo un error pero nos pudimos conectar... ???
+                  * deberiamos nuevamente reordenar el vector e introducir este
+                  * server al final */
+                 /* ahora simplemente vamos a volver cerrar la conexion y buscar
+                  * otro server */
+                 btCon.closeConnection();
                  continue;
              }
+
+             /* pudimos mandar todo asique esta genial */
+             btCon.closeConnection();
+             break;
          }
 
-         /* verificamos si salimos por la flag... o porque pudimos mandar datos
-          * o por que causa fue */
-         if (flag == false && (i < workDevs.size())) {
-             /* pudimos mandar correctamente los datos */
-             result = 1;
+         /* ahora vamos a verificar porque salimos del ciclo */
+         if (i < servers.size() && result >= 0) {
+             /* pudimos mandar correctamente */
+             return result;
          } else
-             /* no se pudieron mandar correctamente los datos => deberiamos
-              * revisar que todos los devices que tenemos esten funcionando
-              * bien */
-             result = -1;
-         
-
-         return result;
+             /* no pudimos mandar por ningun server */
+             return -2;
      }
 
 

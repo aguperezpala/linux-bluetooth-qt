@@ -5,6 +5,8 @@
 
 package hello;
 
+import java.util.Vector;
+
 /**
  *
  * @author agustin
@@ -127,6 +129,49 @@ public class BtParser {
             /* tamos recibiendo cualquier otra cosa... */
             result = -3;
 
+
+        return result;
+    }
+
+
+    /* Funcion que parsea una lista de servidores (separadas por coma)
+     * y devuelve un vector con cada una de las MACS en formato usado
+     * por el celular (sin los ":")
+     * RETURNS:
+     *      null        on error
+     *      servVec     if success
+     */
+    static Vector parseServerList(String msg) {
+        Vector result = null;
+        int pos1 = 0, pos2 = 1;
+        String aux = null, aux2 = "";
+
+
+        if (msg == null)
+            return result;
+
+        result = new Vector();
+
+        /* ahora extraemos las mac addrs */
+        while (pos1 >= 0 && pos2 > 0) {
+            pos2 = msg.indexOf(",", pos1 + 1);
+            aux = msg.substring(pos1, pos2);
+
+            if (aux != null) {
+                /* sacamos los : */
+                aux2 = "";
+                for (int i = 0; i < aux.length(); i++)
+                    if(aux.charAt(i) != ':')
+                        aux2 += aux.charAt(i);
+                
+                result.addElement(aux2);
+            }
+
+            pos1 = pos2 + 1;
+        }
+
+        aux = null;
+        aux2 = null;
 
         return result;
     }
