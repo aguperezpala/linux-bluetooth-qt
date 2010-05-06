@@ -23,6 +23,7 @@ public class CityBluetooth extends MIDlet implements CommandListener {
     public static final int ACCEPTED_PORT = 11;
     public static final String PARAMS = "authenticate=false;encrypt=false;master=false";
     public static final String PROTOCOL_ACCEPTED = "btspp";
+    public static final int CONN_MAX_DATA_SIZE = 255; /* bytes */
     public static final int CONN_MAX_TIME_OUT = 10000; /* ms */
 
 
