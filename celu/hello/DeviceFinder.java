@@ -7,6 +7,8 @@ package hello;
 
 import javax.bluetooth.*;
 import java.util.Vector;
+import javax.microedition.io.Connector;
+import javax.microedition.io.StreamConnection;
 import javax.microedition.lcdui.Form;
 
 
@@ -110,23 +112,52 @@ public class DeviceFinder implements DiscoveryListener {
 
   public void inquiryCompleted(int discType) {
       int searchID = 0;
+      String url = null;
       int i = 0;
+      RemoteDevice rD = null;
+      StreamConnection connection = null;
+
 
       this.statusForm.append("InquiryCompleted: " + discType + "\n");
       this.statusForm.append("Determinando undefined devices...\n");
 
       /* comenzamos a buscar ahora sobre los dispositivos indefinidos cuales
        * nos sirven y cuales no.. */
+      /* Por el momento vamos a dejar a TODOS los undefined devices como
+       * aceptables */
       this.searching = this.undefinedDevices.size();
-      
-      for (i = 0; i < this.undefinedDevices.size(); i++) {
+     for (i = 0; i < this.undefinedDevices.size(); i++) {
+         /*
+          rD = null;
+          rD = (RemoteDevice) this.undefinedDevices.elementAt(i);
+          if (rD == null) {
+              this.undefinedDevices.removeElementAt(i);
+              i--;
+              continue;
+          }
+          url = null;
+          url = BtParser.generateUrl(rD.getBluetoothAddress());
+
+          try {
+              connection = null;
+              connection = (StreamConnection) Connector.open(url,
+                    Connector.READ_WRITE, true);
+              connection.close();
+          } catch (Exception e) {
+
+          }
+          */
+          
           try {
               searchID = this.discoveryAgent.searchServices(this.attributes,
                       this.uuidSet,(RemoteDevice) this.undefinedDevices.elementAt(i),this);
           } catch (Exception e) {
               this.statusForm.append("Error searchServices: " + e.toString()
                        + "\n");
+              /* decrementamos en uno la busqueda */
+              this.searching--;
         }
+
       }
 
       

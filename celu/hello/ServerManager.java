@@ -42,12 +42,9 @@ public class ServerManager implements Runnable {
         if (rD == null)
             return result;
 
-        /* generamos la url */
-        //btspp://6A54017D1A00:11;authenticate=false;encrypt=false;master=false
-        url = new String("");
-        url += CityBluetooth.PROTOCOL_ACCEPTED + "://" + rD.getBluetoothAddress();
-        url += ":" + Integer.toString(CityBluetooth.ACCEPTED_PORT) + ";";
-        url += CityBluetooth.PARAMS;
+        /* generamos la url */        
+        url = BtParser.generateUrl(rD.getBluetoothAddress());
+       
 
         /* intentamos conectarnos */
         btCon = new BtConnection(url, this.statusForm,
@@ -70,20 +67,25 @@ public class ServerManager implements Runnable {
          */
         serverResp = btCon.reciveData();
         
-        if (serverResp == null || BtParser.parseRecvData(serverResp) < 0) {
+        if (serverResp == null) {
             this.statusForm.append("SM: getServersList: btCon receiving err\n");
             return result;
         }
+        btCon.closeConnection();
 
+        this.statusForm.append("obtuvimos respuesta de un server: " +
+                serverResp + "\n y vamos a parsear\n");
         /* obtenemos el mensaje y lo parseamos entonces */
-        auxVec = BtParser.parseServerList(serverResp);
+        auxVec = BtParser.parseServerList(BtParser.getMsg(serverResp));
         if (auxVec == null) {
             this.statusForm.append("SM: getServersList: parsing ServerList err\n");
             return result;
         }
+        this.statusForm.append("Ya parseamos: " + auxVec.toString() + "\n");
         
         /* si llegamos aca esta todo joya => agregamos todos los servers que
          * no tengamos ya */
+        result = true;
         for (int i = 0; i < auxVec.size(); i++)
             if (!this.serverList.contains(auxVec.elementAt(i)))
                     /* lo agregamos */
@@ -114,7 +116,7 @@ public class ServerManager implements Runnable {
 
     public void startSearchingServers() {
         /* verificamos que no este buscando */
-        if(this.smThread != null)
+        if(this.isRunning)
             return;
         /* generamos todo */
         this.smThread = new Thread(this);
@@ -122,8 +124,7 @@ public class ServerManager implements Runnable {
     }
 
     public void stopSearching() {
-        if (this.smThread != null && (this.smThread.isAlive() ||
-                this.isRunning)) {
+        if ((this.smThread.isAlive() || this.isRunning)) {
             this.smThread.interrupt();
             this.smThread = null;
         }
@@ -139,6 +140,7 @@ public class ServerManager implements Runnable {
         boolean haveFound = false;
         Vector workDevs = null;
         RemoteDevice rD = null;
+        int retry = 4;  /* cantidad de veces que vamos a buscar esto */
 
 
         this.isRunning = true;
@@ -147,7 +149,8 @@ public class ServerManager implements Runnable {
          * buscar dispositivos... una vez que termine vamos a intentar
          * conectarnos a cada uno de ellos para obtener la lista de servers
          */
-        while(!haveFound) {
+        while(!haveFound && retry > 0) {
+            retry--;
             /* buscamos y esperamos esperamos */
             if (!this.devFinder.isSearching())
                 this.devFinder.startFindDevices();

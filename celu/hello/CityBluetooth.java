@@ -183,8 +183,10 @@ public class CityBluetooth extends MIDlet implements CommandListener {
                             this.statusFrom.append("No hay servers disponibles. " +
                                     "Porfavor vuelva a intentarlo mas tarde: "+
                                     "errCode: "+ status +"\n");
-                            /* volvemos a activar el servicio de busqueda */
-                            this.serverM.startSearchingServers();
+                            /* volvemos a activar el servicio de busqueda si y
+                             * solo si NO encontramos servers */
+                            if (status == -1)
+                                this.serverM.startSearchingServers();
                         } else {
                             /* error interno => no pudimos mandar nada */
                             this.statusFrom.append("No se pudo enviar el codigo "+
@@ -207,8 +209,10 @@ public class CityBluetooth extends MIDlet implements CommandListener {
                             this.statusFrom.append("No hay servers disponibles. " +
                                     "Porfavor vuelva a intentarlo mas tarde: "+
                                     "errCode: "+ status +"\n");
-                            /* volvemos a activar el servicio de busqueda */
-                            this.serverM.startSearchingServers();
+                          /* volvemos a activar el servicio de busqueda si y
+                             * solo si NO encontramos servers */
+                            if (status == -1)
+                                this.serverM.startSearchingServers();
                         } else {
                             /* error interno => no pudimos mandar nada */
                             this.statusFrom.append("No se pudo enviar el codigo "+

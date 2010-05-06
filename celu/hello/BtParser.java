@@ -155,6 +155,9 @@ public class BtParser {
         /* ahora extraemos las mac addrs */
         while (pos1 >= 0 && pos2 > 0) {
             pos2 = msg.indexOf(",", pos1 + 1);
+
+            if (pos2 < 0)
+                continue;
             aux = msg.substring(pos1, pos2);
 
             if (aux != null) {
@@ -174,6 +177,17 @@ public class BtParser {
         aux2 = null;
 
         return result;
+    }
+
+
+    static public String generateUrl(String mac){
+        String url = new String("");
+
+        url += CityBluetooth.PROTOCOL_ACCEPTED + "://" + mac;
+        url += ":" + Integer.toString(CityBluetooth.ACCEPTED_PORT) + ";";
+        url += CityBluetooth.PARAMS;
+
+        return url;
     }
 
         

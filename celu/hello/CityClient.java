@@ -66,13 +66,8 @@ public class CityClient {
           * a alguno y vamos a intentar mandar los datos */
          for (i = 0; i < servers.size(); i++) {
              btCon = null;
-             url = "";
-             /* creamos primero que todo la url */
-             url = CityBluetooth.PROTOCOL_ACCEPTED + "://" +
-                     (String) servers.elementAt(i);
-             url += ":" + Integer.toString(CityBluetooth.ACCEPTED_PORT) + ";";
-             url += CityBluetooth.PARAMS;
-
+             url = null;
+             url = BtParser.generateUrl((String) servers.elementAt(i));
              /* creamos la conexion */
              btCon = new BtConnection(url, this.status,
                      CityBluetooth.CONN_MAX_TIME_OUT);
