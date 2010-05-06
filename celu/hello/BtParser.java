@@ -44,13 +44,14 @@ public class BtParser {
         String cmd = null;
         int sizeOfData = 0;
 
+        
         if (sepPos < 4)
             return false;
 
-        cmd = data.substring(sepPos - 5, 4);
+        cmd = data.substring(sepPos - 4, sepPos);
         /* FIXME: deberiamos chequear el cmd sea uno de los que queremos */
         sepPos2 = data.indexOf(":", sepPos+1);
-        sizeOfData = Integer.parseInt(data.substring(sepPos + 1, sepPos2 - 1));
+        sizeOfData = Integer.parseInt(data.substring(sepPos + 1, sepPos2));
 
         if (sepPos2 <= sepPos)
             return false;
@@ -61,6 +62,35 @@ public class BtParser {
         cmd = null;
 
         return true;
+    }
+
+    /* Funcion que devuelve el mensaje de una respuesta
+     * RETURNS:
+     *      null    on error
+     *      msg     if success
+     */
+    static String getMsg(String data) {
+        int sepPos = data.indexOf(":");
+        int sepPos2 = 0;
+        String cmd = null;
+        int sizeOfData = 0;
+
+
+        if (sepPos < 4)
+            return null;
+
+        sepPos2 = data.indexOf(":", sepPos+1);
+        sizeOfData = Integer.parseInt(data.substring(sepPos + 1, sepPos2));
+
+        if (sepPos2 <= sepPos)
+            return null;
+
+        if (data.length() != sizeOfData + sepPos2 + 1)
+            return null;
+
+        /* no hay error => devolvemos los datos */
+        return data.substring(sepPos2 + 1, sepPos2 + 1 + sizeOfData);
+
     }
 
 

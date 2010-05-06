@@ -40,6 +40,7 @@ public class BtConnection implements Runnable {
             this.connection = (StreamConnection)Connector.open(this.strUrl,
                     Connector.READ_WRITE, true);
 
+            
             /* comenzamos con el time out */
             this.thisTrhead = new Thread(this);
             this.thisTrhead.start();
@@ -82,61 +83,56 @@ public class BtConnection implements Runnable {
      *          recibio nada ==> hubo error..)
      */
     public String reciveData(){
-        byte[] data = null;
-        byte[] readData = null;
         String result = null;
 
     
         try {
-            input = this.connection.openInputStream();            
-            data = new byte[255];
-            int byteRead = 0;
-            int i = 0;
-            boolean haveResp = false;
+            input = this.connection.openInputStream();
+            int bytesRead = 0, bytesToRead = 0;
+            int i = 0, retry = 3;
+            boolean haveResp = false, timedOut = false;
+            result = new String("");
 
-            
-            /* FIXME: aca estamos suponiendo que siempre tenemos datos al
-             * instante para leer, no siempre es asi, deberiamos cambiar esto
-             * porque no nos esta andando el tema del timeout para la lectura.
-             */
-            i = 10;
-             while (i > 0 && input.available() == 0) {
-                 this.addNewTimeOut(500);
-                 try {
-                     Thread.sleep(500);
-                 } catch (Exception e) {}
-                 i--;
+            while (bytesRead < CityBluetooth.CONN_MAX_DATA_SIZE && !haveResp
+                    && !timedOut) {
+                 /* primero que todo vamos a esperar a tener algun dato
+                  * viable para leer */
+                 while(input.available() == 0 && retry > 0 &&
+                         this.waitMs > 0){
+                     this.statusForm.append("retry: "+retry+"\navailable: "+
+                             input.available()+"\nwaitMs: " + this.waitMs + "\n");
+                     /* vamos a esperar hasta que haya datos listos si y solo
+                      * si no nos pasamos con el timeOut */
+                     this.addNewTimeOut(500);                             
+                     try {
+                         Thread.sleep(500);
+                     } catch (Exception e) {}
+
+                     if (this.waitMs <= 0) {
+                         timedOut = true;
+                         break;
+                     }
+                     retry--;
+                 }
+                 /* verificamos si salimos por timed out */
+                 if (this.waitMs <= 0)
+                     break;
+
+                 /* si estamos aca es porque no salimos por timed out */
+                 bytesToRead = input.available();
+                 this.statusForm.append("bytesToRead: " + bytesToRead + "\n");
+                 /* leemos bytesToRead bytes */
+                 for (i = 0; i < bytesToRead; i++)
+                     result += (char) input.read();
+
+                 bytesRead += i;
+                 haveResp = BtParser.haveResponse(result);
+
              }
-            this.statusForm.append("Podemos leer sin que se clave: " +
-                    input.available() + "\n y byte data[] = " + String.valueOf(data));
 
-            i = 0;
-            this.statusForm.append("\nEmpezamos con el ciclo\n");
+            this.statusForm.append("haveResp: " + haveResp + "\tRecibimos: " +
+                    result + "\n");
             
-            while (input.available() > 0)
-                this.statusForm.append("char: "+ (char)input.read()+"\n");
-            
-            this.statusForm.append("terminamos con el ciclo\n");
-            /*while (byteRead >= 0 && !haveResp && i < 255 && input.available() > 0) {
-                this.statusForm.append("Entrando al ciclo de lectura i:" + i + "\n");
-                byteRead = input.read(data, i, 255);
-                this.statusForm.append("leimos: " + byteRead + "\n");
-                i += byteRead;
-                readData = null;
-                readData = new byte[i];
-                System.arraycopy(data, 0, readData, 0, i);
-                haveResp = BtParser.haveResponse(String.valueOf(readData));
-                this.statusForm.append("Recibiendo - " + byteRead + ": " + 
-                        String.valueOf(readData) + "\n");
-            }*/
-            if (haveResp) {
-                result = String.valueOf(readData);
-                readData = null;
-                this.statusForm.append("Terminamos de recibir:" + result + "\n");
-            } else {
-                data = null;
-                readData = null;
-            }
 
         } catch (IOException e) {
             this.statusForm.append("error al recibir datos: " + e.toString()+ "\n");
@@ -184,14 +180,27 @@ public class BtConnection implements Runnable {
         this.status = -1;
         try {
             /* interrumpimos el thread */
-            this.thisTrhead.interrupt();
+            if (this.thisTrhead != null) {
+                this.thisTrhead.interrupt();
+                this.thisTrhead = null;
+            }
+
             this.waitMs = 0;
 
-            if (this.output != null)
+            if (this.output != null) {
                 this.output.close();
-            if (this.input != null)
+                this.output = null;
+            }
+
+            if (this.input != null){
                 this.input.close();
-            this.connection.close();
+                this.input = null;
+            }
+
+            if (this.connection != null){
+                this.connection.close();
+                this.connection = null;
+            }
         } catch (IOException ioe) {
       	  this.statusForm.append("Error Closing connection " + ioe+ "\n");
         }

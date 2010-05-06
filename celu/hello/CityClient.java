@@ -120,9 +120,13 @@ public class CityClient {
                      this.status.append("Se envio correctamente\n");
                      flag = true;
                  } else if (respCode == -1) {
-                     this.status.append("No estas registrado para mandar datos\n");
+
+                     this.status.append("Error recibido del servidor: " +
+                             BtParser.getMsg(sResp) + "\n");
                      flag = true;
                  } else {
+                     /* Fixme: deberiamos sacar a este device y colocarlo
+                      * como si fuese inusable... */
                      this.status.append("Error al intentar conectarse al server\n");
                      continue;
                  }
