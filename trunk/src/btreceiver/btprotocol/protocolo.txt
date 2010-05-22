@@ -1,0 +1,29 @@
+El protocolo para recibir datos desde los celulares sera:
+
+<cmd>:<len>:[data]
+
+Donde: 
+ * cmd = es el comando que referencia la accion (4 caracteres)
+ * len = tamaño de los datos (en caracteres -numeros-, no en bits).
+ * data = datos brutos a enviar de tamaño len.
+
+No es nescesario que haya siempre una respuesta para todo pedido. En caso de 
+existir puede ser de la siguiente forma
+
+resp:<len>:"tipo de respuesta"
+
+
+Los comandos aceptados son:
+
+resp - indica que se esta enviando una respuesta
+requ - indica que se esta haciendo un pedido (request)
+regi - indica que se esta mandando un codigo de registracion (en data)
+text - indica que se esta enviando texto plano
+file - indica que se esta por mandar un archivo
+erro - se ha producido un error interno al server.
+
+
+/* Peticiones hechas por el celular */
+Cliente: requ:15:get_server_list
+Server : resp:xxx:mac1,mac2,mac3,...,macN, 	(NOTE: debe terminar con ','
+						 para facilitarnos la vida :) )
