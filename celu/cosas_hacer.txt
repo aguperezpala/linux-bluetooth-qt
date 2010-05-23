@@ -1,0 +1,8 @@
+* Verificar primero que todo que el bluetooth este prendido, si no lo esta ver
+  como hacer para que se prenda desde la aplicacion.
+* Apenas se ejecute la aplicacion intentar conectarse a algun dispositivo
+  para que aparezca el cartelito de "aceptar siempre esta aplicacion use
+  bluetooth".
+* Verificar las lineas marcadas en los .java.
+* Sacar todos los form.append(strings)
+
