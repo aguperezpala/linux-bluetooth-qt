@@ -1,0 +1,15 @@
+BtReceiver
+----------
+
+1) Detectar Dongles (dongle manager)
+2) Generar N servers, con N = cantidad de dongles.
+3) Generar BTConnManager y agregar los servers.
+4) Entrar en el ciclo principal en espera de datos.
+
+* Cuando se reciben datos se debe hacer:
+4-1)	Esta cumpliendose el protocolo? Si es asi, determinar cual es el comando
+	que esta enviandose y verificar si esta en la base de datos esa btmac.
+	Si no esta, se desconecta si y solo si no es del tipo regi (estan 
+	enviando un comando deregistracion -deben aceptarse todas las conexiones
+	que esten mandando este comando-).
+4-2) 	Si no esta cumpliendose el protocolo => se elimina tal conexion.
