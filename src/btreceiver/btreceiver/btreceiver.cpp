@@ -283,6 +283,7 @@ int BTReceiver::startListen(void)
 		server = createServer((*it));
 		if (server == NULL) {
 			/* error al intentar hacer un server aca */
+			debugp("Error al crear el server\n");
 			continue;
 		}
 		/* agregamos al manejador de conexiones */
@@ -299,36 +300,27 @@ int BTReceiver::startListen(void)
 */
 int BTReceiver::stopListen(void)
 {
-	list<BTSimpleServer *>::const_iterator it, it2;
-	list<BTConnection *>::const_iterator cit, cit2;
-	/*& getServersList(void) */
+	list<BTSimpleServer *> sList = this->connManager.getServersList();
+	list<BTConnection *> cList = this->connManager.getConList();
+	list<BTSimpleServer *>::iterator it;
+	list<BTConnection *>::iterator cit;
 	
-	if (this->connManager.getServersList().size() != 0){	
-		it = this->connManager.getServersList().begin();
-		while (it != this->connManager.getServersList().end()) {
-			it2 = it;
-			++it2;
+	
+	for (it = sList.begin(); it != sList.end(); ++it) {
 			assert((*it) != NULL);
 			/* eliminamos el server */
 			this->connManager.removeServer(*it);
 			/* lo borramos */
 			delete (*it);
-			it = it2;
-		}
 	}
-	
-	if (this->connManager.getConList().size() != 0) {
-		/* borramos todas las conexiones */
-		cit = this->connManager.getConList().begin();
-		while (cit != this->connManager.getConList().end()) {
-			cit2 = cit;
-			++cit2;
-			assert(*cit != NULL);
+
+	for (cit = cList.begin(); cit != cList.end(); ++cit) {
+			assert((*cit) != NULL);
+			/* eliminamos el server */
 			this->connManager.removeConnection(*cit);
 			delete (*cit);
-			cit = cit2;
-		}
 	}
+	
 
 	return 0;
 }
