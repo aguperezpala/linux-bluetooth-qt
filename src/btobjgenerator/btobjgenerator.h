@@ -22,7 +22,6 @@
 #include <bt-manager/btservermanager.h>
 #include <bt-manager/btsdpsessiondata.h>
 /* libs propias auxiliares */
-#include "udatabase.h"
 #include "btprotocol.h"
 #include "btpaket.h"
 #include "consts.h"
@@ -46,7 +45,7 @@ using namespace::std;
 class BTReceiver {
 	public:
 		/* constructor */
-		BTReceiver(UDataBase *udb);
+		BTReceiver(/*!FIXME:UDataBase *udb*/);
 		
 		
 		/* Funcion que genera los servidores, configura los dongles, y 
@@ -169,7 +168,7 @@ class BTReceiver {
 		/* Manejador de conexiones */
 		BTConnManager connManager;
 		/* Base de datos de usuarios */
-		UDataBase *udb;
+		/*!FIXME UDataBase *udb;*/
 		
 		
 		
