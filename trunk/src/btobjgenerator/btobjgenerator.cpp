@@ -218,7 +218,7 @@ bool BTReceiver::handleConnection(BTConnection *con, BTPaket &pktRecv)
 
 
 /* constructor */
-BTReceiver::BTReceiver(UDataBase *udb)
+BTReceiver::BTReceiver(/*!FIXME:UDataBase *udb*/)
 {
 	list<BTDongleDevice *>::iterator it;
 	list<BTDongleDevice *> *dongleList = NULL;
@@ -226,8 +226,8 @@ BTReceiver::BTReceiver(UDataBase *udb)
 	string *aux = NULL;
 	
 	this->dManager = new BTDManager();
-	assert(udb != NULL);
-	this->udb = udb;
+	/*!FIXME:assert(udb != NULL);
+	this->udb = udb;*/
 	this->donglesMacs.clear();
 		
 	/* inicializamos los dongles */
