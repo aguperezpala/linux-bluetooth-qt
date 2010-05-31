@@ -29,6 +29,41 @@ int BTReceiver::initializeDongle(BTDongleDevice *dongle)
 	return 0;
 }
 
+/* Funcion que setea una SDP asociada a un server. 
+* REQUIRES:
+* 	UUID	!= NULL
+* 	dongle 	!= NULL
+* 	port
+* RETURNS:
+* 	0	if success
+* 	< 0	on error
+*/
+int BTReceiver::createSdpSession(uint32_t *uuid, BTDongleDevice *dongle, 
+		      int port)
+{
+	BTSDPSessionData *sdpS = NULL;
+	
+	
+	assert(uuid != NULL);
+	assert(dongle != NULL);
+	
+	sdpS = new BTSDPSessionData(uuid, (uint8_t) port);
+	if (!sdpS) {
+		debugp("no se pudo crear la SDP Session\n");
+		return -1;
+	}
+	/* se pudo crear correctamente ==> creamos el server */
+	
+	/*! deberiamos mostrar ahora el servicio */
+	if (dongle->addSDPSession(sdpS) < 0){
+		debugp("Error al intentar publicar el servicio\n");
+		delete sdpS;
+		return -2;
+	}
+	
+	return 0;
+}
+
 /* Funcion que genera e inicializa un server para un dongle
 * determinado.
 * REQIURES:
@@ -40,6 +75,7 @@ int BTReceiver::initializeDongle(BTDongleDevice *dongle)
 BTSimpleServer *BTReceiver::createServer(BTDongleDevice *dongle)
 {
 	BTSimpleServer *server = NULL;
+	uint32_t sdpUUID[4] = {BTRECEIVER_UUID};
 	
 	assert(dongle != NULL);
 	
@@ -63,9 +99,12 @@ BTSimpleServer *BTReceiver::createServer(BTDongleDevice *dongle)
 		delete server;
 		return NULL;
 	}
-	/*! FIXME: debemos crear el sdp */
-	
-	
+	if (createSdpSession(sdpUUID, dongle, BTRECEIVER_SERVER_PORT) 
+		< 0){
+		debugp("Error al crear la SDPSessionData\n");
+		delete server;
+		return NULL;
+	}
 	
 	return server;
 }
@@ -93,22 +132,25 @@ void BTReceiver::sendDongleList(BTConnection *con)
 {
 	
 	assert(con != NULL);
-	con->getSendBuff() += this->donglesMacs;
+	con->sendData(this->donglesMacs);
+	/*! DELETE! */
+	cout << "Mandando macList: " << this->donglesMacs << endl;
 	this->connManager.setFlags(con, BTCM_POLL_OUT_FLAGS);
 }
 
 /* Funcion que dada una conexion, determina si la conexion debe
 * ser cerrada, debe seguir recibiendo datos, o si ya tiene
-* datos completos.
+* datos completos y rellena el paket, ademas de que elimina
+* del buffer de recepcion los datos.
 * REQUIRES:
 * 	con != NULL
 * RETURNS:
 * 	-1	si la conexion debe ser cerrada
 * 	0	si tenemos datos completos.
 * 	1	si tenemos datos impletos pero correctos.
-* 	msg 	= mensaje extraido (si no hubo error).
+* 	pkt 	paquete extraido (si no hubo error).
 */
-int BTReceiver::checkConnection(BTConnection *con, string &msg)
+int BTReceiver::checkConnection(BTConnection *con, BTPaket &pkt)
 {
 	int result = 0;
 	int cmd = -1;
@@ -117,9 +159,10 @@ int BTReceiver::checkConnection(BTConnection *con, string &msg)
 	
 	assert(con != NULL);
 	
-	msg.clear();
 	/* primero que todo vamos a verificar si estamos recibiendo bien. */
-	result = btproto_parse_data(con->getRcvBuff(), cmd, size, msg);
+	result = btproto_parse_data(con->getRcvBuff(), cmd, size, pkt.getMsg());
+	pkt.setCmdType(cmd);
+	pkt.setOrigination(BT_PKT_RCV);
 	if (result < 0 || cmd < 0) 
 		/* si hay que cerrar la conexion */
 		return result;
@@ -138,15 +181,37 @@ int BTReceiver::checkConnection(BTConnection *con, string &msg)
 	}
 	
 	/* si esta en la bd y ademas tenemos algo entonces devolvemos result = 0 */
-	assert(result = 0);
-	/*! FIXME: eliminamos todo el buffer, deberiamos eliminar solo el buffer
-	 * recibido */
-	con->clearRecvBuffer();
+	assert(result == 0);
 	
 	return result;
 }
 
 
+/* Funcion que se encarga de devolver la lista de servidores
+* a una conexion si y solo si pide la lista de servers.
+* NOTE: tiene que haber recibido un pakete ya.
+* REQUIRES:
+* 	con	!= NULL
+* 	pktRecv.getOrigination() == BT_PKT_RCV
+* RETURNS:
+* 	true	si envio pedian la lista de servers
+* 	false	caso contrario
+*/
+bool BTReceiver::handleConnection(BTConnection *con, BTPaket &pktRecv)
+{
+	assert(con != NULL);
+	assert(pktRecv.getOrigination() == BT_PKT_RCV);
+	
+	
+	if((pktRecv.getCmdType() == BT_CMD_REQU) && pktRecv.getMsg().compare(
+		"get_server_list") == 0) {
+		/* debemos enviar la lista */
+		sendDongleList(con);
+		return true;
+	}
+	
+	return false;
+}
 
 
 /*!	###		FUNCIONES PUBLICAS		###	*/
@@ -183,6 +248,7 @@ BTReceiver::BTReceiver(/*!FIXME:UDataBase *udb*/)
 		this->donglesMacs.append(addr);
 		this->donglesMacs.append(",");
 	}
+	delete dongleList;
 	/* ahora parseamos para que este lista para ser mandada la lista */
 	aux = btproto_create_data(this->donglesMacs, BT_CMD_RESP);
 	assert(aux != NULL);
@@ -222,6 +288,7 @@ int BTReceiver::startListen(void)
 		/* agregamos al manejador de conexiones */
 		this->connManager.insertServer(server);
 	}
+	delete dongleList;
 	
 	return 0;
 }
@@ -232,30 +299,37 @@ int BTReceiver::startListen(void)
 */
 int BTReceiver::stopListen(void)
 {
-	list<BTSimpleServer *>::const_iterator it;
-	list<BTConnection *>::const_iterator cit;
+	list<BTSimpleServer *>::const_iterator it, it2;
+	list<BTConnection *>::const_iterator cit, cit2;
 	/*& getServersList(void) */
 	
-	if (this->connManager.getServersList().size() == 0)
-		return 0;
-	
-	for(it = this->connManager.getServersList().begin();
-		it != this->connManager.getServersList().end(); ++it) {
-		assert((*it) != NULL);
-		/* eliminamos el server */
-		this->connManager.removeServer(*it);
-		/* lo borramos */
-		delete (*it);
+	if (this->connManager.getServersList().size() != 0){	
+		it = this->connManager.getServersList().begin();
+		while (it != this->connManager.getServersList().end()) {
+			it2 = it;
+			++it2;
+			assert((*it) != NULL);
+			/* eliminamos el server */
+			this->connManager.removeServer(*it);
+			/* lo borramos */
+			delete (*it);
+			it = it2;
+		}
 	}
 	
-	/* borramos todas las conexiones */
-	for(cit = this->connManager.getConList().begin();
-		cit != this->connManager.getConList().end(); ++cit) {
-		assert(*cit != NULL);
-		this->connManager.removeConnection(*cit);
-		delete (*cit);
+	if (this->connManager.getConList().size() != 0) {
+		/* borramos todas las conexiones */
+		cit = this->connManager.getConList().begin();
+		while (cit != this->connManager.getConList().end()) {
+			cit2 = cit;
+			++cit2;
+			assert(*cit != NULL);
+			this->connManager.removeConnection(*cit);
+			delete (*cit);
+			cit = cit2;
+		}
 	}
-	
+
 	return 0;
 }
 
@@ -268,10 +342,10 @@ int BTReceiver::stopListen(void)
 * RETURNS:
 * 	< 0 	on error
 * 	0	if success
-* 	data 	= data received
+* 	pkt 	= paket received
 * 	mac	= remote mac address
 */ 
-int BTReceiver::getReceivedObject(string &data, bdaddr_t *mac)
+int BTReceiver::getReceivedObject(BTPaket &pkt, bdaddr_t *mac)
 {
 	bool finish = false, fail = false;
 	BTSimpleServer *server = NULL;
@@ -281,17 +355,16 @@ int BTReceiver::getReceivedObject(string &data, bdaddr_t *mac)
 	int tries = 0;
 	
 	assert(mac != NULL);
-	data.clear();
 	
-	while(!finish) {
+	while(!finish && !fail) {
 		con = this->connManager.getConnEvent(event, result);
 		if (con != NULL)
 			bacpy(mac, con->getMacDest());
 		switch(event) {
 			case BTCM_EV_NEW_CONN:
-				/*! tenemos una nueva conexion => debemos 
-				 * enviarle la lista de dongles */
-				sendDongleList(con);
+				/*! tenemos una nueva conexion, no tenemos que
+				 * hacer nada...*/
+				continue;
 				break;
 				
 			case BTCM_EV_OUT:
@@ -313,7 +386,7 @@ int BTReceiver::getReceivedObject(string &data, bdaddr_t *mac)
 				 */
 				if ((int)con->getRcvBuff().size() > 0) {
 					/* tenemos datos que analizar => */
-					int status = checkConnection(con, data);
+					int status = checkConnection(con, pkt);
 					if (status == 0) {
 						/* entonces tenemos algo que
 						 * sirve y es lo que tenemos
@@ -335,15 +408,22 @@ int BTReceiver::getReceivedObject(string &data, bdaddr_t *mac)
 				/*! recibimos datos, debemos verificar si estan
 				 * completos, o debemos seguir recibiendo o
 				 * si debemos cerrar la conexion */
-				if ((int)con->getRcvBuff().size() > 0 && 
-					result > 0) {
+				if ((int)con->getRcvBuff().size() > 0) {
 					/* tenemos datos que analizar => */
-					int status = checkConnection(con, data);
+					int status = checkConnection(con, pkt);
 					if (status == 0) {
 						/* entonces tenemos algo que
 						* sirve y es lo que tenemos
-						* que devolver */
-						finish = true;
+						* que devolver si y solo si no
+						* nos estan pidiendo la lista
+						* de servers. */
+						/*! FIXME: eliminamos todo el 
+						 * buffer, deberiamos eliminar 
+						 * solo el buffer recibido */
+						con->clearRecvBuffer();
+						
+						finish = !handleConnection(con, 
+									   pkt);
 					} else if (status == 1) {
 						/* debemos seguir recibiendo,
 						 * asique no hacemos nada..*/
@@ -415,6 +495,8 @@ int BTReceiver::getReceivedObject(string &data, bdaddr_t *mac)
 	if (fail)
 		/* no se produjo ningun error-.. */
 		result = -1;
+	else
+		result = 0;
 	
 	return result;
 }
@@ -424,6 +506,7 @@ int BTReceiver::getReceivedObject(string &data, bdaddr_t *mac)
 BTReceiver::~BTReceiver(void)
 {
 	stopListen();
+
 	if (this->dManager != NULL)
 		delete this->dManager;
 	

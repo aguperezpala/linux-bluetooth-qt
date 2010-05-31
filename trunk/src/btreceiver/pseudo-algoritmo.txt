@@ -13,3 +13,13 @@ BtReceiver
 	enviando un comando deregistracion -deben aceptarse todas las conexiones
 	que esten mandando este comando-).
 4-2) 	Si no esta cumpliendose el protocolo => se elimina tal conexion.
+
+
+
+
+FALTA HACER
+------------
+
+BTReceiver
+	* Estamos teniendo un invalid read cuando eliminamos servers/connections
+	falta testear.

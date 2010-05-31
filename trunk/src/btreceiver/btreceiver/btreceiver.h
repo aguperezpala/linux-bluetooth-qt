@@ -20,8 +20,10 @@
 #include <bt-manager/btconnection.h>
 #include <bt-manager/btconnmanager.h>
 #include <bt-manager/btservermanager.h>
+#include <bt-manager/btsdpsessiondata.h>
 /* libs propias auxiliares */
 #include "btprotocol.h"
+#include "btpaket.h"
 #include "consts.h"
 #include "debug.h"
 
@@ -33,6 +35,8 @@
 /* cantidad de veces que vamos a intentar algo antes de determinarlo como 
  * error */
 #define BTRECEIVER_MAX_TRIES		5
+/*! FIXME vamos a definir estaticamente el UUID, cambiar esto... */
+#define BTRECEIVER_UUID		 0 , 0 , 0 , 0x0003 
 
 
 using namespace::std;
@@ -67,10 +71,10 @@ class BTReceiver {
 		 * RETURNS:
 		 * 	< 0 	on error
 		 * 	0	if success
-		 * 	data 	= data received
+		 * 	pkt 	= paket received
 		 * 	mac	= remote mac address
 		 */ 
-		int getReceivedObject(string &data, bdaddr_t *mac);
+		int getReceivedObject(BTPaket &pkt, bdaddr_t *mac);
 		
 		
 		/* destructor */
@@ -89,6 +93,18 @@ class BTReceiver {
 		 *	0	if success
 		*/
 		int initializeDongle(BTDongleDevice *dongle);
+		
+		/* Funcion que setea una SDP asociada a un server. 
+		 * REQUIRES:
+		 * 	UUID	!= NULL
+		 * 	dongle 	!= NULL
+		 * 	port
+		 * RETURNS:
+		 * 	0	if success
+		 * 	< 0	on error
+		 */
+		int createSdpSession(uint32_t *uuid, BTDongleDevice *dongle, 
+				      int port);
 		
 		/* Funcion que genera e inicializa un server para un dongle
 		 * determinado (hace el bind y el listen..)
@@ -119,7 +135,7 @@ class BTReceiver {
 		
 		/* Funcion que dada una conexion, determina si la conexion debe
 		 * ser cerrada, debe seguir recibiendo datos, o si ya tiene
-		 * datos completos y los agrega a msg, ademas de que elimina
+		 * datos completos y rellena el paket, ademas de que elimina
 		 * del buffer de recepcion los datos.
 		 * REQUIRES:
 		 * 	con != NULL
@@ -127,10 +143,21 @@ class BTReceiver {
 		 * 	-1	si la conexion debe ser cerrada
 		 * 	0	si tenemos datos completos.
 		 * 	1	si tenemos datos impletos pero correctos.
-		 * 	msg 	= mensaje extraido (si no hubo error).
+		 * 	pkt 	paquete extraido (si no hubo error).
 		 */
-		int checkConnection(BTConnection *con, string &msg);
+		int checkConnection(BTConnection *con, BTPaket &pkt);
 		
+		/* Funcion que se encarga de devolver la lista de servidores
+		 * a una conexion si y solo si pide la lista de servers.
+		 * NOTE: tiene que haber recibido un pakete ya.
+		 * REQUIRES:
+		 * 	con	!= NULL
+		 * 	pktRecv.getOrigination() == BT_PKT_RCV
+		 * RETURNS:
+		 * 	true	si envio pedian la lista de servers
+		 * 	false	caso contrario
+		 */
+		 bool handleConnection(BTConnection *con, BTPaket &pktRecv);
 		
 		
 		/*	###		Atributos		###	*/

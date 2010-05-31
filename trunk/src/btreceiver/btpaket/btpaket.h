@@ -18,10 +18,10 @@ enum {
 using namespace::std;
 
 
-class BtPaket {
+class BTPaket {
 	public:
 		/* constructor */
-		BtPaket(void);
+		BTPaket(void);
 		
 		/* Funcion que llena un pakete segun el protocolo determinado
 		 * RETURNS:
@@ -73,7 +73,7 @@ class BtPaket {
 		string *toString(void);
 		
 		/* destructor */
-		~BtPaket(void);
+		~BTPaket(void);
 		
 	
 	
