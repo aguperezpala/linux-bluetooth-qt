@@ -117,8 +117,18 @@ BTSimpleServer *BTReceiver::createServer(BTDongleDevice *dongle)
 */
 bool BTReceiver::isMacInDB(const bdaddr_t &mac)
 {
-	/* FIXME: */
-	return true;
+	char strMac[20] = {0};
+	CUser * user = NULL;
+	bool result = false;
+	
+	ba2str(&mac, strMac);
+	user = new CUser("", strMac);
+	if(user != NULL) {
+		result = this->udb->existUser(user);
+		delete user;
+	}
+	
+	return result;
 }
 
 
@@ -137,6 +147,50 @@ void BTReceiver::sendDongleList(BTConnection *con)
 	cout << "Mandando macList: " << this->donglesMacs << endl;
 	this->connManager.setFlags(con, BTCM_POLL_OUT_FLAGS);
 }
+
+/* Funcion que registra un nuevo usuario en la base de datos
+* REQUIRES:
+* 	pkt
+* RETURNS:
+* 	< 0	on error
+* 	0	if succes
+*/
+int BTReceiver::registerNewUser(const bdaddr_t *mac, BTPaket &pkt)
+{
+	CUser *user = NULL;
+	string aux = "";
+	int p = 0;
+	char strMac[20] = {0};
+	
+	if (pkt.getCmdType() != BT_CMD_REGI)
+		return -1;
+	
+	/* separamos el codigo y el nick */
+	p = pkt.getMsg().find(" ");
+	if (p <= 0)
+		return -1;
+	
+	/*! verificamos si el codigo que enviaron es valido */
+	aux = pkt.getMsg().substr(0, p);
+	if (btcg_is_valid_code(aux) == false) {
+		/* el codigo no es valido */
+		return -1;
+	}
+	
+	/* extraemos el nick y creamos el user */
+	p++;
+	aux = pkt.getMsg().substr(p, pkt.getMsg().size() - p);
+	ba2str(mac, strMac);
+	user = new CUser(aux.c_str(), strMac);
+	if (user == NULL)
+		return -1;
+	
+	/* agregamos el usuario */
+	this->udb->addUser(user);
+	
+	return 0;
+}
+
 
 /* Funcion que dada una conexion, determina si la conexion debe
 * ser cerrada, debe seguir recibiendo datos, o si ya tiene
@@ -167,51 +221,43 @@ int BTReceiver::checkConnection(BTConnection *con, BTPaket &pkt)
 		/* si hay que cerrar la conexion */
 		return result;
 	
-	/* ahora debemos verificar si tenemos datos completos o a medias, si 
-	 * tenemos cmd => verificamos que la conexion este en la base de datos
-	 * si no cerramos automaticamente.
-	 */
-	if (cmd == BT_CMD_REGI)
-		return result;
-	else {
-		/* si no es BT_CMD_REGI entonces debemos ver si esta en la bd,
-		 * si no lo esta => hay que cerrar la conexion */
-		if (!isMacInDB(*(con->getMacDest())))
-			return -1;
-	}
 	
-	/* si esta en la bd y ademas tenemos algo entonces devolvemos result = 0 */
-	assert(result == 0);
+	/*! deberiamos ahora analizar los 3 posibles casos que tenemos.
+	 * 1) Tenemos un pedido de la lista de donglesMacs.
+	 * 2) Se estan intentando registrar
+	 * 3) Estan mandando alguna otra cosa.
+	 */
+	switch(cmd) {
+		case BT_CMD_REQU:
+			if(pkt.getMsg().compare("get_server_list") == 0){
+				/* enviamos la lista de servers y devolvemos
+				 */
+				sendDongleList(con);
+				/*! FIXME:debemos esperar que se envien para 
+				 * cerrar la conexion, */
+			}
+			/* en cualquier caso cerramos la conexion */
+			result = 1;
+			break;
+		case BT_CMD_REGI:
+			/* se estan registrando... */
+			result = registerNewUser(con->getMacDest(), pkt);
+			result = -1;
+			break;
+			
+		default:
+			/* estan mandando otra cosa... verificamos que este 
+			 * en la base de datos para poder hacerlo */
+			if (!isMacInDB(*(con->getMacDest())))
+				result = -1;
+			else
+				result = 0;
+			break;
+	}
 	
 	return result;
 }
 
-
-/* Funcion que se encarga de devolver la lista de servidores
-* a una conexion si y solo si pide la lista de servers.
-* NOTE: tiene que haber recibido un pakete ya.
-* REQUIRES:
-* 	con	!= NULL
-* 	pktRecv.getOrigination() == BT_PKT_RCV
-* RETURNS:
-* 	true	si envio pedian la lista de servers
-* 	false	caso contrario
-*/
-bool BTReceiver::handleConnection(BTConnection *con, BTPaket &pktRecv)
-{
-	assert(con != NULL);
-	assert(pktRecv.getOrigination() == BT_PKT_RCV);
-	
-	
-	if((pktRecv.getCmdType() == BT_CMD_REQU) && pktRecv.getMsg().compare(
-		"get_server_list") == 0) {
-		/* debemos enviar la lista */
-		sendDongleList(con);
-		return true;
-	}
-	
-	return false;
-}
 
 
 /*!	###		FUNCIONES PUBLICAS		###	*/
@@ -414,8 +460,7 @@ int BTReceiver::getReceivedObject(BTPaket &pkt, bdaddr_t *mac)
 						 * solo el buffer recibido */
 						con->clearRecvBuffer();
 						
-						finish = !handleConnection(con, 
-									   pkt);
+						finish = true;
 					} else if (status == 1) {
 						/* debemos seguir recibiendo,
 						 * asique no hacemos nada..*/

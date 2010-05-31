@@ -43,7 +43,6 @@ bool UDataBase::udb_add_user (QString * MAC, QString * nick)
 UDataBase::UDataBase (const char * fname)
 {
 	this->file = NULL;
-	this->serverOn = false;
 	/* pre */
 	ASSERT(fname != NULL);
 	
@@ -286,98 +285,6 @@ void UDataBase::clean (void)
 	this->mutex.unlock();
 }
 
-
-/* Funcion que corre el servidor en determinados puertos. Esto
-* lo corre en un nuevo thread, por lo que no es bloqueante.
-* Esta funcion permite la posibilidad de accesos externos
-* a la base de datos respetando el protocolo <SSDBP>.
-* Vamos a escuchar en alguno de los puertos de rango definido
-* arriba.
-* NOTE: Si esta funcion es llamada y el servidor esta corriendo
-* 	no tiene efecto.
-*/
-void UDataBase::runServer (void)
-{
-	/* chequeamos que no este ejecutandose */
-	if (this->isRunning() || this->serverOn)
-		return;
-	/* si no se esta ejecutando empezamos entonces */
-	this->start();
-}
-
-
-/* Funcion que cierra el servidor.
-* NOTE: en caso de que no este corriendo, no tiene efecto.
-*/
-void UDataBase::stopServer (void)
-{
-	/* verificamos si estamos corriendo el server o no */
-	if (!this->isRunning() && !this->serverOn)
-		/* no esta corriendo => no frenamos nada */
-		return;
-	this->serverOn = false;
-}
-
-/* Funcion que practicamente carga el server y se ejecuta
-* en el thread (es llamada desde runServer())
-*/
-void UDataBase::run (void)
-{
-	SServer *server = new SServer(SSDBP_MAX_BUFF_SIZE);
-	SClient *client = NULL;
-	unsigned short startPort = UDBSERVER_START_PORT;
-	bool listening = false;
-	unsigned int errCount = 0;
-	int errCode = 0;
-	
-	
-	
-	/* empezamos el server */
-	this->serverOn = true;
-	/* intentamos escuchar */
-	for (startPort = UDBSERVER_START_PORT; startPort < UDBSERVER_END_PORT &&
-		!listening; startPort++)
-		listening = server->startListen (startPort);
-	
-	/* verificamos que estemos escuchando, si no abortamos todo */
-	if (!listening) {
-		/*! zatanas */
-		debugp ("UDataBase::run: error al intentar hacer el listeng\n");
-		this->serverOn = false;
-		return;
-	}
-	/* tamos aca es porque estamos escuchando correctamente */
-	/*! ahora comenzamos a aceptar y luego trabajar con los clientes hasta
-	 * que nos cierren el server.
-	 */
-	while (this->serverOn || errCount < 15 /* ... try 15 times :) */) {
-		client = server->acceptClient();
-		if (client == NULL) {
-			errCount++;
-			continue; /* volvemos a intentar */
-		}
-		/* verificamos que se registre el usuario */
-		errCode = udbs_registerClient (client);
-		/* ahora vamos a trabajar con el cliente */
-		while (client && this->serverOn && errCode == 0) {
-			/* recibimos una request valida */
-			errCode = udbs_receiveReq (client);
-			if (errCode == 0)
-				errCode = udbs_RPCWork (client, this);
-		}
-		/* si estamos aca es porque se cerro el server o porque el
-		 * cliente dio algun error => en cualquier caso destruimos
-		 * el cliente (cierra el socket, etc) */
-		delete client; client = NULL;
-		/* reseteamos para que no muera el server */
-		errCode = 0;
-	}
-	
-	/* termino el server */
-	server->stopServer();
-	this->serverOn = false;
-	delete server;
-}
 
 /*!DEBUG*/
 #ifdef __DEBUG

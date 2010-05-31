@@ -5,6 +5,7 @@
 #define CUSER_H
 
 
+#include <string>
 #include <QString>
 #include "../consts.h"
 #include "../debug.h"
@@ -20,7 +21,9 @@ class CUser{
 		 *	mac != NULL && mac->size == MAC_ADDR_SIZE / * cacaso * /
 		 * NOTE: copia memoria, liberar con lo que se llamo 
 		 */
-		CUser (QString * nick, QString * mac);
+		CUser(QString * nick, QString * mac);
+		CUser(void);
+		CUser(const char *nick, const char *mac);
 		
 		/* GETS
 		 * NOTE: devuelve el puntero NO COPIA MEMORIA => NO liberarla
