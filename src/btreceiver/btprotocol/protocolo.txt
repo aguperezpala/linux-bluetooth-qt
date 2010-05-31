@@ -27,3 +27,13 @@ erro - se ha producido un error interno al server.
 Cliente: requ:15:get_server_list
 Server : resp:xxx:mac1,mac2,mac3,...,macN, 	(NOTE: debe terminar con ','
 						 para facilitarnos la vida :) )
+						 
+
+
+
+
+REGISTRACION DE USUARIOS
+------------------------
+
+el celular debe mandar: regi:<size>:codigo nickname
+separados con un espacio, el codigo NO debe contener espacios

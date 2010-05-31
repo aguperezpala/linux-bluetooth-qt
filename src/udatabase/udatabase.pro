@@ -1,6 +1,6 @@
 DEFINES += __DEBUG
-HEADERS += udbserver/udbserver.h \
-udatabase.h ../debug.h ../tester.h \
+# udbserver/udbserver.h \
+HEADERS += udatabase.h ../debug.h ../tester.h \
 ../cuser/cuser.h ../consts.h
-SOURCES += udbserver/udbserver.cpp \
-../cuser/cuser.cpp udatabase.cpp test.cpp 
+# udbserver/udbserver.cpp \
+SOURCES += ../cuser/cuser.cpp udatabase.cpp test.cpp 

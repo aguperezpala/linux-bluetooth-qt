@@ -20,15 +20,9 @@
 #include "../cuser/cuser.h"
 #include "../consts.h"
 #include "../debug.h"
-#include "../simple_server/sserver.h"
-#include "../simple_server/sclient.h"
-/*! en este archivo esta definido todo el protocolo SSDBP */
-#include "udbserver/udbprotocol.h"
-/* facilita las funciones del server */
-#include "udbserver/udbserver.h"
 
 
-class UDataBase: public QThread{
+class UDataBase {
 	public:
 		/* Constructor: Se va a pedir un archivo de texto, el cual
 		 * a medida que se vayan ingresando los usuarios se van a ir
@@ -87,22 +81,6 @@ class UDataBase: public QThread{
 		 */
 		void saveToFile (void);
 		
-		/* Funcion que corre el servidor en determinados puertos. Esto
-		* lo corre en un nuevo thread, por lo que no es bloqueante.
-		* Esta funcion permite la posibilidad de accesos externos
-		* a la base de datos respetando el protocolo <SSDBP>.
-		* Vamos a escuchar en alguno de los puertos de rango definido
-		* arriba.
-		* NOTE: Si esta funcion es llamada y el servidor esta corriendo
-		* 	no tiene efecto.
-		*/
-		void runServer (void);
-		
-		/* Funcion que cierra el servidor.
-		 * NOTE: en caso de que no este corriendo, no tiene efecto.
-		 */
-		void stopServer (void);
-		
 		
 		/* Funcion que limpia la base de datos */
 		void clean (void);
@@ -125,10 +103,6 @@ class UDataBase: public QThread{
 		*/
 		bool udb_add_user (QString * MAC, QString * nick);
 		
-		/* Funcion que practicamente carga el server y se ejecuta
-		 * en el thread (es llamada desde runServer())
-		 */
-		void run (void);
 		 
 		
 		/* La tabla hash <key, value>*/
@@ -136,8 +110,7 @@ class UDataBase: public QThread{
 		FILE * file;
 		QString fname;
 		QMutex mutex;
-		bool serverOn;
-		
+
 };
 
 #endif

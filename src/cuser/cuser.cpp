@@ -1,5 +1,19 @@
 #include "cuser.h"
 
+CUser::CUser(void)
+{
+	return ;
+}
+
+
+CUser::CUser(const char *nick, const char *mac)
+{
+	ASSERT(nick != NULL);
+	ASSERT(mac != NULL);
+	
+	this->nick = QString::QString (nick);
+	this->MAC = QString::QString (mac);
+}
 
 CUser::CUser(QString * nick, QString * mac)
 {

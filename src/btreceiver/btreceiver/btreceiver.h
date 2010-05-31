@@ -23,8 +23,12 @@
 #include <bt-manager/btsdpsessiondata.h>
 /* libs propias auxiliares */
 #include "udatabase.h"
+#include "cuser.h"
 #include "btprotocol.h"
 #include "btpaket.h"
+/* code generator */
+#include "btcodegenerator.h"
+/* const / debug */
 #include "consts.h"
 #include "debug.h"
 
@@ -134,6 +138,15 @@ class BTReceiver {
 		 */
 		void sendDongleList(BTConnection *con);
 		
+		/* Funcion que registra un nuevo usuario en la base de datos
+		 * REQUIRES:
+		 * 	pkt
+		 * RETURNS:
+		 * 	< 0	on error
+		 * 	0	if succes
+		 */
+		int registerNewUser(const bdaddr_t *mac, BTPaket &pkt);
+		
 		/* Funcion que dada una conexion, determina si la conexion debe
 		 * ser cerrada, debe seguir recibiendo datos, o si ya tiene
 		 * datos completos y rellena el paket, ademas de que elimina
@@ -147,18 +160,6 @@ class BTReceiver {
 		 * 	pkt 	paquete extraido (si no hubo error).
 		 */
 		int checkConnection(BTConnection *con, BTPaket &pkt);
-		
-		/* Funcion que se encarga de devolver la lista de servidores
-		 * a una conexion si y solo si pide la lista de servers.
-		 * NOTE: tiene que haber recibido un pakete ya.
-		 * REQUIRES:
-		 * 	con	!= NULL
-		 * 	pktRecv.getOrigination() == BT_PKT_RCV
-		 * RETURNS:
-		 * 	true	si envio pedian la lista de servers
-		 * 	false	caso contrario
-		 */
-		 bool handleConnection(BTConnection *con, BTPaket &pktRecv);
 		
 		
 		/*	###		Atributos		###	*/

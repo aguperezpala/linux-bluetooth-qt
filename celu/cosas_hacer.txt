@@ -5,4 +5,7 @@
   bluetooth".
 * Verificar las lineas marcadas en los .java.
 * Sacar todos los form.append(strings)
+* Salta una excepcion cuando se hace un thread.interrupt().
+  debemos meterlo dentro de un try.
+  
 
