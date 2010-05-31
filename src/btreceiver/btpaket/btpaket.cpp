@@ -1,7 +1,7 @@
 #include "btpaket.h"
 
 /* constructor */
-BtPaket::BtPaket(void)
+BTPaket::BTPaket(void)
 {
 	this->msg.clear();
 	this->origination = -1;
@@ -13,40 +13,23 @@ BtPaket::BtPaket(void)
 * 	< 0	if error (no respeta el protocolo)
 *	0	on success
 */
-int BtPaket::pktFromRcvString(string &data)
+int BTPaket::pktFromRcvString(string &data)
 {
 	int size = 0;
-	string *cmd = NULL, *auxMsg = NULL;
-	int i = 0;
+	string auxMsg = "";
 	
-	if (data.size() < BT_CMD_STR[0][0].size())
+	if (data.size() < BT_CMD_STR[0].size())
 		return -1;
 	
 	/* ahora buscamos el cmd correspondiente */
-	if (!btproto_parse_data(data, &cmd, &size, &auxMsg))
+	if (!btproto_parse_data(data, this->cmdType, size, this->msg))
 		return -1;
 	
-	/* tenemos los datos verdaderos ==> buscmaos el commando y asignamos
-	 * la data */
-	ASSERT(cmd != NULL);
-	ASSERT(auxMsg != NULL);
-	this->msg = *auxMsg;
 	
-	this->cmdType = -1;
-	
-	while (BT_CMD_STR[i][0] != NULL) {
-		if (BT_CMD_STR[i][0] == *cmd) {
-			this->cmdType = i;
-			break;
-		}
-		i++;
-	}
 	/* el origen del paquete es del recibido */
 	this->origination = BT_PKT_RCV;
 	
 	/* liberamos memoria */
-	delete cmd;
-	delete auxMsg;
 	
 	return 0;
 }
@@ -54,22 +37,21 @@ int BtPaket::pktFromRcvString(string &data)
 /* Funcion que setea el origen del paquete 
 * {BT_PKT_RCV | BT_PKT_SND}
 */
-void BtPaket::setOrigination(int o)
+void BTPaket::setOrigination(int o)
 {
-	if (o != BT_PKT_RCV || o != BT_PKT_SND)
-		return;
+	assert(o == BT_PKT_RCV || o == BT_PKT_SND);
 	
 	this->origination = o;
 }
 
 /* Funcion que setea el tipo de commando commando */
-void BtPaket::setCmdType(int ct)
+void BTPaket::setCmdType(int ct)
 {
 	this->cmdType = ct;
 }
 
 /* Funcion que setea los datos del pakete */
-void BtPaket::setMsg(string &msg)
+void BTPaket::setMsg(string &msg)
 {
 	this->msg = msg;
 }
@@ -79,13 +61,13 @@ void BtPaket::setMsg(string &msg)
 * 	< 0	on error
 * 	== 0	if success
 */
-int BtPaket::pktFromCmdAndMsg(string &cmd, string &msg)
+int BTPaket::pktFromCmdAndMsg(string &cmd, string &msg)
 {
 	int i = 0;
 	
 	this->cmdType = -1;
-	while (BT_CMD_STR[i][0] != NULL) {
-		if (BT_CMD_STR[i][0] == *cmd) {
+	while (BT_CMD_STR[i].size() != 0) {
+		if (BT_CMD_STR[i].compare(cmd) == 0) {
 			this->cmdType = i;
 			break;
 		}
@@ -106,7 +88,7 @@ int BtPaket::pktFromCmdAndMsg(string &cmd, string &msg)
 * 	strPkt	on success
 * NOTE: Genera memoria
 */
-string *BtPaket::toString(void)
+string *BTPaket::toString(void)
 {
 	string *result = NULL;
 	char aux[10] = {0};
@@ -114,17 +96,17 @@ string *BtPaket::toString(void)
 	if (this->cmdType < 0)
 		return NULL;
 	
-	result = new String("");
+	result = new string("");
 	if (!result)
 		return NULL;
 	
 	/* agregamos el commando */
-	result->append(BT_CMD_STR[this->cmdType][0]);
+	result->append(BT_CMD_STR[this->cmdType]);
 	result->append(":");
 	/* convertimos */
-	if (sprintf(aux, "%d", this->msg.size()) < 0) {
+	if (sprintf(aux, "%d", (int) this->msg.size()) < 0) {
 		/* wtf! error */
-		ASSERT(false);
+		assert(false);
 	}
 	result->append(aux);
 	result->append(":");
@@ -134,7 +116,7 @@ string *BtPaket::toString(void)
 }
 
 /* destructor */
-BtPaket::~BtPaket(void)
+BTPaket::~BTPaket(void)
 {
 	this->msg.clear();
 }
