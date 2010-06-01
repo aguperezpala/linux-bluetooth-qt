@@ -7,14 +7,14 @@
  *
  *
 */
-#ifndef BTCODEGENERATOR_H
-#define BTCODEGENERATOR_H
+#ifndef BTCODEADMIN_H
+#define BTCODEADMIN_H
 
 #include <string>
 #include <vector>
 #include <map>
 #include <iostream>
-#include <ftream>
+#include <fstream>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -56,7 +56,10 @@ class BTCodeAdmin {
 		bool wasUsed(string &code);
 		
 		/* Funcion que agrega un codigo ya usado a la lista de codigos
-		 * usados */
+		 * usados
+		 * REQUIRES:
+		 * 	code is valid
+		 */
 		void addUsedCode(string &code);
 		
 		/* Funcion que setea un codigo como no usado... */

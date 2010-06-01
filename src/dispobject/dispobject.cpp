@@ -39,6 +39,7 @@ DispObject::DispObject (QString & fname)
 	this->user = NULL;
 }
 
+DispObject::DispObject(void){};
 
 /* Funcion que se encarga de setear el usuario del dispobj
 * REQUIRES:

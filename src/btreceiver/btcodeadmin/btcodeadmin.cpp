@@ -1,4 +1,4 @@
-#include "btcodegenerator.h"
+#include "btcodeadmin.h"
 
 
 /* Converts a hexadecimal string to integer
@@ -77,7 +77,7 @@ int BTCodeAdmin::xtoi(const char* xs, unsigned int* result)
 * 	true	if code its valid
 * 	false	otherwise
 */
-bool BTCodeAdmin::isCodeValid(string &code)
+bool BTCodeAdmin::isCodeValid(string &data)
 {
 	time_t t = time(NULL);
 	struct tm *lt = localtime(&t);
@@ -116,13 +116,15 @@ bool BTCodeAdmin::isCodeValid(string &code)
 */
 bool BTCodeAdmin::wasUsed(string &code)
 {
-	return (this->hash.find(code) != map::end);
+	return (this->hash.find(code) != this->hash.end());
 }
 
 /* Funcion que agrega un codigo ya usado a la lista de codigos
 * usados */
 void BTCodeAdmin::addUsedCode(string &code)
 {
+	assert(isCodeValid(code));
+	
 	this->hash.insert( pair<string,bool>(code,true) );
 }
 
@@ -195,7 +197,7 @@ void BTCodeAdmin::toFile(string &fname)
 	
 	for(it = this->hash.begin(); it != this->hash.end(); ++it) {
 		aux = (*it).first;
-		aux.append('\n');
+		aux.append("\n");
 		filestr.write(aux.c_str(), aux.size());
 		if(filestr.fail())
 			break;
