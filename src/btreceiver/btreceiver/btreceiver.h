@@ -27,7 +27,7 @@
 #include "btprotocol.h"
 #include "btpaket.h"
 /* code generator */
-#include "btcodegenerator.h"
+#include "btcodeadmin.h"
 /* const / debug */
 #include "consts.h"
 #include "debug.h"
@@ -171,6 +171,8 @@ class BTReceiver {
 		BTConnManager connManager;
 		/* Base de datos de usuarios */
 		UDataBase *udb;
+		/* administrador de codigos */
+		BTCodeAdmin codAdmin;
 		
 		
 		
