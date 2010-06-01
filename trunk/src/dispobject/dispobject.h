@@ -37,6 +37,8 @@ class DispObject {
 		 */
 		DispObject (QString & fname);
 		
+		DispObject(void);
+		
 		/* Funcion que elimina el archivo asociado a file si es posible.
 		 * Es una funcion "facilitadora"
 		 */

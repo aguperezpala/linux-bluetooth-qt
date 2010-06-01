@@ -143,8 +143,6 @@ void BTReceiver::sendDongleList(BTConnection *con)
 	
 	assert(con != NULL);
 	con->sendData(this->donglesMacs);
-	/*! DELETE! */
-	cout << "Mandando macList: " << this->donglesMacs << endl;
 	this->connManager.setFlags(con, BTCM_POLL_OUT_FLAGS);
 }
 
@@ -170,13 +168,15 @@ int BTReceiver::registerNewUser(const bdaddr_t *mac, BTPaket &pkt)
 	if (p <= 0)
 		return -1;
 	
-	/*! verificamos si el codigo que enviaron es valido */
+	/*! verificamos si el codigo que enviaron es valido o si fue usado */
 	aux = pkt.getMsg().substr(0, p);
-	if (btcg_is_valid_code(aux) == false) {
-		/* el codigo no es valido */
+	if (this->codAdmin.isCodeValid(aux) == false || 
+		this->codAdmin.wasUsed(aux)) {
+		/* el codigo no es valido o ya fue usado! */
 		return -1;
 	}
-	
+	/*! si estamos aca es valido => lo agregamos a la lista */
+	this->codAdmin.addUsedCode(aux);
 	/* extraemos el nick y creamos el user */
 	p++;
 	aux = pkt.getMsg().substr(p, pkt.getMsg().size() - p);
@@ -315,6 +315,7 @@ int BTReceiver::startListen(void)
 	BTSimpleServer *server = NULL;
 	
 	
+ 	stopListen();
 	/*! FIXME: aca solo deberiamos obtener los dongles que esten "habilitados
 	 *	o en caso de que no lo esten entonces habilitarlos.
 	 */

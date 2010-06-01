@@ -39,7 +39,8 @@ class UDataBase {
 		 *	true 	if exist
 		 *	false 	otherwise
 		 */
-		bool existUser (const CUser * user); 
+		bool existUser (const CUser * user);
+		bool existUser(QString &mac);
 		
 		/* Funcion que va a agregar a un usuario SI Y SOLO SI no se 
 		 * encuentra en la base de datos, Si existe no lo agrega.

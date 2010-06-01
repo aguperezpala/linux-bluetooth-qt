@@ -76,6 +76,19 @@ bool UDataBase::existUser (const CUser * user)
 	
 	return result;
 }
+bool UDataBase::existUser(QString &mac)
+{
+	bool result = false;
+	
+	
+	/*! atomico */
+	this->mutex.lock();
+	result = this->hashTable.contains (mac);
+	this->mutex.unlock();
+	
+	return result;
+	
+}
 
 /* Funcion que va a agregar a un usuario SI Y SOLO SI no se 
 * encuentra en la base de datos, Si existe no lo agrega.
