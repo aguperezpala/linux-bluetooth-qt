@@ -540,6 +540,17 @@ int BTReceiver::getReceivedObject(BTPaket &pkt, bdaddr_t *mac)
 }
 
 
+/* Funcion que devuelve la lista de conexiones con la que esta
+* trabajando:
+* NOTE: TENER CUIDADO con manipular conexiones cuando se esta
+* 	 llamando a getReceivedObject desde otro thread.
+* NOTE 2: NO borrar ninguna conexion.
+*/
+const list<BTConnection *>& BTReceiver::getConList(void)
+{
+	return this->connManager.getConList();
+}
+
 /* destructor */
 BTReceiver::~BTReceiver(void)
 {

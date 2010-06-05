@@ -49,7 +49,7 @@ CUser::~CUser()
 }
 
 #ifdef __DEBUG
-void CUser::printUser()
+void CUser::printUser() const
 {
 	
 	printf ("Nick: %s\tMAC: %s\n",

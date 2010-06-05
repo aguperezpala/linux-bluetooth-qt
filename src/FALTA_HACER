@@ -69,7 +69,11 @@ UServer:
 	* Modularizar UServer y agregarle otra clase UClient que maneje las
 	interacciones con el cliente (soporte de multiples clientes).
 	
-	
+BTSystemManager:
+	* Verificar como se van a inicializar los dongles
+	* Como se van a reparar (tryToRepairDongles).
+
+
 * Generar un config_file (parser) para leer las configuraciones de varias cosas:
 	* Posicion de la ventana de la marquesina.
 	* Tamaño de la fuente.

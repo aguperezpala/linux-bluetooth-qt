@@ -43,7 +43,7 @@ DispObject *BTObjGenerator::dObjFromText(BTPaket &pkt)
 	if (result == NULL)
 		return result;
 	else {
-		QString aux = pkt.getMsg();
+		QString aux = pkt.getMsg().c_str();
 		result->setData(aux);
 	}
 	
@@ -59,14 +59,12 @@ DispObject *BTObjGenerator::dObjFromText(BTPaket &pkt)
 * REQUIRES
 * 	receiver != NULL
 */
-BTObjGenerator::BTObjGenerator(BTReceiver *receiver, UDataBase *udb);
+BTObjGenerator::BTObjGenerator(BTReceiver *receiver, UDataBase *udb)
 {
 	assert(receiver != NULL);
 	assert(udb != NULL);
 	
 	this->btReceiver = receiver;
-	if(this->btReceiver->startListen() < 0)
-		debugp("Error al hacer listen en el btReceiver\n");
 	this->udb = udb;
 }
 
