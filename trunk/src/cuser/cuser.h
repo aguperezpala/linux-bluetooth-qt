@@ -46,7 +46,7 @@ class CUser{
 		
 		/*!DEBUG*/
 		#ifdef __DEBUG
-		void printUser();
+		void printUser() const;
 		#endif
 		
 		~CUser();

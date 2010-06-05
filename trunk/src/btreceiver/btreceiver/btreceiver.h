@@ -19,7 +19,6 @@
 #include <bt-manager/btdongledevice.h>
 #include <bt-manager/btconnection.h>
 #include <bt-manager/btconnmanager.h>
-#include <bt-manager/btservermanager.h>
 #include <bt-manager/btsdpsessiondata.h>
 /* libs propias auxiliares */
 #include "udatabase.h"
@@ -52,7 +51,6 @@ class BTReceiver {
 		/* constructor */
 		BTReceiver(UDataBase *udb);
 		
-		
 		/* Funcion que genera los servidores, configura los dongles, y 
 		 * comienza a escuchar. Seria la funcion de inicializacion.
 		 * RETURNS:
@@ -81,6 +79,16 @@ class BTReceiver {
 		 */ 
 		int getReceivedObject(BTPaket &pkt, bdaddr_t *mac);
 		
+		/* Funcion que devuelve el dongle manager utilizado */
+		BTDManager *getDongleManager(void){return this->dManager;};
+		
+		/* Funcion que devuelve la lista de conexiones con la que esta
+		 * trabajando:
+		 * NOTE: TENER CUIDADO con manipular conexiones cuando se esta
+		 * 	 llamando a getReceivedObject desde otro thread.
+		 * NOTE 2: NO borrar ninguna conexion.
+		 */
+		const list<BTConnection *>& getConList(void);
 		
 		/* destructor */
 		~BTReceiver(void);
