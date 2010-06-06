@@ -40,16 +40,21 @@
  * error */
 #define BTRECEIVER_MAX_TRIES		5
 /*! FIXME vamos a definir estaticamente el UUID, cambiar esto... */
-#define BTRECEIVER_UUID		 0 , 0 , 0 , 0x0003 
-
+#define BTRECEIVER_UUID		0 , 0 , 0 , 0x0003 
+/*! Vamos a determinar que nombre de archivo vamos a guarcar los codigos */
+#define BTRECEIVER_CODES_FILE	"code_file.codes"
 
 using namespace::std;
 
 
 class BTReceiver {
 	public:
-		/* constructor */
-		BTReceiver(UDataBase *udb);
+		/* constructor 
+		 * REQUIRES:
+		 * 	udb != NULL
+		 * 	load = (true => load BTCodeAdmin from file, false = new)
+		*/
+		BTReceiver(UDataBase *udb, bool load = true);
 		
 		/* Funcion que genera los servidores, configura los dongles, y 
 		 * comienza a escuchar. Seria la funcion de inicializacion.

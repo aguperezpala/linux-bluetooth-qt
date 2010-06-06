@@ -50,13 +50,14 @@ int BTSystemManager::closeConnTimeExceeded(const list<BTConnection *> &l)
 /* constructor:
 * REQUIRES:
 * 	udb != NULL
+* 	load = (true => load codes from file, false => new one)
 */
-BTSystemManager::BTSystemManager(UDataBase *udb)
+BTSystemManager::BTSystemManager(UDataBase *udb, bool load)
 {
 	assert(udb != NULL);
 	this->udb = udb;
 	
-	this->btRec = new BTReceiver(udb);
+	this->btRec = new BTReceiver(udb, load);
 	if(this->btRec == NULL) {
 		setMsgAndState("Error al crear el BTReceiver", BTSM_ERROR);
 		return;
@@ -186,6 +187,8 @@ int BTSystemManager::startToReceive(void)
 	this->canReceive = true;
 	/* ejecutamos el thread */
 	this->start();
+	
+	return 0;
 }
 void BTSystemManager::run(void)
 {

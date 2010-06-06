@@ -3,7 +3,8 @@
 # Subdirectorio relativo al directorio principal del proyecto: .
 # El destino es una aplicaci??n
 QMAKE_CXXFLAGS+= -g
-FORMS = ../dispobjmanager/mainwidget.ui
+FORMS = ../dispobjmanager/textwindow/txtwincontrol.ui ../dispobjmanager/mainwidget.ui \
+../dispobjmanager/picturewindow/picwincontrol.ui
 CONFIG += uitools
 DEFINES += __DEBUG 
 HEADERS += ../consts.h \
@@ -18,8 +19,6 @@ HEADERS += ../consts.h \
 ../dispobjmanager/dispobjtable/dispobjtable.h \
 ../configmanipulator/configmanipulator.h \
 ../cuser/cuser.h \
-../udatabase/udbserver/udbprotocol.h \
-../udatabase/udbserver/udbserver.h \
 ../udatabase/udatabase.h \
 ../simple_server/sserver.h \
 ../simple_server/sclient.h \
@@ -35,8 +34,6 @@ SOURCES += ../dispobjmanager/picturewindow/picturewindow.cpp \
 ../dispobjmanager/dispobjtable/dispobjtable.cpp \
 ../configmanipulator/configmanipulator.cpp \
 ../cuser/cuser.cpp \
-../udatabase/udbserver/udbprotocol.cpp \
-../udatabase/udbserver/udbserver.cpp \
 ../udatabase/udatabase.cpp \
 ../simple_server/sserver.cpp \
 ../simple_server/sclient.cpp \
