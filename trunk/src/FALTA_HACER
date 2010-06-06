@@ -30,48 +30,25 @@ Modulos en chequeo:
 	
 
 Tareas:
+	* HACIENDO MainProg (FIXME! TODO).
 	* Al crear un dispObj que sea del tipo permitido (segun extencion).
-	* Si el DispObj a crear es del tipo vnote => parsearlo antes, y luego
-	sobreescribir el contenido del archivo, ya que despues lo vamos a
-	leer de pecho.
-	* Armar un mini ejemplo de funcionamiento con un DispObjFilter,
-	con un solo usuario (para la bd, ni importa). Y el MainWidget y todo
-	lo demas. (carpeta mini-ejemplo)
 	* Agregar el tema de las variables configurables	
 	* El tema de guardar las configuraciones, en el txtwincontrol y el
-	picwincontrol.
-	* "compilando el obexreceiver", falta hacer el modulo de testeo,
-	nos vamos a basar en el test de carlox :)....
+	picwincontrol.	
 	* El tema de la tabla (dispobjtable) vamos a manejar las imagenes, 
 	por el momento, mostrando el nombre de la imagen, y ante un doble
 	click, esta va a ser mostrada por pantalla (falta implementar y 
 	testear esto).
-	* Chequear el diagrama si falta algo.
-	* Testear el verdadero udbserver/UDataBase->server.
-
-Tareas obexserver:
-	* Determinar el tema de los tipos de archivos, evitar recibir
-	archivos mayores a cierto tamaño, y que no sean formatos € .{bmp,
-	png, jpg, jpeg, txt, vnt?..} y si no tiene extencion => es de texto =>
-	tiene que tener un tamaño pequeño.
-	* Fijarse el tema de los modulos de dbconector que sean "atomicos",
-	osea que soporten concurrencia (se debe hacer un solo pedido a la
-	vez a la base de datos).
-	* Crear N*7 servidores que escuchen en diferentes puertos. Donde N es
-	la cantidad de usb dongles. Para cada dongle usar un Thread. Para cada
-	servidor de un mismo dongle usar select.
-	* Fijarse que cuando se reciba un archivo, si el nombre del archivo
-	ya existe => modificarlo y guardarlo con otro nombre.
-	* IMPLEMENTAR en vez de PIPE con un socket..
 	
-UServer:
-	* Hacerlo que soporte multiples clientes?.
-	* Modularizar UServer y agregarle otra clase UClient que maneje las
-	interacciones con el cliente (soporte de multiples clientes).
+
+
 	
 BTSystemManager:
 	* Verificar como se van a inicializar los dongles
 	* Como se van a reparar (tryToRepairDongles).
+	* Como hacer el tema de ante una falla, cargar todos los codigos ya 
+	utilizados por el btcodeadmin (y tambien ir guardando aquellos que
+	ya fueron registrados..)
 
 
 * Generar un config_file (parser) para leer las configuraciones de varias cosas:

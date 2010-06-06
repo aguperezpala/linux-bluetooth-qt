@@ -263,16 +263,29 @@ int BTReceiver::checkConnection(BTConnection *con, BTPaket &pkt)
 /*!	###		FUNCIONES PUBLICAS		###	*/
 
 
-/* constructor */
-BTReceiver::BTReceiver(UDataBase *udb)
+/* constructor
+* REQUIRES:
+* 	udb != NULL
+* 	load = (true => load BTCodeAdmin from file, false = new)
+*/
+BTReceiver::BTReceiver(UDataBase *udb, bool load)
 {
 	list<BTDongleDevice *>::iterator it;
 	list<BTDongleDevice *> *dongleList = NULL;
 	char addr[20] = {0};
 	string *aux = NULL;
 	
-	this->dManager = new BTDManager();
+	
+	
 	assert(udb != NULL);
+	this->dManager = new BTDManager();
+	
+	/* cargamos el code admin si nos piden */
+	if(load){
+		string fname = BTRECEIVER_CODES_FILE;
+		this->codAdmin.fromFile(fname);
+	}
+	
 	this->udb = udb;
 	this->donglesMacs.clear();
 		

@@ -46,4 +46,7 @@
 #define DOF_MAX_SIZE_Y			600
 
 
+/*! DEFINIMOS TIEMPO MAXIMO DE LAS CONEXIONES! */
+#define MAX_CONN_TIME_USCES		15000000	/* 15 segundos.. */
+
 #endif

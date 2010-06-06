@@ -34,8 +34,9 @@ class BTSystemManager : public QThread {
 		/* constructor:
 		 * REQUIRES:
 		 * 	udb != NULL
+		 * 	load = (true => load codes from file, false => new one)
 		 */
-		BTSystemManager(UDataBase *udb);
+		BTSystemManager(UDataBase *udb, bool load = false);
 		
 		/* Funcion que devuelve un reporte de la ultima accion
 		 * realizada. */
