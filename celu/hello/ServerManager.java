@@ -59,16 +59,17 @@ public class ServerManager implements Runnable {
         status = btCon.sendData("requ:15:get_server_list");
         if (status < 0) {
             this.statusForm.append("SM: getServersList: btCon sending err\n");
+            btCon.closeConnection();
             return result;
         }
 
         /* si llegamos aca => pudimos mandar correctamente, ahora intentamos
          * ver y desifrar que nos mando el server
          */
-        serverResp = btCon.reciveData();
-        
+        serverResp = btCon.reciveData();        
         if (serverResp == null) {
             this.statusForm.append("SM: getServersList: btCon receiving err\n");
+            btCon.closeConnection();
             return result;
         }
         btCon.closeConnection();
@@ -144,7 +145,7 @@ public class ServerManager implements Runnable {
 
 
         this.isRunning = true;
-
+        
         /* vamos a esperar primero que todo a que el devFinder termine de
          * buscar dispositivos... una vez que termine vamos a intentar
          * conectarnos a cada uno de ellos para obtener la lista de servers
