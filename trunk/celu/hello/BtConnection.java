@@ -64,7 +64,7 @@ public class BtConnection implements Runnable {
 
         try {
             output = this.connection.openOutputStream();
-            output.write(data.length());
+            //output.write(data.length());
             output.write(data.getBytes());
             output.close();
         } catch (Exception e) {

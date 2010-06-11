@@ -6,7 +6,6 @@
 package hello;
 
 import java.util.Vector;
-import javax.bluetooth.RemoteDevice;
 import javax.microedition.lcdui.Form;
 
 
@@ -14,9 +13,13 @@ import javax.microedition.lcdui.Form;
  *
  * @author agustin
  */
-public class CityClient {
+public class CityClient implements Runnable {
     private Form status = null;
     private ServerManager sm = null;
+    private String dataToSend = null;
+    private Thread ccThread = null;
+    private boolean isRunning = false;
+    private int sendResult = 0;
 
 
     public CityClient(Form st, ServerManager serverM) {
@@ -37,29 +40,65 @@ public class CityClient {
      *      -3  error interno
      *      >=0 if success
      */
-     public int sendData(String cmd, String data) {         
-         String dataToSend = cmd + ":" + data.length() + ":" + data;
+     public int sendData(String cmd, String data) {
+         int waitMs = CityBluetooth.CONN_MAX_TIME_OUT * 2;
+
+         /* vamos a revisar que no se este mandando nada */
+         if (this.isRunning)
+             return -3;
+
+         dataToSend = null;
+         if (this.status != null)
+             /* limpiamos la barra de estado (el log) */
+             this.status.deleteAll();
+
+          if (cmd == null || cmd.length() < 4 || data == null) {
+             this.status.append("CC:sendData: cmd | data null\n");
+             return -3;
+         }
+         dataToSend = cmd + ":" + data.length() + ":" + data;
+
+         /* vamos a ejecutar en un nuevo thread el envio */
+         this.ccThread = new Thread(this);
+         this.ccThread.start();
+         this.isRunning = true;
+         /* ahora vamos a esperar un determinado tiempo de envio
+          * si no se envia vamos a interrumpir todo y a devolver error */
+         while (waitMs > 0 && this.isRunning) {
+             try {
+                 Thread.sleep(300);
+             } catch (Exception e) {}
+             waitMs = waitMs - 300;
+         }
+         /* si llegamos aca y no se mando => isRunning = true ==> error interno
+          */
+         if (this.isRunning) {
+             this.ccThread.interrupt();
+             this.ccThread = null;
+             this.isRunning = false;
+             /* limpiamos con el gbc */
+             System.gc();
+             return -3;
+         }
+         
+         return this.sendResult;
+     }
+
+    public void run() {
          Vector servers = null;
          BtConnection btCon = null;
          String url = null;
          int result = -3;
          int i = 0;
-         
 
-         if (this.status != null)
-             /* limpiamos la barra de estado (el log) */
-             this.status.deleteAll();
-
-         if (cmd == null || cmd.length() < 4 || data == null) {
-             this.status.append("CC:sendData: cmd | data null\n");
-             return -3;
-         }
 
          /* obtenemos la lista de servers diponibles */
          servers = this.sm.getServerVector();
          if (servers == null || servers.size() == 0) {
              /* no tenemos naranja => devolvemos no se encontro server */
-             return -1;
+             this.sendResult = -1;
+             this.isRunning = false;
+             return;
          }
 
          /* si tenemos server => entonces vamos a intentar conectarnos
@@ -103,11 +142,13 @@ public class CityClient {
          /* ahora vamos a verificar porque salimos del ciclo */
          if (i < servers.size() && result >= 0) {
              /* pudimos mandar correctamente */
-             return result;
-         } else
+             this.sendResult = result;
+         } else {
              /* no pudimos mandar por ningun server */
-             return -2;
-     }
+             this.sendResult = -2;
+         }
+         this.isRunning = false;
+    }
 
 
 
