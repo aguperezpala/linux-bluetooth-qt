@@ -146,18 +146,25 @@ void MainProg::run(void)
 	 * 4) agregamos el DispObject al MainWidget: (this->mw->addDispObject)
 	 * 5) volvemos a 1.
 	 */
+	cout << "Comenzando a Recibr datos\n";
+	
 	while(this->running) {
 		obj = this->btSM->getDispObject();
 		if(obj == NULL) {
 			debugp("Error al sacar un obj! en el btSM!!!!!!!!!");
+			cout << "Tenemos un obj NULL\n";
 			continue;
 		}
+		cout << "tenemos un obj vemos si lo aceptamos\n";
 		if(this->dof->accept(obj)) {
 			/*! guardamos estadistics register */
+			cout << "LO ACEPTAMOS\n";
 			this->mw->addDispObject(obj);
-		} else
+		} else {
+			cout << "LO RECHAZAMOS\n";
 			/* rechazamos el objeto => se borra solo => continuamos */
 			continue;
+		}
 	}
 }
 
