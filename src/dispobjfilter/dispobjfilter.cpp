@@ -160,7 +160,6 @@ bool DispObjFilter::accept(DispObject * dobj)
 	
 	/* pre */
 	ASSERT (dobj != NULL);
-	ASSERT (dobj->file.exists());
 	
 	/* primero vamos a chequear que exista el usuario en la bd */
 	user = dobj->getUser();

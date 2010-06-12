@@ -39,7 +39,10 @@ class BTCodeAdmin {
 	
 	public:
 		/* constructor */
-		BTCodeAdmin(void){};
+		BTCodeAdmin(void);
+		
+		/* funcion que setea el archivo a usar */
+		void setFileName(string &fname);
 		
 		/* Funcion que determina si un codigo es valido o no 
 		* RETURNS:
@@ -57,12 +60,15 @@ class BTCodeAdmin {
 		
 		/* Funcion que agrega un codigo ya usado a la lista de codigos
 		 * usados
+		 * NOTE: agrega al archivo asignado (hace un append)
 		 * REQUIRES:
 		 * 	code is valid
 		 */
 		void addUsedCode(string &code);
 		
-		/* Funcion que setea un codigo como no usado... */
+		/* Funcion que setea un codigo como no usado... 
+		 * FIXME: deberiamos eliminar del archivo el codigo no usado
+		*/
 		void setCodeUnused(string &code);
 		
 		/* Funcion que genera un N codigos teniendo en cuenta un tamaño 
@@ -75,14 +81,18 @@ class BTCodeAdmin {
 		
 		/* Funcion que guarda la lista de codigos usados hasta
 		 * el momento en un archivo
+		 * REQUIRES:
+		 * 	debe estar seteado el nombre del archivo
 		 * NOTE: Rescribe el archivo si existe
 		 */
-		void toFile(string &fname);
+		void toFile(void);
 		
 		/* Funcion que carga una lista de codigos usados desde un
 		 * archivo determinado.
+		 * REQUIRES:
+		 * 	debe estar seteado el nombre del archivo
 		 */
-		void fromFile(string &fname);
+		void fromFile(void);
 		
 		/* destructor */
 		~BTCodeAdmin(void);
@@ -105,6 +115,7 @@ class BTCodeAdmin {
 		
 		
 		map<string,bool> hash;
+		string fname;
 	
 };
 #endif
