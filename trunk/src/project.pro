@@ -29,6 +29,7 @@ btreceiver/btpaket \
 btreceiver/btreceiver \
 btreceiver/btobjgenerator \
 btreceiver/btsystemmanager \
+main
 
 HEADERS += consts.h \
 debug.h \
@@ -52,6 +53,8 @@ btreceiver/btpaket/btpaket.h \
 btreceiver/btreceiver/btreceiver.h \
 btreceiver/btobjgenerator/btobjgenerator.h \
 btreceiver/btsystemmanager/btsystemmanager.h \
+main/mainprog.h 
+
 
 SOURCES += dispobjmanager/picturewindow/picturewindow.cpp \
 dispobjmanager/picturewindow/picwincontrol.cpp \
@@ -73,4 +76,5 @@ btreceiver/btpaket/btpaket.cpp \
 btreceiver/btreceiver/btreceiver.cpp \
 btreceiver/btobjgenerator/btobjgenerator.cpp \
 btreceiver/btsystemmanager/btsystemmanager.cpp \
-
+main/mainprog.cpp \
+main/main.cpp

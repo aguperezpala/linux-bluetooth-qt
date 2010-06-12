@@ -283,7 +283,8 @@ BTReceiver::BTReceiver(UDataBase *udb, bool load)
 	/* cargamos el code admin si nos piden */
 	if(load){
 		string fname = BTRECEIVER_CODES_FILE;
-		this->codAdmin.fromFile(fname);
+		this->codAdmin.setFileName(fname);
+		this->codAdmin.fromFile();
 	}
 	
 	this->udb = udb;
@@ -296,7 +297,8 @@ BTReceiver::BTReceiver(UDataBase *udb, bool load)
 		debugp("Error al obtener la lista de dongles\n");
 		return;
 	}
-	/* ahora para cada dongle creamos un server */
+	
+	/* inicializamos cada dongle  le extraemos la mac */
 	for (it = dongleList->begin(); it != dongleList->end(); ++it){
 		initializeDongle(*it);
 		/* extraemos su mac */

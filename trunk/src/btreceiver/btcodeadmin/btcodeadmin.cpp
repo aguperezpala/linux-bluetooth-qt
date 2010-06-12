@@ -71,6 +71,19 @@ int BTCodeAdmin::xtoi(const char* xs, unsigned int* result)
 
 
 
+/* constructor */
+BTCodeAdmin::BTCodeAdmin()
+{
+	this->fname = "";
+}
+
+/* funcion que setea el archivo a usar */
+void BTCodeAdmin::setFileName(string &fname)
+{
+	this->fname = fname;
+}
+
+
 
 /* Funcion que determina si un codigo es valido o no 
 * RETURNS:
@@ -100,7 +113,10 @@ bool BTCodeAdmin::isCodeValid(string &data)
 	/*! verificamos que realmente sea un codigo el que tenemos 
 	 * NOTE: aca esta el algoritmo  */
 	
-		
+	/*! no vamos aceptar el codigo 0x0 */
+	if ((int) code == 0)
+		return false;
+	
 	aux = ((unsigned int) lt->tm_mon) * ((unsigned int) lt->tm_mday) *
 		codeNum;
 	if(aux == code)
@@ -120,18 +136,43 @@ bool BTCodeAdmin::wasUsed(string &code)
 }
 
 /* Funcion que agrega un codigo ya usado a la lista de codigos
-* usados */
+* usados 
+* NOTE: agrega al archivo asignado (hace un append)
+*/
 void BTCodeAdmin::addUsedCode(string &code)
 {
+	fstream filestr;
+	
 	assert(isCodeValid(code));
 	
+	/* verificamos si ya fue usado => no lo agregamos */
+	if(wasUsed(code))
+		return;
+	
+	/* no fue usado => lo agregamos al archivo y al map */
 	this->hash.insert( pair<string,bool>(code,true) );
+	
+	/* abrimos para append */
+	filestr.open(this->fname.c_str(), fstream::app);
+	
+	if (!filestr.good())
+		return;
+	
+	code.append("\n");
+	filestr.write(code.c_str(), code.size());
+	code.erase(code.size()-1, 1);
+	
+	filestr.close();
+	
 }
 
 /* Funcion que setea un codigo como no usado... */
 void BTCodeAdmin::setCodeUnused(string &code)
 {
+	
 	this->hash.erase(code);
+	/*! FIXME: TODO: borrar el codigo del archivo MUY INEFICIENTE*/
+	toFile();
 }
 
 /* Funcion que genera un N codigos teniendo en cuenta un tamaño 
@@ -183,13 +224,15 @@ int BTCodeAdmin::genCodes(vector<string> &codes, int N)
 * el momento en un archivo
 * NOTE: Rescribe el archivo si existe
 */
-void BTCodeAdmin::toFile(string &fname)
+void BTCodeAdmin::toFile(void)
 {
 	fstream filestr;
 	map<string,bool>::iterator it;
 	string aux = "";
 	
-	filestr.open(fname.c_str(), fstream::out);
+	assert((int) this->fname.size() > 0);
+	
+	filestr.open(this->fname.c_str(), fstream::out);
 	
 	if (!filestr.good())
 		return;
@@ -209,14 +252,16 @@ void BTCodeAdmin::toFile(string &fname)
 /* Funcion que carga una lista de codigos usados desde un
 * archivo determinado.
 */
-void BTCodeAdmin::fromFile(string &fname)
+void BTCodeAdmin::fromFile(void)
 {
 	fstream filestr;
 	char line[BTCG_CODE_SIZE + 2];
 	int size = BTCG_CODE_SIZE + 2;
 	string aux = "";
 	
-	filestr.open(fname.c_str(), fstream::in);
+	assert((int) this->fname.size() > 0);
+	
+	filestr.open(this->fname.c_str(), fstream::in);
 	
 	if (!filestr.good())
 		return;

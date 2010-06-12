@@ -112,12 +112,30 @@ bool UDataBase::addUser (CUser * user)
 		/* lo borramos al choripan */
 		delete user;
 	else {
+		fstream filestr;
+		QString data = "";
+		
 		/*! hacemos atomico esto */
 		this->mutex.lock();
 		/* agregamos a la hash una nueva entrada */
 		this->hashTable.insert (user->getMAC(), user);
 		this->mutex.unlock();
 		
+		/* hacemos un append en el archivo */
+		data = user->getMAC();
+		/* tenemos: MAC */
+		data.append(QChar(','));
+		/* tenemos: MAC, */
+		data.append (user->getNick());
+		/* tenemos: MAC,Nickname */
+		data.append(QChar('\n'));
+		/* tenemos: MAC,Nickname\n */
+		
+		filestr.open(this->fname.toStdString().c_str(), fstream::app);
+		if (filestr.good()) {
+			filestr.write(data.toStdString().c_str(), data.size());
+			filestr.close();
+		}
 		result = true;
 		
 	}

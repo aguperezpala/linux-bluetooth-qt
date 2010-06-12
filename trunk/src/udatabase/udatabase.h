@@ -9,6 +9,8 @@
 #ifndef UDATABASE_H
 #define UDATABASE_H
 
+#include <iostream>
+#include <fstream>
 #include <stdio.h>	/* para almacenar los usuarios en disco */
 #include <string.h>
 #include <QString>
@@ -17,10 +19,13 @@
 #include <QMutex>
 #include <QThread>
 
+
 #include "../cuser/cuser.h"
 #include "../consts.h"
 #include "../debug.h"
 
+
+using namespace std;
 
 class UDataBase {
 	public:
@@ -49,6 +54,7 @@ class UDataBase {
 		 * RETURNS:
 		 *	true 	si el usuario fue agregado
 		 *	false	caso contrario (ej ya existia o error)
+		 * NOTE: guarda el usuario en el archivo seteado (hace un append)
 		 * NOTE: NO se debe liberar user despues de haber llamado a esta
 		 * funcion.*//*! si el usuario ya existe es liberado lo mismo
 		 */

@@ -10,11 +10,6 @@ Modulos terminados de chequear:
 	* MarquesinObj listo.
 	* TextWindow pareceria estar listo.
 	* DispObjFilter
-	* SServer se podria decir (testeado para un solo cliente, deberia andar
-	para mas clientes...).
-	* SClient (80 % testeado.. faltaria intentar volver a enviar 2 veces
-	seguidas y recibir 2 veces seguidas..).
-	* udbprotocol (testeado)
 	* ConfigManipulator (testeado y andando)
 	* TxtWinControl (testeado, faltan las configuraciones)
 	* ObexParser (terminadito :) )
@@ -26,10 +21,13 @@ Modulos terminados de chequear:
 	
 Modulos en chequeo:
 	* dispobjtable NO esta testeado, pero si compilando.
-	* UServer (2 version, implementado con SServer).
 	
 
 Tareas:
+	* Main: verificar cuando debemos cargar algo de archivo o no (verificar
+	si la fecha del ultimo guardado es la misma que la actual por ej).
+	* BTCodeAdmin: falta "borrar de archivo un codigo" cuando nos dicen
+	que un codigo es "unused". Buscar FIXME
 	* HACIENDO MainProg (FIXME! TODO).
 	* Al crear un dispObj que sea del tipo permitido (segun extencion).
 	* Agregar el tema de las variables configurables	
