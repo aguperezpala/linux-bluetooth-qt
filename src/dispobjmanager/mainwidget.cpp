@@ -39,6 +39,7 @@ MainWidget::MainWidget(QWidget *parent, QString & fname) : QWidget (parent)
 	this->pwc = NULL;
 	this->table = NULL;
 	this->realExit = false;
+	this->dof = NULL;
 	
 	/* Creamos la tabla ahora */
 	this->table = new DispObjTable (this);
@@ -65,6 +66,10 @@ MainWidget::MainWidget(QWidget *parent, QString & fname) : QWidget (parent)
 	this->pwc->setWindowModality(Qt::NonModal);
 	
 	this->setFocusPolicy (Qt::StrongFocus);
+	
+	/* creamos el objetc filter */
+	this->dof = new DispObjFilter();
+	assert(this->dof != NULL);
 	
 	/* Recargamos todas las configuraciones */
 	loadConfigs();
@@ -101,8 +106,10 @@ void MainWidget::addDispObject (DispObject * dobj)
 		/* no tenemos nada que hacer... */
 		return;
 	}
-	
+	cout << "estamos agregando un objeto:\n" << dobj->getData().toStdString()
+	<< endl;
 	this->table->insertBack(dobj);
+	
 }
 
 
@@ -155,6 +162,20 @@ void MainWidget::destroyAll (void)
 }
 
 
+
+
+void MainWidget::acceptNewObject(DispObject *dobj)
+{
+	ASSERT(dobj != NULL);
+	if(dobj == NULL)
+		return;
+	/* ahora nos fijamos si el operador lo acepta o no */
+	if(this->dof->accept(dobj)) {
+		/* si lo acepto => lo guardamos en la tabla */	
+		addDispObject(dobj);
+	} /* else: no hacemos nada porque automaticamente fue rechazado */
+	
+}
 
 /* Destructor, esto destruye ### TODAS ### las ventanas, tener
 * cuidado con esto.

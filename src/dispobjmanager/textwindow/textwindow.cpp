@@ -16,7 +16,7 @@ QString * TextWindow::getNextMsg (void)
 	DispObject * obj = NULL;
 	QString * result = NULL;
 	const CUser * user = NULL;
-	QByteArray data = "";
+	QString data = "";
 	
 	
 	
@@ -54,23 +54,9 @@ QString * TextWindow::getNextMsg (void)
 	
 	/* le agregamos unos 2 puntos y un espacio... */
 	result->append (": ");
-	/* ahora obtenemos los datos verdaderos, intentamos abrir el archivo
-	* y leer el contenido */
-	if (obj->file.open (QIODevice::ReadOnly) == false) {
-		/*! error abriendo el archivo, mierda carajo... muy raro */
-		debugp ("MainWidget::sendMsgSignal: error abriendo archivo "
-		"de texto, :(\n");
-		/*! ACA debemos implementar otra politica: mostramos por
-		* pantalla algo? no mostramos nada? elegimos 2º */
-		/* vamos a eliminar todo a la bosta, no nos sirve de nada */
-		delete result; result = NULL;
-		delete obj;
-		return result;
-	}
+	
 	/* si estamos aca es porque pudimos abrirlo => leemos los datos */
-	data = obj->file.readAll();
-	/* cerramos el archivo */
-	obj->file.close();
+	data = obj->getData();
 	/* lo limpiamos de basuras como \n */
 	data.replace ('\n', ' ');
 	
