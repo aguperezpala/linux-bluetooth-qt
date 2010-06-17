@@ -5,7 +5,6 @@ MainProg::MainProg()
 {
 	this->udb = NULL;
 	this->mw = NULL;
-	this->dof = NULL;
 	this->btSM = NULL;
 	this->running = false;
 }
@@ -52,19 +51,17 @@ int MainProg::createGUI(QString &confFile)
 	assert(this->udb != NULL);
 	
 	/* tenemos algo creado? */
-	if (this->mw != NULL || this->dof != NULL)
+	if (this->mw != NULL)
 		return -1;
 	
 	this->mw = new MainWidget(NULL, confFile);
 	if (this->mw == NULL)
 		return -1;
 	
-	this->dof = new DispObjFilter(this->udb);
-	if (this->dof == NULL) {
-		delete this->mw;
-		this->mw = NULL;
-		return -1;
-	}
+	/* conectamos la señal con el slot de la mw */
+	connect((MainProg *) this, SIGNAL(newObjectReceived(DispObject *)),
+		 this->mw, SLOT(acceptNewObject(DispObject *)));
+	
 	
 	/* todo genial */
 	return 0;
@@ -125,7 +122,6 @@ int MainProg::startSystem(void)
 	
 	assert(this->udb != NULL);
 	assert(this->mw != NULL);
-	assert(this->dof != NULL);
 	assert(this->btSM != NULL);
 	
 	/* empezariamos a ejecutar el sistema en un thread aparte */
@@ -146,7 +142,7 @@ void MainProg::run(void)
 	 * 4) agregamos el DispObject al MainWidget: (this->mw->addDispObject)
 	 * 5) volvemos a 1.
 	 */
-	cout << "Comenzando a Recibr datos\n";
+	
 	
 	while(this->running) {
 		obj = this->btSM->getDispObject();
@@ -155,16 +151,8 @@ void MainProg::run(void)
 			cout << "Tenemos un obj NULL\n";
 			continue;
 		}
-		cout << "tenemos un obj vemos si lo aceptamos\n";
-		if(this->dof->accept(obj)) {
-			/*! guardamos estadistics register */
-			cout << "LO ACEPTAMOS\n";
-			this->mw->addDispObject(obj);
-		} else {
-			cout << "LO RECHAZAMOS\n";
-			/* rechazamos el objeto => se borra solo => continuamos */
-			continue;
-		}
+		/* emitimos una señal */
+		emit newObjectReceived(obj);
 	}
 }
 
@@ -185,14 +173,16 @@ void MainProg::stopSystem(bool save)
 	}
 }
 
+
+
+
+
 MainProg::~MainProg()
 {
 	if(this->udb != NULL)
 		delete this->udb;
 	if (this->mw != NULL)
 		delete this->mw;
-	if(this->dof != NULL)
-		delete this->dof;
 	if(this->btSM != NULL)
 		delete this->btSM;
 	

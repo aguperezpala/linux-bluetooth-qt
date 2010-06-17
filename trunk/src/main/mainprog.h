@@ -5,6 +5,7 @@
 #include <string>
 #include <QString>
 #include <QThread>
+#include <QObject>
 
 #include "consts.h"
 #include "debug.h"
@@ -16,7 +17,10 @@
 #include "btsystemmanager.h"
 
 
-class MainProg : public QThread {
+class MainProg : public QThread
+{
+	Q_OBJECT
+	
 	public:
 		/* Constructor, no hace falta nada */
 		MainProg();
@@ -77,11 +81,14 @@ class MainProg : public QThread {
 		
 		/* Libera la memoria de todas las estructuras */
 		~MainProg();
+	
+		
+	signals:
+		void newObjectReceived(DispObject *obj);
 		
 	private:
 		UDataBase *udb;
-		MainWidget *mw;;
-		DispObjFilter *dof;
+		MainWidget *mw;
 		BTSystemManager *btSM;
 		bool running;
 		

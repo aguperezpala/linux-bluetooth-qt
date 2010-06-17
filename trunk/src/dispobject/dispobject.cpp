@@ -107,5 +107,6 @@ DispObject::~DispObject()
 {
 	if (this->user != NULL)
 		delete this->user;
-	deleteFile();
+	if(this->file.exists())
+		deleteFile();
 }

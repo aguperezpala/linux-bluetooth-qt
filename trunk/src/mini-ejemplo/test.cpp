@@ -36,7 +36,7 @@ static void createDispObjs (void)
 
 	/* Cargamos las fotos y los textos */
 	/*! primero los textos */
-	for (i = 1; i < 11; i++ ) {
+	for (i = 1; i < 5; i++ ) {
 		fname = "";
 		fname.setNum(i);
 		fname.prepend("mesaje");
@@ -56,7 +56,7 @@ static void createDispObjs (void)
 		}
 	}
 
-	for (i = 1; i < 11; i++ ) {
+	for (i = 1; i < 1; i++ ) {
 		fname = "";
 		fname.setNum(i);
 		fname.prepend("foto");
@@ -86,6 +86,10 @@ int main (int argc, char ** argv)
 {	
 	QApplication app(argc, argv, true);
 	QString fname = " ";
+	CUser * user = NULL;
+	QString nick = QString ("Agu");
+	QString MAC = QString("AB:DC:EF:56:32:15");
+	DispObject * dobj = NULL;
 	mw = new MainWidget (NULL ,fname);
 	bool result = false;
 	
@@ -97,6 +101,20 @@ int main (int argc, char ** argv)
 	fail_if (dof == NULL);
 	
 	createDispObjs();
+	
+	sleep(5);
+	cout << "\n\n\nvamos a agregar otro elemento mas\n";
+	cout << "Agregando archivo: " << qstrtochar (fname) << endl;
+	user = new CUser(&nick, &MAC);
+	dobj = new DispObject();
+	dobj->kind = DISPOBJ_TEXT;
+	dobj->setUser(user);
+	/* preguntamos si lo aceptamos */
+	if (dof->accept(dobj)) {
+		cout << "Aceptamos el archivo: " << endl;
+		/*! entonces lo mandamos a la MainWidget */
+		mw->addDispObject(dobj);
+	}
 	
 	app.exec();
 	delete mw;

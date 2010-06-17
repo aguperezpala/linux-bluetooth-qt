@@ -27,7 +27,7 @@
 #include "textwindow/txtwincontrol.h"
 #include "../configmanipulator/configmanipulator.h"
 #include "../cuser/cuser.h"
-
+#include "dispobjfilter.h"
 
 
 
@@ -58,8 +58,11 @@ public:
 	 * cuidado con esto.
 	 */
 	~MainWidget();
+
+
 	
 public slots:
+	void acceptNewObject(DispObject *dobj);
 	void on_btnDelSelected_clicked ();
 	void on_btnExit_clicked();
 	void closeEvent (QCloseEvent *);
@@ -73,6 +76,7 @@ private:
 	bool realExit;			/* determinar si es el verdadero exit */
 	QString confFile;		/* donde almacenamos el nombre del 
 					 * confFile */
+	DispObjFilter *dof;
 		
 	
 	/* Funciones auxiliares para cargar las configs */

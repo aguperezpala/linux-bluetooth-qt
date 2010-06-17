@@ -21,6 +21,7 @@ bool DispObjFilter::acceptTextObj (const DispObject * dobj)
 	ASSERT (dobj != NULL);
 	ASSERT (dobj->kind == DISPOBJ_TEXT);
 	
+	
 	msgFile = new QMessageBox (0);
 	/*! implementamos la politica de que si no se puede crear => retornamos
 	 * false */
@@ -139,6 +140,15 @@ DispObjFilter::DispObjFilter(UDataBase * db)
 	this->udb = db;
 }
 
+/* Constructor que no chequea la existencia del usuario en la base
+* de datos. Solo muestra al operador si acepta o no el obj 
+*/
+DispObjFilter::DispObjFilter()
+{
+	/* vamos a setear la base de datos nula para saber que no hay que
+	 * verificarla */
+	this->udb = NULL;
+}
 
 /* Funcion principal que hace todo practicamente, es la que chequea
 * si el owner (user) del DispObject pertenece a la udb, si es asi
@@ -161,13 +171,16 @@ bool DispObjFilter::accept(DispObject * dobj)
 	/* pre */
 	ASSERT (dobj != NULL);
 	
-	/* primero vamos a chequear que exista el usuario en la bd */
-	user = dobj->getUser();
-	if (user == NULL || !(this->udb->existUser (user))) { 
-		/*! es null o no existe en la base de datos, de cualquier modo
-		 * lo borramos al choripan y ni lo mostramos */
-		delete dobj;
-		return false;
+	/* debemos chequear la base de datos si y solo si la udb != NULL */
+	if(this->udb != NULL){
+		/* primero vamos a chequear que exista el usuario en la bd */
+		user = dobj->getUser();
+		if (user == NULL || !(this->udb->existUser (user))) { 
+			/*! es null o no existe en la base de datos, de cualquier modo
+			* lo borramos al choripan y ni lo mostramos */
+			delete dobj;
+			return false;
+		}
 	}
 	
 	/* ahora vamos a mostrar al usuario dependiendo el tipo de archivo que

@@ -123,26 +123,15 @@ void DispObjTable::insertBack (DispObject* obj)
 	switch (obj->kind) {
 		case DISPOBJ_TEXT:
 		{
-			QByteArray data = "";
-			QString realData = "";
+			QString realData = obj->getData();
 			
-			/* abrimos el archivo y lo lemos */
-			if (obj->file.open (QIODevice::ReadOnly)) {
-				data = obj->file.readAll();
-				/* lo limpiamos de basuras como \n */
-				data.replace ('\n', ' ');
-				/* del tipo texto */
-				realData = data;
-				item = new QTableWidgetItem (realData);
-				ASSERT (item != NULL);
-				/* lo metemos en la tabla */
-				enqueued = enqueueItem (item);
-				obj->file.close();
-			} else {
-				/* cualquiera esto, lo borramos al choripan */
-				delete obj; obj = NULL;
-			}
-			
+			/* sacamos los enters */
+			realData.replace ('\n', ' ');
+			/* del tipo texto */
+			item = new QTableWidgetItem (realData);
+			ASSERT (item != NULL);
+			/* lo metemos en la tabla */
+			enqueued = enqueueItem (item);
 			
 		}
 			break;

@@ -11,6 +11,7 @@
 #ifndef DispObjFilter_H
 #define DispObjFilter_H
 
+#include <QObject>
 #include <QString>
 #include <QAbstractButton>
 #include <QMessageBox>
@@ -25,9 +26,9 @@
 
 
 
-class DispObjFilter
+class DispObjFilter : public QObject
 {
-
+	
 public:
 	/* Constructor: Requiere de una base de datos donde pueda chequear
 	 * si existen o no usuarios en un momento determinado.
@@ -35,6 +36,11 @@ public:
 	 *	udb != NULL
 	 */
 	DispObjFilter(UDataBase * udb);
+	
+	/* Constructor que no chequea la existencia del usuario en la base
+	 * de datos. Solo muestra al operador si acepta o no el obj 
+	 */
+	DispObjFilter();
 	
 	
 	/* Funcion principal que hace todo practicamente, es la que chequea
