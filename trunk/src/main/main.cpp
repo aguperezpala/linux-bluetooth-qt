@@ -48,5 +48,7 @@ int main (int argc, char ** argv)
 	}
 	cout << "Corriendo el sistema\n";
 	app.exec();
+	/*! aca deberiamos setear el tema de guardar las configuraciones capaz */
+	cout << "Terminando de correr el sistema!\n";
 	return 0;
 }
