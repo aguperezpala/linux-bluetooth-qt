@@ -24,10 +24,6 @@ Modulos en chequeo:
 	
 
 Tareas:
-	* MainWidget: estamos incorporando el dispObjFilter a esta clase (para
-	tener todo lo GUI aca). Tambien estamos creando un nuevo constructor
-	para el dispobjfilter, para evitar el chequeo en la base de datos
-	de usuarios.
 	* Main: verificar cuando debemos cargar algo de archivo o no (verificar
 	si la fecha del ultimo guardado es la misma que la actual por ej).
 	* BTCodeAdmin: falta "borrar de archivo un codigo" cuando nos dicen
@@ -64,6 +60,8 @@ BTSystemManager:
 	
 	
 FINAL:
+	* Estamos aceptando usuarios sin codigo de registracion! modificar esto
+	en BTReceiver (funcion isMacInDB).
 	* Sacar el flab -g.
 	* Sacar el define __DEBUG.
 	* Correr el sistema y verificar la memoria que no se vaya con dios

@@ -106,9 +106,11 @@ void MainWidget::addDispObject (DispObject * dobj)
 		/* no tenemos nada que hacer... */
 		return;
 	}
-	cout << "estamos agregando un objeto:\n" << dobj->getData().toStdString()
-	<< endl;
+	
 	this->table->insertBack(dobj);
+	/* verificamos si esta pausado para autoactivarlo */
+	if (this->tw->isPaused())
+		this->tw->pause(false);
 	
 }
 

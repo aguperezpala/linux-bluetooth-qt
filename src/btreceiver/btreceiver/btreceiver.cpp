@@ -121,6 +121,14 @@ bool BTReceiver::isMacInDB(const bdaddr_t &mac)
 	CUser * user = NULL;
 	bool result = false;
 	
+	/*! ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+	 * FIXME 	<MODO DEBUG NO VAMOS A PEDIR REGISTRACION!>
+	 *  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+	 */
+	/*#ifdef __DEBUG
+	return true;
+	#endif
+	*/
 	ba2str(&mac, strMac);
 	user = new CUser("", strMac);
 	if(user != NULL) {
