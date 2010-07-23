@@ -35,19 +35,29 @@ public class CodeManager {
 
         /* extraemos el mes/dia de ahora y ayer */
         nd = cal.get(Calendar.DAY_OF_MONTH);
-        nm = cal.get(Calendar.MONTH);
+        nm = cal.get(Calendar.MONTH) + 1;
         cal.set(Calendar.DATE, cal.get(Calendar.DATE) - 1);
         yd = cal.get(Calendar.DAY_OF_MONTH);
-        ym = cal.get(Calendar.MONTH);
-        System.out.print("hoy- dia:" + nd + " mes:" + nm + "\nayer dia:" + yd + " mes:" + ym + "\n");
+        ym = cal.get(Calendar.MONTH) + 1;
+        //System.out.print("hoy- dia:" + nd + " mes:" + nm + "\nayer dia:" + yd + " mes:" + ym + "\n");
 
         /* primero obtenemos el numero de codigo */
-        codeIndex = Integer.parseInt(code.substring(0, 2), 10);
-        codePro = Integer.parseInt(code.substring(3, 7), 10);
+
+        try {
+            codeIndex = Integer.parseInt(code.substring(0, 3), 16);
+            codePro = Integer.parseInt(code.substring(3, 8), 16);
+        } catch (Exception e) {
+            // no pudimos parsearlo es porque teniamos algo raro! */
+            return false;
+        }
 
         /* ahora vamos a verificar si es correcto el codigo */
         res1 = codeIndex * nd * nm;
         res2 = codeIndex * yd * ym;
+
+        /* no admitimos el 0x0 */
+        if ((codePro * codeIndex) == 0)
+            return false;
 
         if (codePro == res1 || codePro == res2)
             return true;
