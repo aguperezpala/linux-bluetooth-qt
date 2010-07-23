@@ -180,7 +180,8 @@ public class BtConnection implements Runnable {
         try {
             /* interrumpimos el thread */
             if (this.thisTrhead != null) {
-                this.thisTrhead.interrupt();
+               // this.thisTrhead.interrupt();
+                Thread.yield();
                 this.thisTrhead = null;
             }
 
