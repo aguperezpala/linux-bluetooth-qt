@@ -73,7 +73,8 @@ public class CityClient implements Runnable {
          /* si llegamos aca y no se mando => isRunning = true ==> error interno
           */
          if (this.isRunning) {
-             this.ccThread.interrupt();
+             //this.ccThread.interrupt();
+             Thread.yield();
              this.ccThread = null;
              this.isRunning = false;
              /* limpiamos con el gbc */

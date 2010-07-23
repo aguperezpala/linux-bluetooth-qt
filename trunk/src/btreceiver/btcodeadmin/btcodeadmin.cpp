@@ -92,15 +92,19 @@ void BTCodeAdmin::setFileName(string &fname)
 */
 bool BTCodeAdmin::isCodeValid(string &data)
 {
-	time_t t = time(NULL);
-	struct tm *lt = localtime(&t);
+	
 	string codeNumStr = "";
 	string codeStr = "";
 	unsigned int codeNum = 0, code = 0;
-	unsigned int aux = 0;
+	unsigned int aux = 0, aux2 = 0;	
+	time_t yestraw, nowraw;	
+	struct tm *yesttm = NULL;
+	struct tm *nowtm = NULL;
 	
 	
-	if (lt == NULL || data.size() != BTCG_CODE_SIZE)
+	time(&nowraw);
+	
+	if (data.size() != BTCG_CODE_SIZE)
 		return false;
 	
 	codeNumStr = data.substr(0,3);
@@ -117,9 +121,28 @@ bool BTCodeAdmin::isCodeValid(string &data)
 	if ((int) code == 0)
 		return false;
 	
-	aux = ((unsigned int) lt->tm_mon) * ((unsigned int) lt->tm_mday) *
+	yesttm = new tm;
+	nowtm = new tm;
+	if (yesttm == NULL || nowtm == NULL)
+		return false;
+	
+	yestraw = nowraw-60*60*24;
+	memcpy(nowtm,localtime(&nowraw),sizeof(struct tm));	
+	memcpy(yesttm,localtime(&yestraw),sizeof(struct tm));
+	
+	/* hoy en dia */
+	aux = ((unsigned int) nowtm->tm_mon) * ((unsigned int) nowtm->tm_mday) *
 		codeNum;
-	if(aux == code)
+	
+	/* o de ayer */
+	aux2 = ((unsigned int) yesttm->tm_mon) * ((unsigned int) yesttm->tm_mday) *	
+	codeNum;
+	
+	
+	delete yesttm;
+	delete nowtm;
+	
+	if(aux == code || aux2 == code)
 		return true;
 	
 	return false;

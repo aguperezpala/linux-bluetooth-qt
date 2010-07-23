@@ -31,9 +31,13 @@ public class CityBluetooth extends MIDlet implements CommandListener {
     private ServerManager serverM = null;
     private CityClient cClient = null;
     private TextBox txtBox = null;
+    private TextField txtFCode = null;
+    private TextField txtFNick = null;
     private Form statusFrom = null;
+    private Form generalForm = null;
     private String[] menuLabels = { "Registrarse", "Enviar mensaje", "Ayuda", "Log" };
     private final List menu = new List("Menu", List.IMPLICIT, menuLabels, null);
+    private boolean itsRegistered = false;
 
 
   
@@ -46,22 +50,32 @@ public class CityBluetooth extends MIDlet implements CommandListener {
      */
     public CityBluetooth() {        
         this.statusFrom = new Form("Log");
+        this.generalForm = new Form(" ");
+        this.txtFCode = new TextField("Codigo:", "", 8, TextField.ANY);
+        this.txtFNick = new TextField("Nick:", "", 15, TextField.ANY);
         
         /* generamos los botones */
         this.exitCommand = new Command("Salir", Command.EXIT, 1);
         this.backCommand = new Command("Volver", Command.BACK, 0);
-        this.okCommand = new Command("Elegir", Command.OK, 2);
-
+        this.okCommand = new Command("Ok", Command.OK, 2);
+        
         /* creamos las estructuras propias */
         this.serverM = new ServerManager(this.statusFrom);
         this.cClient = new CityClient(this.statusFrom, this.serverM);
     
 
 
+        
         this.txtBox = new TextBox("CityEntert", "", 256,0);
         this.txtBox.addCommand(backCommand);
         this.txtBox.addCommand(okCommand);
         this.txtBox.setCommandListener(this);
+
+        this.generalForm.append(txtFCode);
+        this.generalForm.append(txtFNick);
+        this.generalForm.addCommand(okCommand);
+        this.generalForm.addCommand(backCommand);
+        this.generalForm.setCommandListener(this);
 
 
         this.menu.addCommand(exitCommand);
@@ -70,6 +84,8 @@ public class CityBluetooth extends MIDlet implements CommandListener {
 
         this.statusFrom.addCommand(backCommand);        
         this.statusFrom.setCommandListener(this);
+
+
 
 
     }
@@ -132,18 +148,27 @@ public class CityBluetooth extends MIDlet implements CommandListener {
         if (displayable == this.menu) {
             switch (menu.getSelectedIndex()) {
                 case 0:
+                    if(this.itsRegistered)
+                        return;
                     // Registrandose
-                    this.txtBox.setString("Codigo de registracion");
-                    Display.getDisplay(this).setCurrent(this.txtBox);
+                    this.txtFCode.setString("");
+                    this.txtFNick.setString("");
+
+                    Display.getDisplay(this).setCurrent(this.generalForm);
                     break;
                 case 1:
                     // mandando mensaje
-                    this.txtBox.setString("Mensaje");
+                    this.txtBox.setString("");
                     Display.getDisplay(this).setCurrent(this.txtBox);
                
                     break;
                 case 2:
                     //Ayuda...
+                    this.statusFrom.deleteAll();
+                    this.statusFrom.append("Version de Prueba\n ante cualquier "+
+                            "duda o problemas comunicarse con Matias Parmigiani " +
+                            "mail: matiaspar@gmail.com\n o cel: 152135859\nMuchas gracias.");
+                    Display.getDisplay(this).setCurrent(this.statusFrom);
                    // form.append("Ayuda");
                
                     break;
@@ -156,76 +181,93 @@ public class CityBluetooth extends MIDlet implements CommandListener {
                     break;
             }            
             
+        } else if (displayable == this.generalForm) {
+            /* nos estamos registrando! */
+            if(command == this.okCommand) {
+                int status = 0;
+                String auxStr = "";
+                boolean nickOk = false;
+
+                /* ahora mostramos el log */
+                Display.getDisplay(this).setCurrent(this.statusFrom);
+
+                /* verificamos si el codigo es correcto! */
+                if (CodeManager.checkCode(this.txtFCode.getString()) == false)
+                {
+                    /* el codigo es incorrecto => salimos */
+                    this.statusFrom.append("Codigo incorrecto\n");
+                    return;
+                }
+                /* ahora verificamos si el nick es correcto (teniendo en cuenta
+                 * que los ultimos 3 digitos del nick tienen que ser numericos */
+                auxStr = this.txtFNick.getString();
+                auxStr = this.txtFNick.getString().substring(auxStr.length()-4,
+                        auxStr.length()-1);
+                try {
+                    Integer.parseInt(auxStr);
+                    nickOk = true;
+                } catch (Exception e) {
+                    nickOk = false;
+                }
+
+                if (!nickOk) {
+                    this.statusFrom.append("Nick incorrecto, debe las 3 ultimas "+
+                            "cifras del documento al final del nick\n");
+                    return;
+                }
+
+                /* Si estamos aca es porque ta todo joya */
+                /* intentamos mandar los datos */
+                status = this.cClient.sendData("regi",
+                        this.txtFCode.getString() + " " + this.txtFNick.getString());
+
+                this.statusFrom.append("Espere por favor... \n");
+                /* verificamos que nos devolvio */
+                if (status >= 0) {
+                    this.statusFrom.append("Codigo de registracion " +
+                            "enviado correctamente\n");
+
+                    /* Vamos a eliminar del menu la posibilidad de mandar codigo
+                     * de registracion nuevamente */
+                    this.menuLabels[0] = "-Registrado-";
+
+                } else if (status == -1 || status == -2) {
+                    this.statusFrom.append("\nNo hay servers disponibles. " +
+                            "Porfavor vuelva a intentarlo mas tarde\n");
+                    /* volvemos a activar el servicio de busqueda si y
+                     * solo si NO encontramos servers */
+                } else {
+                    /* error interno => no pudimos mandar nada */
+                    this.statusFrom.append("No se pudo enviar el codigo "+
+                            "de registracion\n");
+                }
+            }
+
         } else if (displayable == this.txtBox) {
             /* vamos a verificar si apretaron ok */
             if(command == this.okCommand) {
-                int status = 0;
-                
-                switch(this.menu.getSelectedIndex()) {
-                    case 0:
-                        //Registrandose
+                int status = 0;                
+               
+                /* ahora mostramos el log */
+                Display.getDisplay(this).setCurrent(this.statusFrom);
 
-                        /* ahora mostramos el log */
-                        Display.getDisplay(this).setCurrent(this.statusFrom);
+                /* intentamos mandar el mensaje */
+                status = this.cClient.sendData("text",
+                        this.txtBox.getString());
 
-                        /* intentamos mandar los datos */
-                        status = this.cClient.sendData("regi",
-                                this.txtBox.getString());
+                this.statusFrom.append("Espere por favor...\n");
 
-                        /* verificamos que nos devolvio */
-                        if (status >= 0) {
-                            this.statusFrom.append("Codigo de registracion " +
-                                    "enviado correctamente\n");
-                        } else if (status == -1 || status == -2) {
-                            this.statusFrom.append("No hay servers disponibles. " +
-                                    "Porfavor vuelva a intentarlo mas tarde: "+
-                                    "errCode: "+ status +"\n");
-                            /* volvemos a activar el servicio de busqueda si y
-                             * solo si NO encontramos servers */                          
-                        } else {
-                            /* error interno => no pudimos mandar nada */
-                            this.statusFrom.append("No se pudo enviar el codigo "+
-                                    "de registracion\n");
-                        }
-                        break;
-
-                    case 1:
-                        //Mandando Mensaje
-
-                        /* ahora mostramos el log */
-                        Display.getDisplay(this).setCurrent(this.statusFrom);
-                        
-                        /* intentamos mandar el mensaje */
-                        status = this.cClient.sendData("text",
-                                this.txtBox.getString());
-                        if (status >= 0) {
-                            this.statusFrom.append("Mensaje enviado correctamente\n");
-                        } else if (status == -1 || status == -2) {
-                            this.statusFrom.append("No hay servers disponibles. " +
-                                    "Porfavor vuelva a intentarlo mas tarde: "+
-                                    "errCode: "+ status +"\n");
-                          /* volvemos a activar el servicio de busqueda si y
-                             * solo si NO encontramos servers */
-                        } else {
-                            /* error interno => no pudimos mandar nada */
-                            this.statusFrom.append("No se pudo enviar el codigo "+
-                                    "de registracion\n");
-                        }
-
-                        break;
-                    case 2:
-                        //form.append("Ayuda");
-
-                        break;
-                    case 3:
-                        //form.append("Log");
-
-                        break;
-                    default: // this shouldn't occur
-                        break;
+                if (status >= 0) {
+                    this.statusFrom.append("Mensaje enviado correctamente\n");
+                } else if (status == -1 || status == -2) {
+                    this.statusFrom.append("No hay servers disponibles. " +
+                            "Porfavor vuelva a intentarlo mas tarde\n");
+                  /* volvemos a activar el servicio de busqueda si y
+                     * solo si NO encontramos servers */
+                } else {
+                    /* error interno => no pudimos mandar nada */
+                    this.statusFrom.append("No se pudo enviar el mensaje\n");
                 }
-
-
             }
 
         }
