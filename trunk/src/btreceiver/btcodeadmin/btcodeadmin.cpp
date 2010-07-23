@@ -131,11 +131,11 @@ bool BTCodeAdmin::isCodeValid(string &data)
 	memcpy(yesttm,localtime(&yestraw),sizeof(struct tm));
 	
 	/* hoy en dia */
-	aux = ((unsigned int) nowtm->tm_mon) * ((unsigned int) nowtm->tm_mday) *
+	aux = ((unsigned int) nowtm->tm_mon + 1) * ((unsigned int) nowtm->tm_mday) *
 		codeNum;
 	
 	/* o de ayer */
-	aux2 = ((unsigned int) yesttm->tm_mon) * ((unsigned int) yesttm->tm_mday) *	
+	aux2 = ((unsigned int) yesttm->tm_mon + 1) * ((unsigned int) yesttm->tm_mday) *	
 	codeNum;
 	
 	
@@ -228,7 +228,7 @@ int BTCodeAdmin::genCodes(vector<string> &codes, int N)
 		memset(result, '\0', sizeof(result));
 		
 		/* ahora seteamos el valor del codigo */
-		cod = ((unsigned int) lt->tm_mon) * ((unsigned int) lt->tm_mday) *
+		cod = ((unsigned int) lt->tm_mon + 1) * ((unsigned int) lt->tm_mday) *
 		codeNum;
 		sprintf(result, "%X", cod);
 		for (i = 5 - strlen(result); i > 0; i--)

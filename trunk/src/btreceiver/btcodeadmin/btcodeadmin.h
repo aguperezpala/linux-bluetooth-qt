@@ -2,7 +2,6 @@
  * Modulo que genera codigos y chequea que los codigos esten bien generados,
  * NOTE: Usa la fecha del sistema (deben estar corrdinadas si se usa en 2 pcs
  * distintas.
- * 
  * TESTED = false;
  *
  *
@@ -28,10 +27,12 @@
 /*! vamos a definir los codigos de la siguiente forma:
  * XXXYYYYY
  * Donde XXX va a ser el numero del codigo (numCode) generado y YYYYY va a ser 
- * el numero tal que es igual a: numDay * numMonth * numCode
+ * el numero tal que es igual a: numDay * (numMonth+1) * numCode
  * Representado en hexadecimal, y va a tener que ser enviado como tal.
  * Los codigos van a ser validos si y solo si son validos del dia o del dia
  * anterior!
+ * NOTE: vamos a tomar los meses del 1 al 12 (y no del 0 al 11) para evitar
+ * que sea tan simple el codigo!
  */
 
 using namespace std;

@@ -53,7 +53,7 @@ public class CityClient implements Runnable {
              this.status.deleteAll();
 
           if (cmd == null || cmd.length() < 4 || data == null) {
-             this.status.append("CC:sendData: cmd | data null\n");
+             //this.status.append("CC:sendData: cmd | data null\n");
              return -3;
          }
          dataToSend = cmd + ":" + data.length() + ":" + data;
@@ -125,7 +125,7 @@ public class CityClient implements Runnable {
               * vamos a intentar mandar los datos */
              result = btCon.sendData(dataToSend);
              if (result < 0) {
-                 this.status.append("CC:sendData: btCon.sendData() < 0\n");
+                 //this.status.append("CC:sendData: btCon.sendData() < 0\n");
                  /* hubo un error pero nos pudimos conectar... ???
                   * deberiamos nuevamente reordenar el vector e introducir este
                   * server al final */

@@ -34,8 +34,8 @@ public class CityBluetooth extends MIDlet implements CommandListener {
     private TextField txtFCode = null;
     private TextField txtFNick = null;
     private Form statusFrom = null;
-    private Form generalForm = null;
-    private String[] menuLabels = { "Registrarse", "Enviar mensaje", "Ayuda", "Log" };
+    private Form regForm = null;
+    private String[] menuLabels = { "Registrarse", "Enviar mensaje", "Ayuda"};
     private final List menu = new List("Menu", List.IMPLICIT, menuLabels, null);
     private boolean itsRegistered = false;
 
@@ -50,7 +50,7 @@ public class CityBluetooth extends MIDlet implements CommandListener {
      */
     public CityBluetooth() {        
         this.statusFrom = new Form("Log");
-        this.generalForm = new Form(" ");
+        this.regForm = new Form(" ");
         this.txtFCode = new TextField("Codigo:", "", 8, TextField.ANY);
         this.txtFNick = new TextField("Nick:", "", 15, TextField.ANY);
         
@@ -71,11 +71,15 @@ public class CityBluetooth extends MIDlet implements CommandListener {
         this.txtBox.addCommand(okCommand);
         this.txtBox.setCommandListener(this);
 
-        this.generalForm.append(txtFCode);
-        this.generalForm.append(txtFNick);
-        this.generalForm.addCommand(okCommand);
-        this.generalForm.addCommand(backCommand);
-        this.generalForm.setCommandListener(this);
+        /* generamos el formulario de registracion */
+         this.regForm.append("Para registrarte ingresa primero el código de registración " +
+                "y luego ingresa un nombre, que debe tener los últimos 3 números de tu documento" +
+                " al final de todo\n");
+        this.regForm.append(txtFCode);
+        this.regForm.append(txtFNick);       
+        this.regForm.addCommand(okCommand);
+        this.regForm.addCommand(backCommand);
+        this.regForm.setCommandListener(this);
 
 
         this.menu.addCommand(exitCommand);
@@ -153,12 +157,15 @@ public class CityBluetooth extends MIDlet implements CommandListener {
                     // Registrandose
                     this.txtFCode.setString("");
                     this.txtFNick.setString("");
+                    this.statusFrom.deleteAll();
 
-                    Display.getDisplay(this).setCurrent(this.generalForm);
+                    Display.getDisplay(this).setCurrent(this.regForm);
                     break;
                 case 1:
                     // mandando mensaje
                     this.txtBox.setString("");
+                    this.statusFrom.deleteAll();
+
                     Display.getDisplay(this).setCurrent(this.txtBox);
                
                     break;
@@ -172,21 +179,16 @@ public class CityBluetooth extends MIDlet implements CommandListener {
                    // form.append("Ayuda");
                
                     break;
-                case 3:
-                    // Log
-                    //form.append("Log");
-
-                    break;
+             
                 default: // this shouldn't occur
                     break;
             }            
             
-        } else if (displayable == this.generalForm) {
+        } else if (displayable == this.regForm) {
             /* nos estamos registrando! */
             if(command == this.okCommand) {
                 int status = 0;
-                String auxStr = "";
-                boolean nickOk = false;
+              
 
                 /* ahora mostramos el log */
                 Display.getDisplay(this).setCurrent(this.statusFrom);
@@ -198,19 +200,10 @@ public class CityBluetooth extends MIDlet implements CommandListener {
                     this.statusFrom.append("Codigo incorrecto\n");
                     return;
                 }
+
                 /* ahora verificamos si el nick es correcto (teniendo en cuenta
                  * que los ultimos 3 digitos del nick tienen que ser numericos */
-                auxStr = this.txtFNick.getString();
-                auxStr = this.txtFNick.getString().substring(auxStr.length()-4,
-                        auxStr.length()-1);
-                try {
-                    Integer.parseInt(auxStr);
-                    nickOk = true;
-                } catch (Exception e) {
-                    nickOk = false;
-                }
-
-                if (!nickOk) {
+                if (checkNick(this.txtFNick.toString()) == false) {
                     this.statusFrom.append("Nick incorrecto, debe las 3 ultimas "+
                             "cifras del documento al final del nick\n");
                     return;
@@ -229,7 +222,8 @@ public class CityBluetooth extends MIDlet implements CommandListener {
 
                     /* Vamos a eliminar del menu la posibilidad de mandar codigo
                      * de registracion nuevamente */
-                    this.menuLabels[0] = "-Registrado-";
+                    this.menuLabels[0] = "-Ya Registrado-";
+                    this.itsRegistered = true;
 
                 } else if (status == -1 || status == -2) {
                     this.statusFrom.append("\nNo hay servers disponibles. " +
@@ -274,6 +268,29 @@ public class CityBluetooth extends MIDlet implements CommandListener {
 
     }
 
+    /* Funcion que testea si un nick es correcto o no
+     * Devuelve TRUE si es correcto.
+     * False caso contrario
+     */
+    private boolean checkNick(String nick)
+    {
+        String auxStr = "";
+        boolean nickOk = false;
+
+        if(nick.length() < 3)
+            return false;
+        
+        auxStr = this.txtFNick.getString();
+        auxStr = auxStr.substring(auxStr.length()-3, auxStr.length());
+        try {
+            Integer.parseInt(auxStr);
+            nickOk = true;
+        } catch (Exception e) {
+            nickOk = false;
+        }
+
+        return nickOk;
+    }
   
     /**
      * Exits MIDlet.

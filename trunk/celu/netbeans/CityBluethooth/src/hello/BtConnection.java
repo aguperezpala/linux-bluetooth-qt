@@ -34,7 +34,7 @@ public class BtConnection implements Runnable {
         this.strUrl = url;
         this.waitMs = timeOut;
 
-        this.statusForm.append("Creando conn a: " + url + "\n");
+        //this.statusForm.append("Creando conn a: " + url + "\n");
 
         try {
             this.connection = (StreamConnection)Connector.open(this.strUrl,
@@ -45,11 +45,11 @@ public class BtConnection implements Runnable {
             this.thisTrhead = new Thread(this);
             this.thisTrhead.start();
             
-            this.statusForm.append("Conexion establecida con: " + this.strUrl
-                     + "\n");
+          /*  this.statusForm.append("Conexion establecida con: " + this.strUrl
+                     + "\n");*/
         } catch (Exception e) {
-            this.statusForm.append("Error al crear la conexion " + e.toString()
-                     + "\n");
+          /*  this.statusForm.append("Error al crear la conexion " + e.toString()
+                     + "\n");*/
             this.status = -1;
         }
     }
@@ -70,8 +70,8 @@ public class BtConnection implements Runnable {
         } catch (Exception e) {
             result = -1;
             this.status = -1;
-            this.statusForm.append("Error al intentar mandar datos " +
-                    e.toString() + "\n");
+            /*this.statusForm.append("Error al intentar mandar datos " +
+                    e.toString() + "\n");*/
         }
         output = null;
 
@@ -127,20 +127,20 @@ public class BtConnection implements Runnable {
 
              }
 
-            this.statusForm.append("haveResp: " + haveResp + "\tRecibimos: " +
-                    result + "\n");
+         /*   this.statusForm.append("haveResp: " + haveResp + "\tRecibimos: " +
+                    result + "\n");*/
             
 
         } catch (IOException e) {
-            this.statusForm.append("error al recibir datos: " + e.toString()+ "\n");
+            //this.statusForm.append("error al recibir datos: " + e.toString()+ "\n");
         } finally {
             // close input stream
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    this.statusForm.append("error al cerrar la conexion para recibir "
-                            + e.toString() + "\n");
+              /*      this.statusForm.append("error al cerrar la conexion para recibir "
+                            + e.toString() + "\n");*/
                     this.status = -1;
                 }
             }
@@ -161,7 +161,7 @@ public class BtConnection implements Runnable {
              this.waitMs = this.waitMs - wMs;
          }
          if (this.status >= 0) {
-            this.statusForm.append("Conexion time out\n");
+            /*this.statusForm.append("Conexion time out\n");*/
             this.closeConnection();
          }
 
@@ -202,7 +202,7 @@ public class BtConnection implements Runnable {
                 this.connection = null;
             }
         } catch (IOException ioe) {
-      	  this.statusForm.append("Error Closing connection " + ioe+ "\n");
+      	  //this.statusForm.append("Error Closing connection " + ioe+ "\n");
         }
     }
 
