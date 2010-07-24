@@ -20,9 +20,13 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
+#include <iostream>
+#include <time.h>
+
 #include "../udatabase/udatabase.h"
 #include "../dispobject/dispobject.h"
 #include "../debug.h"
+#include "../consts.h"
 
 
 
@@ -88,6 +92,12 @@ private:
 	* NOTE: NO se libera memoria.
 	*/
 	bool acceptPictureObj (const DispObject * dobj);
+	
+	/* funcion que guarda un mensaje rechazado en un archivo (REJECTED_O_FN)
+	* REQUIRES:
+	*	dobj != NULL 
+	*/
+	void saveRejectedObj(DispObject *dobj);
 	
 	UDataBase * udb;	/* base de datos de usuario :) */
 	
