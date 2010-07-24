@@ -177,7 +177,7 @@ void MainWidget::acceptNewObject(DispObject *dobj)
 	if(this->dof->accept(dobj)) {
 		/* si lo acepto => lo guardamos en la tabla */	
 		addDispObject(dobj);
-	} /* else: no hacemos nada porque automaticamente fue rechazado */
+	} 
 	
 }
 

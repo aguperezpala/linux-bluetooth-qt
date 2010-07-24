@@ -123,6 +123,59 @@ bool DispObjFilter::acceptPictureObj (const DispObject * dobj)
 }
 
 
+/* funcion que guarda un mensaje rechazado en un archivo (REJECTED_O_FN)
+* REQUIRES:
+*	dobj != NULL 
+*/
+void DispObjFilter::saveRejectedObj(DispObject *dobj)
+{
+	fstream filestr;
+	QString result = "";
+	const CUser *user = NULL;
+	char *strDate = NULL;
+	time_t nowraw;	
+	
+	assert(dobj != NULL);
+	
+	/*! FIXME: solo estamos guardando mensajes de texto por ahora, probablemente
+	 * en un futuro se quiera tambien guardar las fotos que mandan "cochinas"
+	 */
+	if(dobj->kind != DISPOBJ_TEXT)
+		return;
+	
+	result.append("<rejected_msg>");
+	
+	/* obtenemos la fecha */
+	time(&nowraw);
+	strDate = ctime(&nowraw);
+	if (strDate != NULL){
+		result.append(strDate);
+		result.remove("\n");
+		result.append(": ");
+	}
+	
+	
+	user = dobj->getUser();
+	if (user != NULL) {
+		/* agregamos el usuario */
+		result.append("nick: ");
+		result.append(user->getNick());
+		result.append(", MAC: ");
+		result.append(user->getMAC());
+		result.append(", ");
+	}
+	
+	result.append("Mensaje: ");
+	result.append(dobj->getData());
+	result.append("</rejected_msg>");
+	
+	/* ahora abrimos el arcivo y hacemos un append */
+	filestr.open(REJECTED_O_FN, fstream::out | fstream::app);
+	filestr << result.toStdString().c_str();
+	filestr.close();
+}
+
+
 
 /* Constructor: Requiere de una base de datos donde pueda chequear
 * si existen o no usuarios en un momento determinado.
@@ -200,6 +253,8 @@ bool DispObjFilter::accept(DispObject * dobj)
 	if (!result) {
 		debugp2 ("DispObjFilter::accept: El usuario cancelo un archivo"
 			"\n");
+		/*! guardamos el objeto rechazado! */
+		saveRejectedObj(dobj);
 		/* borramos el archivo correspondiente */
 		if (!(dobj->file.remove ()))
 			debugp ("DispObjFilter::accept: Error al intentar"

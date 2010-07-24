@@ -15,7 +15,6 @@
 #include <QMutex>
 #include <QByteArray>
 
-
 #include "ui_mainwidget.h"
 #include "../consts.h"
 #include "../debug.h"
@@ -28,7 +27,6 @@
 #include "../configmanipulator/configmanipulator.h"
 #include "../cuser/cuser.h"
 #include "dispobjfilter.h"
-
 
 
 
@@ -84,6 +82,7 @@ private:
 	void loadConfigs (void);
 	/* Funcion que destruye todo el contenido de esta clase */
 	void destroyAll (void);
+	
 	
 };
 
