@@ -179,12 +179,13 @@ void MainProg::stopSystem(bool save)
 
 MainProg::~MainProg()
 {
-	if(this->udb != NULL)
-		delete this->udb;
 	if (this->mw != NULL)
 		delete this->mw;
 	if(this->btSM != NULL)
 		delete this->btSM;
+	if(this->udb != NULL)
+		delete this->udb;
+	
 	
 }
 

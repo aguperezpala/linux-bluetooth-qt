@@ -9,14 +9,14 @@
 
 ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 {
-	iw = new ImageWindow (0);
+	/*iw = new ImageWindow (0);*/
 	tw = new TextWindow (0,NULL);
 	parser = new Parser;
 	/*configuramos ImageWindow*/
-	//iw->setWindowFlags (SW_WITHOUT_BORDERS);
+	/*iw->setWindowFlags (SW_WITHOUT_BORDERS);
 	iw->setWindowSize (300,300);
 	iw->LoadImage( QString ("../ona.jpg"));
-	
+	*/
 	
 	/*configuramos TextWindow*/
 	//tw->setWindowFlags (SW_WITHOUT_BORDERS);
@@ -49,7 +49,7 @@ ControllerWindow::ControllerWindow(QWidget* parent): QWidget(parent)
 	layout->addWidget (buttontable);
 	setLayout(layout);
 
-	iw->show();
+	/*iw->show();*/
 	tw->show();
 }
 

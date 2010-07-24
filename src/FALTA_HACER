@@ -37,6 +37,11 @@ Tareas:
 	por el momento, mostrando el nombre de la imagen, y ante un doble
 	click, esta va a ser mostrada por pantalla (falta implementar y 
 	testear esto).
+	* Ir guardando los usuarios registrados en el dia y si coincide con
+	la fecha en los que fueron guardados, entonces preguntar si se desea
+	cargar o no de archivos los usuarios
+	* Ir guardando los codigos ya usados en un archivo y preguntar si se
+	desean cargar (verificando la fecha)
 	
 
 

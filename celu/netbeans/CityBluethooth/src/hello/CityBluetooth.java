@@ -172,9 +172,12 @@ public class CityBluetooth extends MIDlet implements CommandListener {
                 case 2:
                     //Ayuda...
                     this.statusFrom.deleteAll();
-                    this.statusFrom.append("Version de Prueba\n ante cualquier "+
-                            "duda o problemas comunicarse con Matias Parmigiani " +
-                            "mail: matiaspar@gmail.com\n o cel: 152135859\nMuchas gracias.");
+                    this.statusFrom.append("pasos a seguir: 1) Ingresar en opción " +
+                            "'registrarse' y seguir las instrucciones. 2) " +
+                            "Luego enviar mensajes desde la opción 'enviar mensaje'." +
+                            " 3) Solo es necesario registrarse una vez por noche (al " +
+                            "cerrarse el programa no retiene la registración, pero ya está hecha). "+
+                            "\nAlguna duda? \nenvianos un e-mail a: matiaspar@gmail\n");
                     Display.getDisplay(this).setCurrent(this.statusFrom);
                    // form.append("Ayuda");
                

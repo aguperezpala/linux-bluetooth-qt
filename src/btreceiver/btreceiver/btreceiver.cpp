@@ -121,14 +121,7 @@ bool BTReceiver::isMacInDB(const bdaddr_t &mac)
 	CUser * user = NULL;
 	bool result = false;
 	
-	/*! ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-	 * FIXME 	<MODO DEBUG NO VAMOS A PEDIR REGISTRACION!>
-	 *  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
-	 */
-	/*#ifdef __DEBUG
-	return true;
-	#endif
-	*/
+	
 	ba2str(&mac, strMac);
 	user = new CUser("", strMac);
 	if(user != NULL) {
@@ -165,6 +158,7 @@ int BTReceiver::registerNewUser(const bdaddr_t *mac, BTPaket &pkt)
 {
 	CUser *user = NULL;
 	string aux = "";
+	string code = "";
 	int p = 0;
 	char strMac[20] = {0};
 	
@@ -178,13 +172,12 @@ int BTReceiver::registerNewUser(const bdaddr_t *mac, BTPaket &pkt)
 	
 	/*! verificamos si el codigo que enviaron es valido o si fue usado */
 	aux = pkt.getMsg().substr(0, p);
-	if (this->codAdmin.isCodeValid(aux) == false || 
-		this->codAdmin.wasUsed(aux)) {
+	code = aux;
+	if (this->codAdmin.isCodeValid(code) == false || 
+		this->codAdmin.wasUsed(code)) {
 		/* el codigo no es valido o ya fue usado! */
 		return -1;
 	}
-	/*! si estamos aca es valido => lo agregamos a la lista */
-	this->codAdmin.addUsedCode(aux);
 	/* extraemos el nick y creamos el user */
 	p++;
 	aux = pkt.getMsg().substr(p, pkt.getMsg().size() - p);
@@ -195,6 +188,9 @@ int BTReceiver::registerNewUser(const bdaddr_t *mac, BTPaket &pkt)
 	
 	/* agregamos el usuario */
 	this->udb->addUser(user);
+	/*! si estamos aca es valido => lo agregamos a la lista */
+	this->codAdmin.addUsedCode(code);
+	
 	
 	return 0;
 }

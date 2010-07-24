@@ -283,10 +283,6 @@ void TxtWinControl::on_txtbuttonShowHideWindow_clicked()
 		this->tw->setVisible (true);
 	}
 }
-void TxtWinControl::on_txtbuttonShowWindow_clicked()
-{
-	this->tw->setVisible (true);
-}
 
 
 void TxtWinControl::on_txtbuttonStartStop_clicked()

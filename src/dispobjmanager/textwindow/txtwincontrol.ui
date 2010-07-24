@@ -9,14 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
-    <height>446</height>
+    <width>180</width>
+    <height>389</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
     <width>180</width>
-    <height>400</height>
+    <height>200</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -216,7 +222,7 @@
          <item>
           <widget class="QPushButton" name="txtbuttonShowWindow">
            <property name="text">
-            <string>Mostrar</string>
+            <string>Guardar Configuraciones</string>
            </property>
           </widget>
          </item>
