@@ -47,12 +47,6 @@ UDataBase::UDataBase (const char * fname)
 	ASSERT(fname != NULL);
 	
 	this->fname = QString (fname);
-	/* abrimos el archivo para leer y escribir al final del fichero */
-	this->file = fopen (fname, "a+");
-	if (this->file == NULL) {
-		debugp ("UDataBase: Error al intentar abrir el archivo\n");
-		ASSERT (false);
-	}
 }
 
 /* Funcion que chequea si existe un usuario o no.
@@ -130,14 +124,15 @@ bool UDataBase::addUser (CUser * user)
 		/* tenemos: MAC,Nickname */
 		data.append(QChar('\n'));
 		/* tenemos: MAC,Nickname\n */
+		filestr.open(this->fname.toStdString().c_str(), fstream::out | 
+			fstream::app);
 		
-		filestr.open(this->fname.toStdString().c_str(), fstream::app);
 		if (filestr.good()) {
-			filestr.write(data.toStdString().c_str(), data.size());
+			filestr << data.toStdString().c_str();
 			filestr.close();
 		}
-		result = true;
 		
+		result = true;
 	}
 	
 	return result;
@@ -291,6 +286,7 @@ void UDataBase::saveToFile (void)
 		/* ahora lo guardamos en el archivo */
 		fprintf (this->file, "%s", qstrtochar(data));
 	}
+	fclose(this->file);
 }
 
 

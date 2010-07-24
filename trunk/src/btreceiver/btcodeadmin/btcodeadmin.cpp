@@ -176,7 +176,7 @@ void BTCodeAdmin::addUsedCode(string &code)
 	this->hash.insert( pair<string,bool>(code,true) );
 	
 	/* abrimos para append */
-	filestr.open(this->fname.c_str(), fstream::app);
+	filestr.open(this->fname.c_str(), fstream::out | fstream::app);
 	
 	if (!filestr.good())
 		return;
