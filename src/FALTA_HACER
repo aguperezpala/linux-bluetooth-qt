@@ -24,27 +24,14 @@ Modulos en chequeo:
 	
 
 Tareas:
-	* Main: verificar cuando debemos cargar algo de archivo o no (verificar
-	si la fecha del ultimo guardado es la misma que la actual por ej).
 	* BTCodeAdmin: falta "borrar de archivo un codigo" cuando nos dicen
 	que un codigo es "unused". Buscar FIXME
-	* HACIENDO MainProg (FIXME! TODO).
 	* Al crear un dispObj que sea del tipo permitido (segun extencion).
-	* Agregar el tema de las variables configurables	
-	* El tema de guardar las configuraciones, en el txtwincontrol y el
-	picwincontrol.	
 	* El tema de la tabla (dispobjtable) vamos a manejar las imagenes, 
 	por el momento, mostrando el nombre de la imagen, y ante un doble
 	click, esta va a ser mostrada por pantalla (falta implementar y 
 	testear esto).
-	* Ir guardando los usuarios registrados en el dia y si coincide con
-	la fecha en los que fueron guardados, entonces preguntar si se desea
-	cargar o no de archivos los usuarios
-	* Ir guardando los codigos ya usados en un archivo y preguntar si se
-	desean cargar (verificando la fecha)
 	
-
-
 	
 BTSystemManager:
 	* Verificar como se van a inicializar los dongles
