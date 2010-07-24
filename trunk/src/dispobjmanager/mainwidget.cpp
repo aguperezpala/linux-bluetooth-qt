@@ -35,8 +35,8 @@ MainWidget::MainWidget(QWidget *parent, QString & fname) : QWidget (parent)
 	/* inicializamos todo lo demas */
 	this->tw = NULL;
 	this->twc = NULL;
-	this->pw = NULL;
-	this->pwc = NULL;
+	/*this->pw = NULL;
+	this->pwc = NULL;*/
 	this->table = NULL;
 	this->realExit = false;
 	this->dof = NULL;
@@ -58,13 +58,13 @@ MainWidget::MainWidget(QWidget *parent, QString & fname) : QWidget (parent)
 	
 	
 	/* creamos todo lo que tiene que ver con las pics */
-	this->pw = new PictureWindow (this->table);
+	/*this->pw = new PictureWindow (this->table);
 	this->pwc = new PicWinControl (NULL, this->confFile, this->pw);
 	this->pw->setFocusPolicy (Qt::StrongFocus);
 	this->pwc->setFocusPolicy (Qt::StrongFocus);
 	this->pw->setWindowModality(Qt::NonModal);
 	this->pwc->setWindowModality(Qt::NonModal);
-	
+	*/
 	this->setFocusPolicy (Qt::StrongFocus);
 	
 	/* creamos el objetc filter */
@@ -79,13 +79,15 @@ MainWidget::MainWidget(QWidget *parent, QString & fname) : QWidget (parent)
 	
 	/* agregamos las ventanas de control al layout */
 	this->textLayoutControl->addWidget (this->twc);
-	this->picLayoutControl->addWidget (this->pwc);
+	/*this->picLayoutControl->addWidget (this->pwc);*/
 	
 	/* Mostramos todas las ventanas */
 	this->tw->show();
-	this->pw->show();
 	this->twc->show();
+	/*this->pw->show();
 	this->pwc->show();
+	*/
+	
 	this->show();
 	
 }
@@ -152,12 +154,12 @@ void MainWidget::destroyAll (void)
 	if (this->tw) {
 		delete this->tw; this->tw = NULL;
 	}
-	if (this->pwc) {
+	/*if (this->pwc) {
 		delete this->pwc; this->pwc = NULL;
 	}
 	if (this->pw) {
 		delete this->pw; this->pw = NULL;
-	}
+	}*/
 	if (this->table) {
 		delete this->table; this->table = NULL;
 	}
