@@ -74,7 +74,7 @@ public class CityBluetooth extends MIDlet implements CommandListener {
         /* generamos el formulario de registracion */
          this.regForm.append("Para registrarte ingresa primero el código de registración " +
                 "y luego ingresa un nombre, que debe tener los últimos 3 números de tu documento" +
-                " al final de todo\n");
+                " al final de todo, para finalizar selecciona el botón Ok \n");
         this.regForm.append(txtFCode);
         this.regForm.append(txtFNick);       
         this.regForm.addCommand(okCommand);
@@ -277,7 +277,7 @@ public class CityBluetooth extends MIDlet implements CommandListener {
         String auxStr = "";
         boolean nickOk = false;
 
-        if(nick.length() < 3)
+        if(nick == null || nick.length() < 3)
             return false;
         
         auxStr = this.txtFNick.getString();
