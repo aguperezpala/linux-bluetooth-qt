@@ -10,6 +10,7 @@
 #define UDATABASE_H
 
 #include <iostream>
+#include <time.h>
 #include <fstream>
 #include <stdio.h>	/* para almacenar los usuarios en disco */
 #include <string.h>

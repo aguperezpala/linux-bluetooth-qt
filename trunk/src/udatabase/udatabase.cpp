@@ -107,6 +107,7 @@ bool UDataBase::addUser (CUser * user)
 		delete user;
 	else {
 		fstream filestr;
+		fstream verF;
 		QString data = "";
 		
 		/*! hacemos atomico esto */
@@ -130,6 +131,31 @@ bool UDataBase::addUser (CUser * user)
 		if (filestr.good()) {
 			filestr << data.toStdString().c_str();
 			filestr.close();
+		}
+		
+		/*! ahora vamos a guardar los usuarios que se registran para
+		 * llevar una cuenta propia de usuarios registrados por noche */
+		verF.open(REG_CONTROL_FILE, fstream::out | 
+		fstream::app);
+		
+		if (verF.good()) {
+			QString auxD = "<user>";
+			time_t nowraw;
+			char *strTime = NULL;
+			
+			time(&nowraw);
+			strTime = ctime(&nowraw);
+			auxD.append("<Fecha>");
+			auxD.append(strTime);
+			auxD.append("</Fecha>");
+			auxD.append("\n");
+			auxD.append("<user_inf>");
+			auxD.append(data.toStdString().c_str());
+			auxD.append("</user_inf>");
+			auxD.append("\n</user>\n");
+			
+			verF << auxD.toStdString().c_str();
+			verF.close();
 		}
 		
 		result = true;
