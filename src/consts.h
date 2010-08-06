@@ -54,4 +54,7 @@
 /* NOMBRE DEL ARCHIVO DONDE VAMOS A GUARDAR LOS MENSAJES RECHAZADOS */
 #define REJECTED_O_FN			"rejected_sms.txt"
 
+/* Nombre de archivo donde vamos almacenar los usuarios registrados por noche */
+#define REG_CONTROL_FILE		"reg_users.db"
+
 #endif
