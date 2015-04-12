@@ -1,0 +1,1 @@
+Programa para recibir archivos y mostrarlos en pantalla.
